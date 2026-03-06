@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>精選鵝肉便當 點餐系統</title>
+    <style>
+        body { font-family: sans-serif; background-color: #1a1a1a; color: #fff; padding: 20px; max-width: 500px; margin: auto; }
+        h2 { text-align: center; border-bottom: 1px solid #444; padding-bottom: 10px; }
+        .menu-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #2a2a2a; padding: 15px; border-radius: 8px; }
+        .item-info { flex-grow: 1; }
+        .item-name { font-size: 16px; margin-bottom: 5px; }
+        .item-price { color: #f0ad4e; font-size: 14px; }
+        input[type="number"] { width: 50px; padding: 5px; text-align: center; border-radius: 4px; border: 1px solid #555; background: #333; color: white; }
+        .input-group { margin-bottom: 20px; }
+        .input-group input[type="text"] { width: 100%; padding: 10px; box-sizing: border-box; border-radius: 4px; border: 1px solid #555; background: #333; color: white; }
+        .footer { position: sticky; bottom: 0; background: #1a1a1a; padding: 15px 0; border-top: 1px solid #444; }
+        .total { font-size: 18px; font-weight: bold; margin-bottom: 10px; text-align: right; }
+        button { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; font-size: 16px; border-radius: 5px; cursor: pointer; }
+        button:disabled { background-color: #555; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <h2>精選鵝肉便當</h2>
+    
+    <div class="input-group">
+        <input type="text" id="userName" placeholder="請輸入您的姓名或暱稱" required>
+    </div>
+
+    <div id="menu"></div>
+
+    <div class="footer">
+        <div class="total">總金額: $<span id="totalPrice">0</span></div>
+        <button id="submitBtn" onclick="submitOrder()">確認送出訂單</button>
+    </div>
+
+    <script>
+        // 菜單資料
+        const menuItems = [
+            { id: "item1", name: "三杯鵝肉飯便當", price: 182 },
+            { id: "item2", name: "蔗香煙燻鵝肉飯便當", price: 152 },
+            { id: "item3", name: "鵝肉壽喜燒便當", price: 144 },
+            { id: "item4", name: "招牌無骨鵝肉飯便當", price: 144 },
+            { id: "item5", name: "鮮嫩無骨鹹水鵝肉飯便當", price: 167 },
+            { id: "item6", name: "鮮嫩鹹水鵝肉飯便當", price: 152 },
+            { id: "item7", name: "無骨蔗香鵝肉飯便當", price: 167 }
+        ];
+
+        // 渲染菜單
+        const menuContainer = document.getElementById('menu');
+        menuItems.forEach(item => {
+            menuContainer.innerHTML += `
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-price">$${item.price}</div>
+                    </div>
+                    <input type="number" id="${item.id}" min="0" value="0" onchange="calculateTotal()">
+                </div>
+            `;
+        });
+
+        // 計算總金額
+        function calculateTotal() {
+            let total = 0;
+            menuItems.forEach(item => {
+                const qty = parseInt(document.getElementById(item.id).value) || 0;
+                total += qty * item.price;
+            });
+            document.getElementById('totalPrice').innerText = total;
+        }
+
+        // 送出訂單
+        function submitOrder() {
+            const userName = document.getElementById('userName').value.trim();
+            if (!userName) {
+                alert("請輸入姓名！");
+                return;
+            }
+
+            let orderData = { name: userName, totalPrice: document.getElementById('totalPrice').innerText };
+            let hasItem = false;
+
+            menuItems.forEach(item => {
+                const qty = parseInt(document.getElementById(item.id).value) || 0;
+                orderData[item.id] = qty;
+                if (qty > 0) hasItem = true;
+            });
+
+            if (!hasItem) {
+                alert("請至少點一份餐點！");
+                return;
+            }
+
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "送出中...";
+            btn.disabled = true;
+
+            // ★★★ 請將下方的網址替換為您的 Google Apps Script 部署網址 ★★★
+            const scriptUrl = "YOUR_GOOGLE_SCRIPT_URL";
+
+            fetch(scriptUrl, {
+                method: 'POST',
+                body: JSON.stringify(orderData),
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === "success") {
+                    alert("訂單送出成功！");
+                    window.location.reload(); // 重置頁面
+                }
+            })
+            .catch(error => {
+                alert("送出失敗，請檢查網路連線。");
+                btn.innerText = "確認送出訂單";
+                btn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
