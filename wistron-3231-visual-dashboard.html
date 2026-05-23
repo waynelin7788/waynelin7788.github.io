@@ -1,0 +1,533 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>緯創 3231 交易儀表板</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #181b22;
+      --panel-2: #20242d;
+      --text: #f2f5f7;
+      --muted: #aab2bd;
+      --line: #333946;
+      --buy: #ff3b30;
+      --hold: #f4c542;
+      --sell: #27c46b;
+      --cyan: #48c7d9;
+      --orange: #ff9f1a;
+      --blue: #4aa3ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+      letter-spacing: 0;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 32px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .date-pill {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: right;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(320px, 0.96fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .signal-board,
+    .chart-panel,
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .signal-board {
+      padding: 18px;
+    }
+
+    .current-signal {
+      display: grid;
+      grid-template-columns: 132px 1fr;
+      gap: 18px;
+      align-items: center;
+      min-height: 196px;
+      background: var(--panel-2);
+      border: 1px solid rgba(244, 197, 66, 0.35);
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .light-stack {
+      width: 112px;
+      padding: 12px;
+      margin: 0 auto;
+      background: #0a0b0d;
+      border: 1px solid #2b3039;
+      border-radius: 8px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .light {
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #121212;
+      font-weight: 800;
+      font-size: 20px;
+      opacity: 0.22;
+      border: 4px solid rgba(255,255,255,0.08);
+    }
+
+    .light.buy { background: var(--buy); }
+    .light.hold { background: var(--hold); }
+    .light.sell { background: var(--sell); }
+    .light.active {
+      opacity: 1;
+      box-shadow: 0 0 0 6px rgba(244, 197, 66, 0.12), 0 0 32px rgba(244, 197, 66, 0.42);
+    }
+
+    .signal-copy h2 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      color: var(--hold);
+    }
+
+    .signal-copy p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .signal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .signal-card {
+      background: #11141a;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px;
+      min-height: 126px;
+    }
+
+    .signal-card strong {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 17px;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot.buy { background: var(--buy); }
+    .dot.hold { background: var(--hold); }
+    .dot.sell { background: var(--sell); }
+
+    .signal-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .chart-panel {
+      display: grid;
+      grid-template-rows: auto auto;
+      align-self: start;
+    }
+
+    .chart-panel header,
+    .section header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chart-panel h2,
+    .section h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .tag {
+      color: #141414;
+      background: var(--cyan);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-weight: 800;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .chart-panel img {
+      width: 100%;
+      height: auto;
+      min-height: 0;
+      object-fit: contain;
+      display: block;
+      background: #08090b;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px;
+      min-height: 96px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .metric strong {
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .metric small {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .accent-buy { color: var(--buy); }
+    .accent-hold { color: var(--hold); }
+    .accent-sell { color: var(--sell); }
+    .accent-cyan { color: var(--cyan); }
+    .accent-orange { color: var(--orange); }
+    .accent-blue { color: var(--blue); }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .section-body {
+      padding: 16px;
+    }
+
+    .rows {
+      display: grid;
+      gap: 10px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 126px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .row:last-child {
+      border-bottom: 0;
+    }
+
+    .row b {
+      color: var(--text);
+    }
+
+    .row span {
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .progress-wrap {
+      margin-top: 14px;
+      background: #11141a;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .progress {
+      height: 16px;
+      background: #0a0b0d;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress div {
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--hold));
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 920px) {
+      main {
+        width: min(100% - 20px, 720px);
+        padding-top: 14px;
+      }
+
+      .topbar,
+      .hero,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        display: grid;
+      }
+
+      .date-pill {
+        text-align: left;
+      }
+
+      .current-signal {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .signal-grid,
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-panel img {
+        min-height: 180px;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="topbar">
+      <div>
+        <h1>緯創 3231 交易儀表板</h1>
+        <p class="subtitle">一頁判斷目前投入、技術位置與下個交易日策略。</p>
+      </div>
+      <div class="date-pill">
+        資料截至 2026/05/22<br>
+        下次更新：2026/05/25（一）開市後
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="signal-board">
+        <div class="current-signal">
+          <div class="light-stack" aria-label="交易燈號">
+            <div class="light buy">買</div>
+            <div class="light hold active">抱</div>
+            <div class="light sell">賣</div>
+          </div>
+          <div class="signal-copy">
+            <h2>黃色燈號：安全續抱</h2>
+            <p>目前 500 股持倉，收盤 145.0 元高於平均成本 139.20 元，也站上 SMA20 140.18。尚未滿足連續三個交易日站穩 SMA20 的加碼條件，因此先續抱、不追價。</p>
+          </div>
+        </div>
+
+        <div class="signal-grid">
+          <div class="signal-card">
+            <strong><span class="dot buy"></span>紅燈買進</strong>
+            <p>連續三個交易日站穩 SMA20，且量能沒有轉弱，再評估動用剩餘 500 股。</p>
+          </div>
+          <div class="signal-card">
+            <strong><span class="dot hold"></span>黃燈續抱</strong>
+            <p>價格維持在 SMA20 與成本之上，但加碼條件尚未完成。這是目前狀態。</p>
+          </div>
+          <div class="signal-card">
+            <strong><span class="dot sell"></span>綠燈賣出</strong>
+            <p>帶量跌破 134.50 / SMA60 防線，優先保護本金，避免前期錯誤重演。</p>
+          </div>
+        </div>
+      </div>
+
+      <aside class="chart-panel">
+        <header>
+          <h2>05/22 技術圖</h2>
+          <span class="tag">站上三均線</span>
+        </header>
+        <img src="/raw/2026-05-22-wistron-3231-technical-chart-screenshot.png" alt="緯創 3231 2026/05/22 技術圖截圖">
+      </aside>
+    </section>
+
+    <section class="metric-grid" aria-label="核心數字">
+      <div class="metric">
+        <span>當前持股</span>
+        <strong>500 股</strong>
+        <small>目標 1,000 股，完成 50%</small>
+      </div>
+      <div class="metric">
+        <span>投入本金</span>
+        <strong>69,600</strong>
+        <small>當前戰役成本基準</small>
+      </div>
+      <div class="metric">
+        <span>平均成本</span>
+        <strong class="accent-cyan">139.20</strong>
+        <small>收盤價仍高於成本</small>
+      </div>
+      <div class="metric">
+        <span>收盤價</span>
+        <strong class="accent-hold">145.0</strong>
+        <small>+5 元，+3.57%</small>
+      </div>
+      <div class="metric">
+        <span>SMA20</span>
+        <strong class="accent-orange">140.18</strong>
+        <small>月線向上，總攻觀察線</small>
+      </div>
+      <div class="metric">
+        <span>SMA60 / 防守線</span>
+        <strong class="accent-blue">134.56</strong>
+        <small>與 134.50 防線幾乎重合</small>
+      </div>
+      <div class="metric">
+        <span>K / D</span>
+        <strong>48.39 / 32.74</strong>
+        <small>K 高於 D，動能回升</small>
+      </div>
+      <div class="metric">
+        <span>成交量</span>
+        <strong>61,145 張</strong>
+        <small>下個交易日看量能延續</small>
+      </div>
+    </section>
+
+    <div class="two-col">
+      <section class="section">
+        <header>
+          <h2>下個交易日劇本</h2>
+          <span class="tag">05/25</span>
+        </header>
+        <div class="section-body rows">
+          <div class="row">
+            <b class="accent-buy">紅燈買進</b>
+            <span>若收盤續站 SMA20，並累積到連續三個交易日站穩，再評估剩餘 500 股的加碼節奏。</span>
+          </div>
+          <div class="row">
+            <b class="accent-hold">黃燈續抱</b>
+            <span>若仍在 SMA20 上方，但站穩天數不足，維持 500 股，等待第三天確認。</span>
+          </div>
+          <div class="row">
+            <b class="accent-sell">綠燈賣出</b>
+            <span>若帶量跌破 134.50 / SMA60，先處理風險，不讓虧損擴大。</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <header>
+          <h2>部位進度</h2>
+          <span class="tag">500 / 1000</span>
+        </header>
+        <div class="section-body">
+          <div class="progress-wrap">
+            <div class="progress-label">
+              <span>已投入 500 股</span>
+              <span>剩餘 500 股</span>
+            </div>
+            <div class="progress"><div></div></div>
+          </div>
+          <div class="rows">
+            <div class="row">
+              <b>目前結論</b>
+              <span>續抱 500 股，暫不追價，等待 2026/05/25（一）確認是否形成第二個站穩 SMA20 的交易日。</span>
+            </div>
+            <div class="row">
+              <b>核心風險</b>
+              <span>右側加碼後成本已墊高，若回落必須尊重 134.50 / SMA60 防線。</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <p class="footer-note">資料來源：緯創 3231 V7 策略報告與 2026/05/22 技術圖截圖。本頁是知識庫視覺化摘要，不取代交易前的即時行情確認。</p>
+  </main>
+</body>
+</html>
