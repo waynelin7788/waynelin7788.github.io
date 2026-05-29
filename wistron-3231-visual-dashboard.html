@@ -97,7 +97,7 @@
       align-items: center;
       min-height: 196px;
       background: var(--panel-2);
-      border: 1px solid rgba(255, 59, 48, 0.35);
+      border: 1px solid rgba(244, 197, 66, 0.35);
       border-radius: 8px;
       padding: 18px;
     }
@@ -148,7 +148,7 @@
     .signal-copy h2 {
       margin: 0 0 8px;
       font-size: 30px;
-      color: var(--buy);
+      color: var(--hold);
     }
 
     .signal-copy p {
@@ -342,9 +342,9 @@
     }
 
     .progress div {
-      width: 80%;
+      width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, var(--cyan), var(--buy));
+      background: linear-gradient(90deg, var(--cyan), var(--hold));
     }
 
     .footer-note {
@@ -402,8 +402,8 @@
         <p class="subtitle">一頁判斷目前投入、技術位置與下個交易日策略。</p>
       </div>
       <div class="date-pill">
-        資料截至 2026/05/25 12:44 盤中<br>
-        下次更新：2026/05/25 收盤後
+        資料截至 2026/05/29 盤中<br>
+        下次更新：2026/05/29 收盤後
       </div>
     </div>
 
@@ -411,102 +411,107 @@
       <div class="signal-board">
         <div class="current-signal">
           <div class="light-stack" aria-label="交易燈號">
-            <div class="light buy active">買</div>
-            <div class="light hold">抱</div>
+            <div class="light buy">買</div>
+            <div class="light hold active">抱</div>
             <div class="light sell">賣</div>
           </div>
           <div class="signal-copy">
-            <h2>紅色燈號：買進已觸發</h2>
-            <p>2026/05/25 盤中以 149.00 元加碼 300 股，目前持股 800 股，平均成本約 142.88 元。盤中價格 149.0 元站上 SMA20 140.53，但仍需等待收盤確認是否形成第二個站穩 SMA20 的交易日。</p>
+            <h2>黃色燈號：滿編安全續抱</h2>
+            <p>2026/05/26 已補齊至 1,000 股，平均成本約 143.50 元。2026/05/29 盤中價格 158.5 元，估計浮盈約 15,000 元；目前不再加碼，重點改為獲利保護與移動防守。</p>
           </div>
         </div>
 
         <div class="signal-grid">
           <div class="signal-card">
             <strong><span class="dot buy"></span>紅燈買進</strong>
-            <p>盤中強勢延續，已執行 300 股加碼。剩餘 200 股等待收盤與後續量價確認。</p>
+            <p>目標部位已滿編，除非另立新戰役，暫不再加碼。</p>
           </div>
           <div class="signal-card">
             <strong><span class="dot hold"></span>黃燈續抱</strong>
-            <p>若收盤續站 SMA20 但量能未再放大，持有 800 股，暫不追剩餘 200 股。</p>
+            <p>價格維持在 SMA5 / SMA20 上方，滿編續抱，優先保護浮盈。</p>
           </div>
           <div class="signal-card">
             <strong><span class="dot sell"></span>綠燈賣出</strong>
-            <p>帶量跌破 134.50 / SMA60 防線，優先保護本金，避免前期錯誤重演。</p>
+            <p>若帶量跌破 SMA20，評估降風險；若跌破 SMA60 / 原防線，優先保護本金。</p>
           </div>
         </div>
       </div>
 
       <aside class="chart-panel">
         <header>
-          <h2>05/25 盤中技術圖</h2>
-          <span class="tag">盤中站上三均線</span>
+          <h2>05/29 盤中技術圖</h2>
+          <span class="tag">強勢站上三均線</span>
         </header>
-        <img src="/raw/2026-05-25-wistron-3231-technical-chart-screenshot.png" alt="緯創 3231 2026/05/25 盤中技術圖截圖">
+        <img src="/raw/2026-05-29-wistron-3231-technical-chart-screenshot.png" alt="緯創 3231 2026/05/29 盤中技術圖截圖">
       </aside>
     </section>
 
     <section class="metric-grid" aria-label="核心數字">
       <div class="metric">
         <span>當前持股</span>
-        <strong>800 股</strong>
-        <small>目標 1,000 股，完成 80%</small>
+        <strong>1,000 股</strong>
+        <small>目標 1,000 股，完成 100%</small>
       </div>
       <div class="metric">
         <span>投入本金</span>
-        <strong>114,300</strong>
+        <strong>143,500</strong>
         <small>當前戰役成本基準</small>
       </div>
       <div class="metric">
         <span>平均成本</span>
-        <strong class="accent-cyan">142.88</strong>
+        <strong class="accent-cyan">143.50</strong>
         <small>盤中價格仍高於成本</small>
       </div>
       <div class="metric">
         <span>盤中價格</span>
-        <strong class="accent-buy">149.0</strong>
-        <small>+4.5 元，+3.11%</small>
+        <strong class="accent-hold">158.5</strong>
+        <small>+14 元，+9.69%</small>
+      </div>
+      <div class="metric">
+        <span>估計浮盈</span>
+        <strong class="accent-sell">+15,000</strong>
+        <small>以 1,000 股與 143.50 元均價估算</small>
       </div>
       <div class="metric">
         <span>SMA20</span>
-        <strong class="accent-orange">140.53</strong>
-        <small>月線向上，總攻觀察線</small>
+        <strong class="accent-orange">142.20</strong>
+        <small>滿編後移動防守候選</small>
       </div>
       <div class="metric">
         <span>SMA60 / 防守線</span>
-        <strong class="accent-blue">134.85</strong>
-        <small>仍接近 134.50 原防線</small>
+        <strong class="accent-blue">135.74</strong>
+        <small>原最終防線持續上移</small>
       </div>
       <div class="metric">
         <span>K / D</span>
-        <strong>62.10 / 42.26</strong>
-        <small>K 高於 D，動能延續</small>
+        <strong>78.50 / 66.20</strong>
+        <small>動能強，但接近高檔區</small>
       </div>
       <div class="metric">
         <span>成交量</span>
-        <strong>59,376 張</strong>
-        <small>盤中量能，收盤後再確認</small>
+        <strong>103,721 張</strong>
+        <small>高量推升，觀察續強或震盪</small>
       </div>
     </section>
 
     <div class="two-col">
       <section class="section">
         <header>
-          <h2>下個交易日劇本</h2>
-          <span class="tag">收盤確認</span>
+          <h2>後續劇本</h2>
+          <span class="tag">滿編管理</span>
         </header>
         <div class="section-body rows">
           <div class="row">
             <b class="accent-buy">紅燈買進</b>
-            <span>紅燈已觸發並加碼 300 股。若收盤與後續量能都延續，才評估剩餘 200 股。</span>
+            <span>已達 1,000 股目標部位，暫不加碼；若要增加部位，需另立新戰役規則。</span>
           </div>
           <div class="row">
             <b class="accent-hold">黃燈續抱</b>
-            <span>若收盤仍在 SMA20 上方但未形成更強訊號，維持 800 股，等待第三天確認。</span>
+            <span>若維持在 SMA5 / SMA20 上方，滿編續抱，並追蹤 KD 是否過熱鈍化。</span>
           </div>
           <div class="row">
             <b class="accent-sell">綠燈賣出</b>
-            <span>若帶量跌破 134.50 / SMA60，先處理風險，不讓虧損擴大。</span>
+            <span>若帶量跌破 SMA20，評估降風險或鎖部分獲利；跌破 SMA60 則優先保護本金。</span>
           </div>
         </div>
       </section>
@@ -514,31 +519,31 @@
       <section class="section">
         <header>
           <h2>部位進度</h2>
-          <span class="tag">800 / 1000</span>
+          <span class="tag">1000 / 1000</span>
         </header>
         <div class="section-body">
           <div class="progress-wrap">
             <div class="progress-label">
-              <span>已投入 800 股</span>
-              <span>剩餘 200 股</span>
+              <span>已投入 1,000 股</span>
+              <span>已滿編</span>
             </div>
             <div class="progress"><div></div></div>
           </div>
           <div class="rows">
             <div class="row">
               <b>目前結論</b>
-              <span>盤中紅燈買進已執行，持有 800 股；剩餘 200 股暫不追價，等待 2026/05/25 收盤確認。</span>
+              <span>滿編 1,000 股，黃燈安全續抱；目前估計浮盈約 15,000 元，重點是獲利保護。</span>
             </div>
             <div class="row">
               <b>核心風險</b>
-              <span>盤中加碼後成本墊高至約 142.88，若回落需先看 SMA20，最終仍尊重 134.50 / SMA60 防線。</span>
+              <span>KD 接近高檔，若高檔爆量後拉回，需判斷是正常震盪或動能反轉。</span>
             </div>
           </div>
         </div>
       </section>
     </div>
 
-    <p class="footer-note">資料來源：緯創 3231 V7 策略報告、2026/05/25 盤中技術圖截圖與 2026/05/25 盤中成交截圖。本頁是知識庫視覺化摘要，不取代交易前的即時行情確認。</p>
+    <p class="footer-note">資料來源：緯創 3231 V7 策略報告、2026/05/26 成交截圖與 2026/05/29 盤中技術圖截圖。本頁是知識庫視覺化摘要，不取代交易前的即時行情確認。</p>
   </main>
 </body>
 </html>
