@@ -20,9 +20,7 @@
       --blue: #4aa3ff;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -79,16 +77,15 @@
 
     .signal-board,
     .chart-panel,
-    .section {
+    .section,
+    .metric {
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 8px;
       overflow: hidden;
     }
 
-    .signal-board {
-      padding: 18px;
-    }
+    .signal-board { padding: 18px; }
 
     .current-signal {
       display: grid;
@@ -97,7 +94,7 @@
       align-items: center;
       min-height: 196px;
       background: var(--panel-2);
-      border: 1px solid rgba(244, 197, 66, 0.35);
+      border: 1px solid rgba(39, 196, 107, 0.45);
       border-radius: 8px;
       padding: 18px;
     }
@@ -119,8 +116,8 @@
       border-radius: 50%;
       display: grid;
       place-items: center;
-      color: #121212;
-      font-weight: 800;
+      color: #101214;
+      font-weight: 900;
       font-size: 20px;
       opacity: 0.22;
       border: 4px solid rgba(255,255,255,0.08);
@@ -129,18 +126,7 @@
     .light.buy { background: var(--buy); }
     .light.hold { background: var(--hold); }
     .light.sell { background: var(--sell); }
-    .light.active {
-      opacity: 1;
-    }
-
-    .light.buy.active {
-      box-shadow: 0 0 0 6px rgba(255, 59, 48, 0.12), 0 0 32px rgba(255, 59, 48, 0.42);
-    }
-
-    .light.hold.active {
-      box-shadow: 0 0 0 6px rgba(244, 197, 66, 0.12), 0 0 32px rgba(244, 197, 66, 0.42);
-    }
-
+    .light.active { opacity: 1; }
     .light.sell.active {
       box-shadow: 0 0 0 6px rgba(39, 196, 107, 0.12), 0 0 32px rgba(39, 196, 107, 0.42);
     }
@@ -148,7 +134,7 @@
     .signal-copy h2 {
       margin: 0 0 8px;
       font-size: 30px;
-      color: var(--hold);
+      color: var(--sell);
     }
 
     .signal-copy p {
@@ -191,7 +177,9 @@
     .dot.hold { background: var(--hold); }
     .dot.sell { background: var(--sell); }
 
-    .signal-card p {
+    .signal-card p,
+    .row span,
+    .metric small {
       margin: 0;
       color: var(--muted);
       line-height: 1.55;
@@ -221,7 +209,7 @@
     }
 
     .tag {
-      color: #141414;
+      color: #121212;
       background: var(--cyan);
       border-radius: 6px;
       padding: 4px 8px;
@@ -233,7 +221,6 @@
     .chart-panel img {
       width: 100%;
       height: auto;
-      min-height: 0;
       object-fit: contain;
       display: block;
       background: #08090b;
@@ -247,9 +234,6 @@
     }
 
     .metric {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
       padding: 13px;
       min-height: 96px;
     }
@@ -269,8 +253,6 @@
     .metric small {
       display: block;
       margin-top: 7px;
-      color: var(--muted);
-      line-height: 1.35;
     }
 
     .accent-buy { color: var(--buy); }
@@ -287,14 +269,8 @@
       margin-top: 16px;
     }
 
-    .section-body {
-      padding: 16px;
-    }
-
-    .rows {
-      display: grid;
-      gap: 10px;
-    }
+    .section-body { padding: 16px; }
+    .rows { display: grid; gap: 10px; }
 
     .row {
       display: grid;
@@ -305,18 +281,7 @@
       border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
-    .row:last-child {
-      border-bottom: 0;
-    }
-
-    .row b {
-      color: var(--text);
-    }
-
-    .row span {
-      color: var(--muted);
-      line-height: 1.55;
-    }
+    .row:last-child { border-bottom: 0; }
 
     .progress-wrap {
       margin-top: 14px;
@@ -344,7 +309,7 @@
     .progress div {
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, var(--cyan), var(--hold));
+      background: linear-gradient(90deg, var(--cyan), var(--sell));
     }
 
     .footer-note {
@@ -363,16 +328,11 @@
       .topbar,
       .hero,
       .two-col {
+        display: grid;
         grid-template-columns: 1fr;
       }
 
-      .topbar {
-        display: grid;
-      }
-
-      .date-pill {
-        text-align: left;
-      }
+      .date-pill { text-align: left; }
 
       .current-signal {
         grid-template-columns: 1fr;
@@ -384,13 +344,8 @@
         grid-template-columns: 1fr;
       }
 
-      .chart-panel img {
-        min-height: 180px;
-      }
-
-      .row {
-        grid-template-columns: 1fr;
-      }
+      .chart-panel img { min-height: 180px; }
+      .row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -399,11 +354,11 @@
     <div class="topbar">
       <div>
         <h1>緯創 3231 交易儀表板</h1>
-        <p class="subtitle">一頁判斷目前投入、技術位置與下個交易日策略。</p>
+        <p class="subtitle">一頁看懂目前部位、技術燈號、浮盈變化與下一步防守策略</p>
       </div>
       <div class="date-pill">
-        資料截至 2026/06/04 盤中<br>
-        下次更新：2026/06/04 收盤後
+        資料截至 2026/06/05 盤中<br>
+        下次更新：2026/06/05 收盤後
       </div>
     </div>
 
@@ -412,106 +367,106 @@
         <div class="current-signal">
           <div class="light-stack" aria-label="交易燈號">
             <div class="light buy">買</div>
-            <div class="light hold active">抱</div>
-            <div class="light sell">賣</div>
+            <div class="light hold">抱</div>
+            <div class="light sell active">賣</div>
           </div>
           <div class="signal-copy">
-            <h2>黃色燈號：高檔警戒續抱</h2>
-            <p>滿編 1,000 股，平均成本約 143.50 元。2026/06/04 盤中價格 179.0 元，估計浮盈約 35,500 元；但當日高檔急跌 -7.73%，價格略低於 SMA5，KD 也出現高檔死亡交叉。</p>
+            <h2>綠色燈號：降風險／賣出檢查</h2>
+            <p>滿編 1,000 股，平均成本約 143.50 元。2026/06/05 盤中價格 171.0 元，估計浮盈約 27,500 元；價格已明顯低於 SMA5，KD 高檔死亡交叉延續。此燈號代表策略檢查，尚未記錄實際賣出成交。</p>
           </div>
         </div>
 
         <div class="signal-grid">
           <div class="signal-card">
             <strong><span class="dot buy"></span>紅燈買進</strong>
-            <p>目標部位已滿編，且高檔轉弱訊號出現，暫不再加碼。</p>
+            <p>目前不適用。部位已滿編，且短線動能轉弱，不再用追價方式加碼。</p>
           </div>
           <div class="signal-card">
             <strong><span class="dot hold"></span>黃燈續抱</strong>
-            <p>仍高於 SMA20 與成本，但 SMA5 失守邊緣，續抱同時提高警戒。</p>
+            <p>若快速收復 SMA5 181.20，且賣壓沒有放大，可回到警戒續抱。</p>
           </div>
           <div class="signal-card">
             <strong><span class="dot sell"></span>綠燈賣出</strong>
-            <p>若帶量跌破 SMA20，評估降風險或鎖部分獲利；跌破 SMA60 則優先保護本金。</p>
+            <p>持續低於 SMA5、KD 向下時，檢查部分停利或設定 SMA20 硬性防守。</p>
           </div>
         </div>
       </div>
 
       <aside class="chart-panel">
         <header>
-          <h2>06/04 盤中技術圖</h2>
-          <span class="tag">高檔急跌警戒</span>
+          <h2>06/05 盤中技術圖</h2>
+          <span class="tag">高檔回落延續</span>
         </header>
-        <img src="/raw/2026-06-04-wistron-3231-technical-chart-screenshot.png" alt="緯創 3231 2026/06/04 盤中技術圖截圖">
+        <img src="/raw/2026-06-05-wistron-3231-technical-chart-screenshot.png" alt="緯創 3231 2026/06/05 盤中技術圖截圖">
       </aside>
     </section>
 
     <section class="metric-grid" aria-label="核心數字">
       <div class="metric">
-        <span>當前持股</span>
+        <span>持股數量</span>
         <strong>1,000 股</strong>
-        <small>目標 1,000 股，完成 100%</small>
+        <small>目標 1,000 股，已達 100%</small>
       </div>
       <div class="metric">
         <span>投入本金</span>
         <strong>143,500</strong>
-        <small>當前戰役成本基準</small>
+        <small>第二段戰役累計成本</small>
       </div>
       <div class="metric">
         <span>平均成本</span>
         <strong class="accent-cyan">143.50</strong>
-        <small>盤中價格仍高於成本</small>
+        <small>目前仍高於成本</small>
       </div>
       <div class="metric">
         <span>盤中價格</span>
-        <strong class="accent-hold">179.0</strong>
-        <small>-15 元，-7.73%</small>
+        <strong class="accent-sell">171.0</strong>
+        <small>-5 元，-2.84%</small>
       </div>
       <div class="metric">
         <span>估計浮盈</span>
-        <strong class="accent-sell">+35,500</strong>
-        <small>以 1,000 股與 143.50 元均價估算</small>
+        <strong class="accent-sell">+27,500</strong>
+        <small>較 06/04 盤中回吐約 8,000</small>
       </div>
       <div class="metric">
         <span>SMA20</span>
-        <strong class="accent-orange">150.35</strong>
+        <strong class="accent-orange">151.43</strong>
         <small>滿編後移動防守候選</small>
       </div>
       <div class="metric">
-        <span>SMA60 / 防守線</span>
-        <strong class="accent-blue">139.52</strong>
-        <small>原最終防線持續上移</small>
+        <span>SMA60 / 最終線</span>
+        <strong class="accent-blue">140.17</strong>
+        <small>偏最終風險線</small>
       </div>
       <div class="metric">
         <span>K / D</span>
-        <strong>80.58 / 81.76</strong>
-        <small>K 低於 D，高檔死亡交叉</small>
+        <strong>68.66 / 77.01</strong>
+        <small>K 仍低於 D，死亡交叉延續</small>
       </div>
       <div class="metric">
         <span>成交量</span>
-        <strong>95,732 張</strong>
-        <small>高量急跌，觀察是否止穩</small>
+        <strong>65,211 張</strong>
+        <small>留意是否放量續弱</small>
       </div>
     </section>
 
     <div class="two-col">
       <section class="section">
         <header>
-          <h2>後續劇本</h2>
-          <span class="tag">獲利保護</span>
+          <h2>下一步策略</h2>
+          <span class="tag">先守再攻</span>
         </header>
         <div class="section-body rows">
           <div class="row">
-            <b class="accent-buy">紅燈買進</b>
-            <span>已達 1,000 股目標部位，且短線轉弱，暫不加碼。</span>
+            <b class="accent-buy">不追買</b>
+            <span>滿編後又跌破 SMA5，現在不適合把問題變大。</span>
           </div>
           <div class="row">
-            <b class="accent-hold">黃燈續抱</b>
-            <span>若能收復 SMA5 或至少守住 SMA20，續抱但提高警戒。</span>
+            <b class="accent-hold">可續抱</b>
+            <span>若快速收復 SMA5 181.20，且 KD 止跌，可回到黃燈警戒續抱。</span>
           </div>
           <div class="row">
-            <b class="accent-sell">綠燈賣出</b>
-            <span>若帶量跌破 SMA20，評估降風險或鎖部分獲利；若跌破 SMA60，優先保護本金。</span>
+            <b class="accent-sell">降風險</b>
+            <span>若持續低於 SMA5，應檢查部分停利，或把 SMA20 151.43 設為硬性移動防守。</span>
           </div>
         </div>
       </section>
@@ -524,26 +479,27 @@
         <div class="section-body">
           <div class="progress-wrap">
             <div class="progress-label">
-              <span>已投入 1,000 股</span>
+              <span>目標部位 1,000 股</span>
               <span>已滿編</span>
             </div>
             <div class="progress"><div></div></div>
           </div>
           <div class="rows">
             <div class="row">
-              <b>目前結論</b>
-              <span>滿編 1,000 股，黃燈警戒續抱；目前估計浮盈約 35,500 元，重點是不要讓高檔急跌侵蝕獲利。</span>
+              <b>核心判斷</b>
+              <span>這不是買點，是滿編後的獲利保護點。浮盈仍在，但已從 06/04 的約 +35,500 回落到約 +27,500。</span>
             </div>
             <div class="row">
-              <b>核心風險</b>
-              <span>SMA5 略失守、KD 高檔死亡交叉、OSC 轉弱，需要判斷是洗盤還是波段轉弱。</span>
+              <b>風險訊號</b>
+              <span>SMA5 失守、KD 死亡交叉延續、OSC 下降。若沒有快速修復，綠燈應維持。</span>
             </div>
           </div>
         </div>
       </section>
     </div>
 
-    <p class="footer-note">資料來源：緯創 3231 V7 策略報告、2026/05/26 成交截圖與 2026/06/04 盤中技術圖截圖。本頁是知識庫視覺化摘要，不取代交易前的即時行情確認。</p>
+    <p class="footer-note">資料來源：緯創 3231 V7 策略報告、2026/05/26 成交截圖、2026/06/04 與 2026/06/05 盤中技術圖截圖。本頁是知識庫視覺化摘要與策略模擬輔助，不構成買賣邀約或個人化投資建議。</p>
   </main>
 </body>
 </html>
+
