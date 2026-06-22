@@ -1,0 +1,48 @@
+[
+  {
+    "id": "taunt",
+    "name": "嘲諷",
+    "rulesText": "敵方必須優先攻擊具有嘲諷的單位。"
+  },
+  {
+    "id": "block",
+    "name": "阻擋",
+    "rulesText": "可替友方目標承受攻擊。"
+  },
+  {
+    "id": "freeze",
+    "name": "凍結",
+    "rulesText": "被凍結的單位下回合不能攻擊或發動主動技能。"
+  },
+  {
+    "id": "shield",
+    "name": "護盾",
+    "rulesText": "抵銷下一次受到的傷害。"
+  },
+  {
+    "id": "chain",
+    "name": "連鎖",
+    "rulesText": "打出指定條件的卡牌時觸發額外效果。"
+  },
+  {
+    "id": "resonance",
+    "name": "共鳴",
+    "rulesText": "打出與自身使者相同元素的卡牌時累積元素共鳴值。"
+  },
+  {
+    "id": "phase_shift",
+    "name": "轉階",
+    "rulesText": "第一階段生命歸零後進入神獸型態。"
+  },
+  {
+    "id": "void",
+    "name": "虛無",
+    "rulesText": "牌組耗盡後，在回合結束時受到逐回合遞增傷害。"
+  },
+  {
+    "id": "domain",
+    "name": "領域",
+    "rulesText": "由場地卡建立的全局狀態，可能提供特殊勝利條件。"
+  }
+]
+

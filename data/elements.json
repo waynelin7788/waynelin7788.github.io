@@ -1,0 +1,59 @@
+[
+  {
+    "id": "fire",
+    "name": "火",
+    "theme": "毀滅與重生",
+    "resourceName": "赤炎結晶",
+    "playstyle": ["直接傷害", "爆發", "自我燃燒", "重生"],
+    "colorHint": "#d94b2b"
+  },
+  {
+    "id": "water",
+    "name": "水",
+    "theme": "深海支配與冷酷隔離",
+    "resourceName": "深海晶體",
+    "playstyle": ["控場", "凍結", "治癒", "延遲"],
+    "colorHint": "#2f80c9"
+  },
+  {
+    "id": "earth",
+    "name": "土",
+    "theme": "絕對防禦與大地開創",
+    "resourceName": "玄岩核心",
+    "playstyle": ["防禦", "嘲諷", "護盾", "領域支配"],
+    "colorHint": "#8a6a3a"
+  },
+  {
+    "id": "wind",
+    "name": "風",
+    "theme": "自由、亂流與空間移動",
+    "resourceName": "疾風晶片",
+    "playstyle": ["位移", "迴避", "連擊", "精準斬殺"],
+    "colorHint": "#75b8b3"
+  },
+  {
+    "id": "lightning",
+    "name": "電",
+    "theme": "狂暴磁場與連鎖破壞",
+    "resourceName": "雷磁晶體",
+    "playstyle": ["連鎖傷害", "速度", "爆發", "干擾"],
+    "colorHint": "#a46cff"
+  },
+  {
+    "id": "light",
+    "name": "光",
+    "theme": "慈悲、審判與秩序",
+    "resourceName": "聖光稜晶",
+    "playstyle": ["淨化", "治癒", "增益", "審判"],
+    "colorHint": "#f2d36b"
+  },
+  {
+    "id": "dark",
+    "name": "闇",
+    "theme": "虛無、安息與深黯夢境",
+    "resourceName": "虛空碎片",
+    "playstyle": ["削弱", "棄牌", "虛無傷害", "潛伏"],
+    "colorHint": "#51346f"
+  }
+]
+

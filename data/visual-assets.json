@@ -1,0 +1,129 @@
+[
+  {
+    "id": "fire_envoy_full",
+    "type": "envoy",
+    "element": "fire",
+    "characterId": "fire_envoy",
+    "displayName": "火元素使者",
+    "path": "source-materials/images/envoys/fire_envoy_full.png",
+    "originalFilename": "ChatGPT Image 2026年6月20日 下午11_02_09.png"
+  },
+  {
+    "id": "water_envoy_full",
+    "type": "envoy",
+    "element": "water",
+    "characterId": "water_envoy",
+    "displayName": "水元素使者",
+    "path": "source-materials/images/envoys/water_envoy_full.png",
+    "originalFilename": "ChatGPT Image 2026年6月20日 下午11_02_15.png"
+  },
+  {
+    "id": "earth_envoy_full",
+    "type": "envoy",
+    "element": "earth",
+    "characterId": "earth_envoy",
+    "displayName": "土元素使者",
+    "path": "source-materials/images/envoys/earth_envoy_full.png",
+    "originalFilename": "ChatGPT Image 2026年6月20日 下午11_02_22.png"
+  },
+  {
+    "id": "wind_envoy_full",
+    "type": "envoy",
+    "element": "wind",
+    "characterId": "wind_envoy",
+    "displayName": "風元素使者",
+    "path": "source-materials/images/envoys/wind_envoy_full.png",
+    "originalFilename": "ChatGPT Image 2026年6月20日 下午11_02_29.png"
+  },
+  {
+    "id": "lightning_envoy_full",
+    "type": "envoy",
+    "element": "lightning",
+    "characterId": "lightning_envoy",
+    "displayName": "電元素使者",
+    "path": "source-materials/images/envoys/lightning_envoy_full.png",
+    "originalFilename": "ChatGPT Image 2026年6月20日 下午11_02_43.png"
+  },
+  {
+    "id": "light_envoy_full",
+    "type": "envoy",
+    "element": "light",
+    "characterId": "light_envoy",
+    "displayName": "光元素使者",
+    "path": "source-materials/images/envoys/light_envoy_full.png",
+    "originalFilename": "ChatGPT Image 2026年6月20日 下午11_29_23.png"
+  },
+  {
+    "id": "dark_envoy_full",
+    "type": "envoy",
+    "element": "dark",
+    "characterId": "dark_envoy",
+    "displayName": "闇元素使者",
+    "path": "source-materials/images/envoys/dark_envoy_full.png",
+    "originalFilename": "ChatGPT Image 2026年6月21日 上午08_32_01.png"
+  },
+  {
+    "id": "ignis_phoenix_full",
+    "type": "beast",
+    "element": "fire",
+    "characterId": "ignis_phoenix",
+    "displayName": "熾炎鳳凰",
+    "path": "source-materials/images/beasts/ignis_phoenix_full.png",
+    "originalFilename": "Gemini_Generated_Image_hwd6zdhwd6zdhwd6.png"
+  },
+  {
+    "id": "abyssal_leviathan_full",
+    "type": "beast",
+    "element": "water",
+    "characterId": "abyssal_leviathan",
+    "displayName": "深淵利維坦",
+    "path": "source-materials/images/beasts/abyssal_leviathan_full.png",
+    "originalFilename": "Gemini_Generated_Image_dyvfwfdyvfwfdyvf.png"
+  },
+  {
+    "id": "titan_rock_tortoise_full",
+    "type": "beast",
+    "element": "earth",
+    "characterId": "titan_rock_tortoise",
+    "displayName": "泰坦岩龜",
+    "path": "source-materials/images/beasts/titan_rock_tortoise_full.png",
+    "originalFilename": "Gemini_Generated_Image_1x88nu1x88nu1x88.png"
+  },
+  {
+    "id": "void_shadow_falcon_full",
+    "type": "beast",
+    "element": "wind",
+    "characterId": "void_shadow_falcon",
+    "displayName": "虛空影隼",
+    "path": "source-materials/images/beasts/void_shadow_falcon_full.png",
+    "originalFilename": "Gemini_Generated_Image_idi3swidi3swidi3.png"
+  },
+  {
+    "id": "thunder_fenrir_full",
+    "type": "beast",
+    "element": "lightning",
+    "characterId": "thunder_fenrir",
+    "displayName": "雷霆魔狼",
+    "path": "source-materials/images/beasts/thunder_fenrir_full.png",
+    "originalFilename": "Gemini_Generated_Image_chpy80chpy80chpy.png"
+  },
+  {
+    "id": "sanctity_pegasus_full",
+    "type": "beast",
+    "element": "light",
+    "characterId": "sanctity_pegasus",
+    "displayName": "聖裁天馬",
+    "path": "source-materials/images/beasts/sanctity_pegasus_full.png",
+    "originalFilename": "Gemini_Generated_Image_1w6ql11w6ql11w6q.png"
+  },
+  {
+    "id": "void_nightmare_full",
+    "type": "beast",
+    "element": "dark",
+    "characterId": "void_nightmare",
+    "displayName": "虛空夢魘",
+    "path": "source-materials/images/beasts/void_nightmare_full.png",
+    "originalFilename": "Gemini_Generated_Image_u8109fu8109fu810.png"
+  }
+]
+

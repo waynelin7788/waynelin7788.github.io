@@ -1,0 +1,28 @@
+{
+  "gameTitle": "星幽啟示錄：元素潰堤",
+  "englishTitle": "Aetherial Revelation: The Great Breach",
+  "genre": "mobile_strategy_ccg",
+  "recommendedDeckSize": 40,
+  "prototypeDeckSize": 20,
+  "startingHandSize": 5,
+  "maxHandSize": 10,
+  "enrageStartsAtTurn": 15,
+  "domainControlRequiredTurns": 5,
+  "voidCollapse": {
+    "startsWhenDeckIsEmpty": true,
+    "baseDamage": 1,
+    "damageIncreasePerTurn": 1
+  },
+  "phaseShift": {
+    "enabled": true,
+    "firstPhaseDefeatedTriggersSecondPhase": true,
+    "secondPhaseHealthRecoveryRatio": 0.5
+  },
+  "resonance": {
+    "enabled": true,
+    "gainWhenPlayingMatchingElementCard": 1,
+    "defaultMax": 10,
+    "fullResonanceCanSummonBeast": true
+  }
+}
+

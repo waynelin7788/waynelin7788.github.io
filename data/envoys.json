@@ -1,0 +1,94 @@
+[
+  {
+    "id": "fire_envoy",
+    "element": "fire",
+    "name": "火元素使者",
+    "title": "火焰女王",
+    "beast": {
+      "id": "ignis_phoenix",
+      "name": "熾炎鳳凰",
+      "englishName": "Ignis Phoenix",
+      "bondSkill": "煉獄火海"
+    },
+    "visualConcept": "流動火焰、熔岩結晶、赤金色魔法紋路，高溫熱浪環繞。"
+  },
+  {
+    "id": "water_envoy",
+    "element": "water",
+    "name": "水元素使者",
+    "title": "深淵支配者",
+    "beast": {
+      "id": "abyssal_leviathan",
+      "name": "深淵利維坦",
+      "englishName": "Abyssal Leviathan",
+      "bondSkill": "高壓水牢"
+    },
+    "visualConcept": "海藍色液態流體、冰晶碎片、銀藍色流動咒文。"
+  },
+  {
+    "id": "earth_envoy",
+    "element": "earth",
+    "name": "土元素使者",
+    "title": "巨人戰士",
+    "beast": {
+      "id": "titan_rock_tortoise",
+      "name": "泰坦岩龜",
+      "englishName": "Titan Rock-Tortoise",
+      "bondSkill": "大地堡壘"
+    },
+    "visualConcept": "玄武岩板塊、金屬礦脈、土黃色厚重魔法符文。"
+  },
+  {
+    "id": "wind_envoy",
+    "element": "wind",
+    "name": "風元素使者",
+    "title": "幻影暗殺者",
+    "beast": {
+      "id": "void_shadow_falcon",
+      "name": "虛空影隼",
+      "englishName": "Void Shadow-Falcon",
+      "bondSkill": "真空斬"
+    },
+    "visualConcept": "半透明疾風氣流、雲霧結晶、青白色微風紋路。"
+  },
+  {
+    "id": "lightning_envoy",
+    "element": "lightning",
+    "name": "電元素使者",
+    "title": "閃電女王",
+    "beast": {
+      "id": "thunder_fenrir",
+      "name": "雷霆魔狼",
+      "englishName": "Thunder Fenrir",
+      "bondSkill": "極光雷域"
+    },
+    "visualConcept": "紫白色電弧、磁能晶體、金色電流紋路。"
+  },
+  {
+    "id": "light_envoy",
+    "element": "light",
+    "name": "光元素使者",
+    "title": "黎明領袖",
+    "beast": {
+      "id": "sanctity_pegasus",
+      "name": "聖裁天馬",
+      "englishName": "Sanctity Pegasus",
+      "bondSkill": "聖光幻像"
+    },
+    "visualConcept": "純白聖光、幾何光棱、黃金神聖紋路。"
+  },
+  {
+    "id": "dark_envoy",
+    "element": "dark",
+    "name": "闇元素使者",
+    "title": "深夜執行者",
+    "beast": {
+      "id": "void_nightmare",
+      "name": "虛空夢魘",
+      "englishName": "Void Nightmare",
+      "bondSkill": "深黯夢境"
+    },
+    "visualConcept": "漆黑霧氣、深紫色虛空結晶、黯淡暗影刻印。"
+  }
+]
+

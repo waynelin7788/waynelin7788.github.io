@@ -1,0 +1,24 @@
+[
+  {
+    "id": "absolute_judgement",
+    "name": "絕對制裁",
+    "concept": "統治與淨化",
+    "members": ["light", "lightning", "fire"],
+    "philosophy": "以絕對秩序與破壞性淨化消滅混沌威脅，讓世界在審判後重生。"
+  },
+  {
+    "id": "primal_guardians",
+    "name": "原初守護",
+    "concept": "防禦與平衡",
+    "members": ["earth", "water", "wind"],
+    "philosophy": "守護殘存生命、隔離混沌殘留，並斬除破壞平衡的極端勢力。"
+  },
+  {
+    "id": "abyss_warden",
+    "name": "孤高的深淵鎮守者",
+    "concept": "虛無與安息",
+    "members": ["dark"],
+    "philosophy": "引導痛苦靈魂與失控能量歸於寂靜，讓世界在黑暗中獲得真正安息。"
+  }
+]
+

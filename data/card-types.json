@@ -1,0 +1,38 @@
+[
+  {
+    "id": "resource",
+    "name": "資源 / 充能卡",
+    "englishName": "Resource / Energy",
+    "purpose": "提供施放卡牌與發動技能所需費用。",
+    "subtypes": ["純粹晶體", "萬能稜鏡"]
+  },
+  {
+    "id": "spell",
+    "name": "法術 / 戰技卡",
+    "englishName": "Spell / Action",
+    "purpose": "產生一次性效果，例如傷害、防禦、控場、檢索或濾牌。",
+    "subtypes": ["攻擊型", "防禦型", "控場型", "檢索型", "濾牌型"]
+  },
+  {
+    "id": "follower",
+    "name": "眷屬 / 召喚物卡",
+    "englishName": "Follower / Minion",
+    "purpose": "建立場面、攻擊、防守與連鎖效果。",
+    "subtypes": ["前排護衛", "後排輸出", "消耗品"]
+  },
+  {
+    "id": "field",
+    "name": "場地 / 環境卡",
+    "englishName": "Field / Environment",
+    "purpose": "改變全局戰場規則，支援元素領域與領域支配。",
+    "subtypes": ["元素領域", "覆蓋場地"]
+  },
+  {
+    "id": "phase_event",
+    "name": "階段 / 討伐事件卡",
+    "englishName": "Phase / Subjugation Event",
+    "purpose": "觸發大型戰局變化，帶來討伐戰式階段演出。",
+    "subtypes": ["戰局切換", "狂暴機制"]
+  }
+]
+
