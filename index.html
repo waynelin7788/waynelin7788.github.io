@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>星幽啟示錄：元素潰堤</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="game-shell">
+      <nav class="top-nav" aria-label="主要頁面">
+        <button class="nav-button is-active" data-view="storyPanel">故事</button>
+        <button class="nav-button" data-view="battlePanel">對戰</button>
+        <button class="nav-button" data-view="libraryPanel">卡池</button>
+      </nav>
+
+      <section class="story-panel view-panel" id="storyPanel" aria-label="故事序章">
+        <div class="story-art" aria-hidden="true">
+          <div class="rift"></div>
+          <div class="sigil sigil-fire"></div>
+          <div class="sigil sigil-water"></div>
+          <div class="sigil sigil-wind"></div>
+          <div class="sigil sigil-earth"></div>
+        </div>
+        <div class="story-copy">
+          <p class="kicker">第一章：潰堤前夜</p>
+          <h1>星幽啟示錄：元素潰堤</h1>
+          <p>
+            星幽之海裂開了。火、水、風、岩四種元素從天穹傾瀉而下，
+            曾守護世界的星界堤防開始崩壞。你是最後一位元素繫牌者，
+            必須從失控的星幽洪流中抽取力量，與潰堤使徒輪流出牌，
+            在世界被吞沒前穩住元素秩序。
+          </p>
+          <div class="story-actions">
+            <button class="primary-button" id="beginButton">開始抽牌</button>
+            <button class="ghost-button" data-view="libraryPanel">查看卡池</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="battle-panel view-panel is-hidden" id="battlePanel" aria-label="卡牌對戰">
+        <header class="battle-header">
+          <div>
+            <p class="kicker">星幽裂隙戰</p>
+            <h2>輪流出卡，壓制潰堤</h2>
+          </div>
+          <div class="header-actions">
+            <button class="ghost-button" id="restartButton">重新開始</button>
+          </div>
+        </header>
+
+        <div class="deck-strip" aria-label="牌堆狀態">
+          <span>玩家牌堆 <strong id="playerDeckCount">0</strong></span>
+          <span>電腦牌堆 <strong id="enemyDeckCount">0</strong></span>
+          <span>卡池種類 <strong id="poolCount">0</strong></span>
+        </div>
+
+        <div class="scoreboard">
+          <article class="fighter">
+            <span>玩家</span>
+            <strong id="playerHp">30</strong>
+            <small>穩定值</small>
+          </article>
+          <article class="turn-status" id="turnStatus">等待抽牌</article>
+          <article class="fighter opponent">
+            <span>潰堤使徒</span>
+            <strong id="enemyHp">30</strong>
+            <small>崩壞值</small>
+          </article>
+        </div>
+
+        <div class="table">
+          <section class="zone enemy-zone">
+            <h3>電腦手牌</h3>
+            <div class="enemy-hand" id="enemyHand"></div>
+          </section>
+
+          <section class="duel-line">
+            <div class="played-card" id="playerPlayed">玩家尚未出牌</div>
+            <div class="round-log" id="roundLog">抽牌後，玩家先出卡。</div>
+            <div class="played-card enemy-played" id="enemyPlayed">電腦尚未出牌</div>
+          </section>
+
+          <section class="zone player-zone">
+            <div class="zone-title">
+              <h3>玩家手牌</h3>
+              <button class="primary-button" id="drawButton">從卡池抽 5 張牌</button>
+            </div>
+            <div class="hand" id="playerHand"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="library-panel view-panel is-hidden" id="libraryPanel" aria-label="卡片預覽">
+        <header class="battle-header">
+          <div>
+            <p class="kicker">元素卡池</p>
+            <h2>卡片預覽與管理基礎</h2>
+          </div>
+          <button class="primary-button" data-view="battlePanel">回到對戰</button>
+        </header>
+        <div class="library-summary" id="librarySummary"></div>
+        <div class="library-grid" id="cardLibrary"></div>
+      </section>
+    </main>
+
+    <script src="data/cardPool.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
