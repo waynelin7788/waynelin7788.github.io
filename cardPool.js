@@ -1,0 +1,120 @@
+window.CARD_POOL = [
+  {
+    id: "ember-oath",
+    name: "燼火誓印",
+    element: "火",
+    className: "fire",
+    rarity: "普通",
+    copies: 4,
+    power: 7,
+    text: "以星幽殘焰燒穿裂隙，對敵方造成高傷害。",
+    flavor: "火不是毀滅，是在黑暗中留下可辨認的邊界。"
+  },
+  {
+    id: "tidal-seal",
+    name: "潮汐封界",
+    element: "水",
+    className: "water",
+    rarity: "普通",
+    copies: 4,
+    power: 5,
+    heal: 2,
+    text: "造成傷害，並回復自身穩定值。",
+    flavor: "水會記得每一道裂縫，也會記得如何把它們縫回去。"
+  },
+  {
+    id: "gale-reversal",
+    name: "疾風逆軌",
+    element: "風",
+    className: "wind",
+    rarity: "普通",
+    copies: 3,
+    power: 4,
+    bonus: 3,
+    text: "若先手出牌，額外造成追加傷害。",
+    flavor: "風從不正面抵抗命運，它只改變命運的方向。"
+  },
+  {
+    id: "stone-levee",
+    name: "岩脈鎮堤",
+    element: "岩",
+    className: "earth",
+    rarity: "普通",
+    copies: 4,
+    power: 3,
+    shield: 4,
+    text: "造成少量傷害，並獲得護盾。",
+    flavor: "當星界堤防崩裂，古老岩脈仍願意替人類站著。"
+  },
+  {
+    id: "astral-echo",
+    name: "星幽回響",
+    element: "星幽",
+    className: "star",
+    rarity: "稀有",
+    copies: 3,
+    power: 6,
+    heal: 1,
+    text: "同時攻擊敵方並回復自身。",
+    flavor: "裂隙深處傳來的聲音，有時像預言，有時像求救。"
+  },
+  {
+    id: "breach-light",
+    name: "潰堤裂光",
+    element: "崩壞",
+    className: "collapse",
+    rarity: "稀有",
+    copies: 2,
+    power: 8,
+    selfDamage: 2,
+    text: "造成巨大傷害，但會反噬自身。",
+    flavor: "不是所有力量都想被使用，有些只是想找出口。"
+  },
+  {
+    id: "frost-ward",
+    name: "霜藍結界",
+    element: "水",
+    className: "water",
+    rarity: "普通",
+    copies: 3,
+    power: 4,
+    shield: 3,
+    text: "攻守兼備，造成傷害並獲得護盾。",
+    flavor: "冷靜不是沒有恐懼，而是讓恐懼慢下來。"
+  },
+  {
+    id: "stardust-judgment",
+    name: "星塵裁決",
+    element: "星幽",
+    className: "star",
+    rarity: "傳說",
+    copies: 1,
+    power: 9,
+    text: "以最後的星塵斬開崩壞洪流。",
+    flavor: "每一粒星塵都曾是某個世界沒有說完的願望。"
+  },
+  {
+    id: "root-binding",
+    name: "根縛迴廊",
+    element: "岩",
+    className: "earth",
+    rarity: "稀有",
+    copies: 2,
+    power: 2,
+    shield: 6,
+    text: "傷害較低，但可大幅提高護盾。",
+    flavor: "根系在地下交談，決定哪一段世界還值得留下。"
+  },
+  {
+    id: "spark-orbit",
+    name: "火星環軌",
+    element: "火",
+    className: "fire",
+    rarity: "普通",
+    copies: 3,
+    power: 5,
+    bonus: 2,
+    text: "若先手出牌，額外造成少量追加傷害。",
+    flavor: "一點火星，足以替迷路的軌道重新命名。"
+  }
+];
