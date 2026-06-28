@@ -114,7 +114,7 @@ function playPlayerCard(index) {
     logLine("system", "潰堤使徒正在凝聚下一張牌...")
   ].join("<br>");
 
-  checkGameOver();
+  checkGameOver({ allowExhaustion: false });
 
   if (state.gameOver) {
     render();
@@ -190,24 +190,26 @@ function statusLine() {
   return `${playerShieldText}，${enemyShieldText}。`;
 }
 
-function checkGameOver() {
+function checkGameOver(options = {}) {
+  const allowExhaustion = options.allowExhaustion !== false;
   if (state.playerHp <= 0 && state.enemyHp <= 0) {
-    endGame("星幽與崩壞同時歸零，世界停在危險的平衡。");
+    endGame("星幽與崩壞同時歸零，世界停在危險的平衡。", "平局");
   } else if (state.enemyHp <= 0) {
-    endGame("你壓制了潰堤使徒，星界堤防暫時穩住。");
+    endGame("你壓制了潰堤使徒，星界堤防暫時穩住。", "玩家勝利");
   } else if (state.playerHp <= 0) {
-    endGame("穩定值耗盡，星幽洪流吞沒了戰場。");
-  } else if (!state.playerHand.length || !state.enemyHand.length) {
-    const winner = state.playerHp >= state.enemyHp
+    endGame("穩定值耗盡，星幽洪流吞沒了戰場。", "玩家失敗");
+  } else if (allowExhaustion && (!state.playerHand.length || !state.enemyHand.length)) {
+    const playerWon = state.playerHp >= state.enemyHp;
+    const winner = playerWon
       ? "牌堆耗盡時你保有較高穩定值，星界堤防暫時穩住。"
       : "牌堆耗盡時潰堤使徒佔上風，星幽洪流壓過了防線。";
-    endGame(winner);
+    endGame(winner, playerWon ? "玩家勝利" : "玩家失敗");
   }
 }
 
-function endGame(message) {
+function endGame(message, resultLabel = "") {
   state.gameOver = true;
-  turnStatus.textContent = "戰局結束";
+  turnStatus.textContent = resultLabel ? `戰局結束：${resultLabel}` : "戰局結束";
   roundLog.innerHTML += `<br>${message}`;
 }
 
@@ -275,21 +277,36 @@ function cardMarkup(card) {
   if (card.shield) traits.push(`護盾 ${card.shield}`);
   if (card.bonus) traits.push(`先手 +${card.bonus}`);
   if (card.selfDamage) traits.push(`反噬 ${card.selfDamage}`);
+  const traitText = traits.length ? traits.join("｜") : "無附加效果";
 
   return `
-    <strong>${card.name}</strong>
-    <span>${card.element}</span>
-    <p>${card.text}</p>
-    <em>力量 ${card.power}${traits.length ? `｜${traits.join("｜")}` : ""}</em>
+    <div class="card-frame">
+      <img class="card-art" src="${card.image}" alt="${card.name}">
+      <div class="card-caption">
+        <div class="card-title-row">
+          <strong>${card.name}</strong>
+          <span>${card.element}</span>
+        </div>
+        <p>${card.text}</p>
+        <em>力量 ${card.power}｜${traitText}</em>
+      </div>
+    </div>
   `;
 }
 
 function cardSummary(card, power) {
   return `
-    <strong>${card.name}</strong>
-    <span>${card.element}</span>
-    <p>${card.text}</p>
-    <em>本次力量 ${power}</em>
+    <div class="card-frame summary-card">
+      <img class="card-art" src="${card.image}" alt="${card.name}">
+      <div class="card-caption">
+        <div class="card-title-row">
+          <strong>${card.name}</strong>
+          <span>${card.element}</span>
+        </div>
+        <p>${card.text}</p>
+        <em>本次力量 ${power}</em>
+      </div>
+    </div>
   `;
 }
 
