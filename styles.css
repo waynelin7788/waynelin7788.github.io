@@ -13,6 +13,9 @@
   --wind: #8ed887;
   --earth: #c8995a;
   --fire: #f0724f;
+  --lightning: #a46cff;
+  --light: #f2d36b;
+  --dark: #7b5aa6;
   --collapse: #d66ce8;
 }
 
@@ -481,6 +484,18 @@ button.card:disabled {
   box-shadow: inset 0 5px 0 var(--accent);
 }
 
+.lightning {
+  box-shadow: inset 0 5px 0 var(--lightning);
+}
+
+.light {
+  box-shadow: inset 0 5px 0 var(--light);
+}
+
+.dark {
+  box-shadow: inset 0 5px 0 var(--dark);
+}
+
 .collapse {
   box-shadow: inset 0 5px 0 var(--collapse);
 }
@@ -881,3 +896,5 @@ button.card:disabled {
     height: clamp(157px, 25.6vh, 221px);
   }
 }
+
+
