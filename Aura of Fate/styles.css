@@ -291,9 +291,11 @@ input:focus {
 }
 
 .drawn-card {
+  width: min(100%, var(--card-width));
   display: grid;
   gap: 12px;
   justify-items: center;
+  justify-self: center;
   min-width: 0;
   opacity: 0;
   transform: translateX(calc(-1 * var(--deck-width))) translateY(24px) rotate(-8deg) scale(0.92);
@@ -302,7 +304,8 @@ input:focus {
 }
 
 .card-button {
-  width: min(100%, var(--card-width));
+  width: 100%;
+  max-width: var(--card-width);
   aspect-ratio: 2 / 3;
   padding: 0;
   border: 0;
@@ -712,8 +715,8 @@ input:focus {
 
 @media (max-width: 620px) {
   :root {
-    --deck-width: 118px;
-    --card-width: min(78vw, 285px);
+    --deck-width: 104px;
+    --card-width: min(86vw, 285px);
   }
 
   .topbar {
@@ -728,6 +731,10 @@ input:focus {
     grid-template-columns: 1fr;
     max-width: var(--card-width);
     margin: 0 auto;
+  }
+
+  .drawn-card {
+    width: var(--card-width);
   }
 
   .pool-modal {
