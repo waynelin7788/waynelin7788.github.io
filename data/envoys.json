@@ -4,6 +4,8 @@
     "element": "fire",
     "name": "火元素使者",
     "title": "火焰女王",
+    "imagePath": "source-materials/images/envoys/fire_envoy_full.png",
+    "attribute": "火屬性。高傲的火焰女王，擅長以爆發傷害與少量自我回復完成重生循環。",
     "beast": {
       "id": "ignis_phoenix",
       "name": "熾炎鳳凰",
@@ -17,6 +19,8 @@
     "element": "water",
     "name": "水元素使者",
     "title": "深淵支配者",
+    "imagePath": "source-materials/images/envoys/water_envoy_full.png",
+    "attribute": "水屬性。深淵支配者，兼具治療、護盾與穩定控場能力。",
     "beast": {
       "id": "abyssal_leviathan",
       "name": "深淵利維坦",
@@ -30,6 +34,8 @@
     "element": "earth",
     "name": "土元素使者",
     "title": "巨人戰士",
+    "imagePath": "source-materials/images/envoys/earth_envoy_full.png",
+    "attribute": "岩屬性。不可撼動的巨人戰士，以厚重護盾拖長戰局並累積優勢。",
     "beast": {
       "id": "titan_rock_tortoise",
       "name": "泰坦岩龜",
@@ -43,6 +49,8 @@
     "element": "wind",
     "name": "風元素使者",
     "title": "幻影暗殺者",
+    "imagePath": "source-materials/images/envoys/wind_envoy_full.png",
+    "attribute": "風屬性。自由奔放的幻影暗殺者，擅長快速壓血與突襲節奏。",
     "beast": {
       "id": "void_shadow_falcon",
       "name": "虛空影隼",
@@ -56,6 +64,8 @@
     "element": "lightning",
     "name": "電元素使者",
     "title": "閃電女王",
+    "imagePath": "source-materials/images/envoys/lightning_envoy_full.png",
+    "attribute": "雷屬性。急躁且破壞力極高的閃電女王，主打直接而強烈的高爆發。",
     "beast": {
       "id": "thunder_fenrir",
       "name": "雷霆魔狼",
@@ -69,6 +79,8 @@
     "element": "light",
     "name": "光元素使者",
     "title": "黎明領袖",
+    "imagePath": "source-materials/images/envoys/light_envoy_full.png",
+    "attribute": "光屬性。慈悲與審判並存的黎明領袖，能同時治療、守護與反擊。",
     "beast": {
       "id": "sanctity_pegasus",
       "name": "聖裁天馬",
@@ -82,6 +94,8 @@
     "element": "dark",
     "name": "闇元素使者",
     "title": "深夜執行者",
+    "imagePath": "source-materials/images/envoys/dark_envoy_full.png",
+    "attribute": "闇屬性。深夜執行者，以反噬為代價換取最高單次召喚傷害。",
     "beast": {
       "id": "void_nightmare",
       "name": "虛空夢魘",
@@ -91,4 +105,3 @@
     "visualConcept": "漆黑霧氣、深紫色虛空結晶、黯淡暗影刻印。"
   }
 ]
-
