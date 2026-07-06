@@ -16,11 +16,7 @@
 
       <section class="story-panel view-panel" id="storyPanel" aria-label="故事序章">
         <div class="story-art" aria-hidden="true">
-          <div class="rift"></div>
-          <div class="sigil sigil-fire"></div>
-          <div class="sigil sigil-water"></div>
-          <div class="sigil sigil-wind"></div>
-          <div class="sigil sigil-earth"></div>
+          <img src="source-materials/images/ui/story-rift-cover.png" alt="">
         </div>
         <div class="story-copy">
           <p class="kicker">第一章：潰堤前夜</p>
@@ -33,7 +29,66 @@
           </p>
           <div class="story-actions">
             <button class="primary-button" id="beginButton">開始抽牌</button>
+            <button class="ghost-button" id="rulesButton" type="button">遊戲說明</button>
             <button class="ghost-button" data-view="libraryPanel">查看卡池</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="rules-panel is-hidden" id="rulesPanel" aria-label="遊戲說明">
+        <div class="rules-dialog" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+          <header class="rules-header">
+            <div>
+              <p class="kicker">星幽裂隙戰規則</p>
+              <h2 id="rulesTitle">遊戲說明</h2>
+            </div>
+            <button class="ghost-button" id="rulesCloseButton" type="button">關閉</button>
+          </header>
+
+          <div class="rules-content">
+            <section>
+              <h3>勝利目標</h3>
+              <p>玩家與潰堤使徒輪流出牌，將對方生命壓到 0。角色有兩個階段：第一階段被擊破後會轉入神獸型態並恢復 15 點生命；第二階段再次被擊破才會真正落敗。</p>
+            </section>
+
+            <section>
+              <h3>開局與抽牌</h3>
+              <p>開局先選一位元素使者，再抽 5 張起手牌。起手牌只會出現普通戰鬥卡，不會抽到神獸卡或元素使卡。第一輪 5 張手牌打完後，補牌會改為每次 2 張。</p>
+            </section>
+
+            <section>
+              <h3>牌池階段</h3>
+              <ul>
+                <li>起手階段：只會抽到普通戰鬥卡。</li>
+                <li>第一輪手牌打完後：神獸型態卡會混入雙方牌堆。</li>
+                <li>召喚元素使後：元素使卡會混入雙方牌堆。</li>
+              </ul>
+            </section>
+
+            <section>
+              <h3>出牌與效果</h3>
+              <p>玩家先出一張牌，電腦會在 3 秒後出牌。卡片的力量會造成傷害；有些卡會回復、增加護盾、先手加成，或造成反噬傷害。護盾會先抵擋一般傷害，但無法抵擋反噬、虛無與狂暴傷害。</p>
+            </section>
+
+            <section>
+              <h3>元素共鳴</h3>
+              <p>打出與目前元素使者同屬性的牌會累積 1 點共鳴；星幽與崩壞卡也會提供通用共鳴。共鳴達到 2 / 2 後，可以使用「召喚元素使」。</p>
+            </section>
+
+            <section>
+              <h3>召喚元素使</h3>
+              <p>召喚元素使會把元素使卡混入雙方牌堆，之後補牌才有機會抽到元素使卡。召喚時也會觸發該元素使的輔助效果，例如回復、護盾或反噬。</p>
+            </section>
+
+            <section>
+              <h3>神獸型態卡</h3>
+              <p>神獸卡不是起手牌。必須等第一輪手牌打完後，神獸型態卡才會進入牌堆。抽到神獸卡後可以像一般卡牌一樣打出，通常擁有較高力量或更強的附加效果。</p>
+            </section>
+
+            <section>
+              <h3>結束回合、虛無與狂暴</h3>
+              <p>沒有想出的牌時可以結束回合。牌堆與手牌都耗盡時會進入虛無吞噬，每輪受到逐步增加的不可防禦傷害。第 8 回合起進入元素狂暴，雙方每回合都會受到 4 點不可防禦傷害。</p>
+            </section>
           </div>
         </div>
       </section>
@@ -49,27 +104,45 @@
           </div>
         </header>
 
-        <div class="deck-strip" aria-label="牌堆狀態">
-          <span>玩家牌堆 <strong id="playerDeckCount">0</strong></span>
-          <span>電腦牌堆 <strong id="enemyDeckCount">0</strong></span>
-          <span>卡池種類 <strong id="poolCount">0</strong></span>
-        </div>
+        <div class="battle-layout">
+          <aside class="battle-sidebar">
+            <section class="envoy-select" aria-label="元素使者選擇">
+              <img class="envoy-portrait" id="selectedEnvoyPortrait" src="source-materials/images/envoys/fire_envoy_full.png" alt="火元素使者">
+              <div class="envoy-info">
+                <p class="kicker">元素使者</p>
+                <strong id="selectedEnvoyName">火焰女王</strong>
+                <p id="selectedEnvoyEffect">打出火元素卡可累積共鳴，滿載後召喚熾炎鳳凰。</p>
+              </div>
+              <div class="envoy-buttons" id="envoyButtons"></div>
+            </section>
 
-        <div class="scoreboard">
-          <article class="fighter">
-            <span>玩家</span>
-            <strong id="playerHp">30</strong>
-            <small>穩定值</small>
-          </article>
-          <article class="turn-status" id="turnStatus">等待抽牌</article>
-          <article class="fighter opponent">
-            <span>潰堤使徒</span>
-            <strong id="enemyHp">30</strong>
-            <small>崩壞值</small>
-          </article>
-        </div>
+            <div class="deck-strip" aria-label="牌堆狀態">
+              <span>玩家牌堆 <strong id="playerDeckCount">0</strong></span>
+              <span>電腦牌堆 <strong id="enemyDeckCount">0</strong></span>
+              <span>卡池種類 <strong id="poolCount">0</strong></span>
+            </div>
 
-        <div class="table">
+            <div class="battle-meters" aria-label="戰局狀態">
+              <article>
+                <span>玩家階段</span>
+                <strong id="playerPhase">一階</strong>
+              </article>
+              <article>
+                <span>元素共鳴</span>
+                <strong id="resonanceMeter">0 / 2</strong>
+              </article>
+              <article>
+                <span>回合</span>
+                <strong id="turnCounter">0</strong>
+              </article>
+              <article>
+                <span>敵方階段</span>
+                <strong id="enemyPhase">一階</strong>
+              </article>
+            </div>
+          </aside>
+
+          <section class="battle-arena" aria-label="星幽裂隙戰場">
           <section class="zone enemy-zone">
             <h3>電腦手牌</h3>
             <div class="enemy-hand" id="enemyHand"></div>
@@ -81,12 +154,33 @@
             <div class="played-card enemy-played" id="enemyPlayed">電腦尚未出牌</div>
           </section>
 
+          <div class="scoreboard">
+            <article class="fighter">
+              <span>玩家</span>
+              <strong id="playerHp">30</strong>
+              <small>穩定值</small>
+            </article>
+            <article class="turn-status" id="turnStatus">等待抽牌</article>
+            <article class="fighter opponent">
+              <span>潰堤使徒</span>
+              <strong id="enemyHp">30</strong>
+              <small>崩壞值</small>
+            </article>
+          </div>
+
+          <div class="special-actions">
+            <button class="primary-button" id="summonButton" disabled>召喚元素使</button>
+            <button class="ghost-button" id="passButton" disabled>結束回合</button>
+            <span id="hazardStatus">尚未進入虛無或狂暴。</span>
+          </div>
+
           <section class="zone player-zone">
             <div class="zone-title">
               <h3>玩家手牌</h3>
               <button class="primary-button" id="drawButton">從卡池抽 5 張牌</button>
             </div>
             <div class="hand" id="playerHand"></div>
+          </section>
           </section>
         </div>
       </section>
