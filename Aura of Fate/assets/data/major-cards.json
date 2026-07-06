@@ -1,0 +1,314 @@
+{
+  "project": "Aura of Fate",
+  "version": "1.0.0",
+  "cards": [
+    {
+      "id": 0,
+      "name_en": "The Fool",
+      "name_zh": "愚者",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["無限可能", "純真", "新的開始", "冒險", "直覺"],
+        "reversed": ["魯莽", "冒險過度", "錯失良機", "天真"]
+      },
+      "core_meaning": "代表著旅程的起點，擁有不受拘束的靈魂與對未知的渴望。在命運光環中，這是一張帶來全新Buff與意外轉折的卡牌。",
+      "visual_symbols": ["年輕旅人", "懸崖邊緣", "白狗", "晨光", "白玫瑰", "行囊"],
+      "ai_prompt_hint": "A young traveler standing joyfully on the edge of a cliff. A white dog beside him. A small travel bag hanging from a wooden staff. Bright morning sunlight. Snow mountains in the distance. White rose.",
+      "image_file": "major_00_fool.png"
+    },
+    {
+      "id": 1,
+      "name_en": "The Magician",
+      "name_zh": "魔術師",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["創造力", "顯化", "自信", "資源整合", "意志力"],
+        "reversed": ["操縱", "才華未展", "計畫延滯", "自我懷疑"]
+      },
+      "core_meaning": "掌握著四大元素的創造者，擁有將意念轉化為現實的力量。抽到此牌意味著你已具備解決當前問題的所有資源。",
+      "visual_symbols": ["年輕法師", "一手向天一手向地", "奧術祭壇", "金色流動能量", "權杖、聖杯、寶劍、星幣符號"],
+      "ai_prompt_hint": "A confident young magician standing before an altar. One hand pointing toward the sky, one hand toward the earth. Golden magical energy flowing through his body. Four magical symbols floating around him representing wand, cup, sword and pentacle.",
+      "image_file": "major_01_magician.png"
+    },
+    {
+      "id": 2,
+      "name_en": "The High Priestess",
+      "name_zh": "女祭司",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["直覺", "潛意識", "神祕學", "內在智慧", "平靜"],
+        "reversed": ["隱瞞", "忽視直覺", "表面化", "情緒波動"]
+      },
+      "core_meaning": "通往潛意識與隱藏知識的守門人。她提醒玩家在喧囂中保持靜默，向內尋找答案，而非向外盲求。",
+      "visual_symbols": ["神祕女性", "雙柱之間", "月光", "古老卷軸", "星空藍袍", "腳下新月"],
+      "ai_prompt_hint": "A mysterious woman sitting between two pillars. Moonlight illuminating her face. Holding an ancient scroll. Blue robe decorated with stars. A crescent moon beneath her feet.",
+      "image_file": "major_02_high_priestess.png"
+    },
+    {
+      "id": 3,
+      "name_en": "The Empress",
+      "name_zh": "皇后",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["豐盛", "母性", "自然", "感官享受", "孕育"],
+        "reversed": ["創意枯竭", "過度依賴", "窒息的愛", "物質匱乏"]
+      },
+      "core_meaning": "大地的母親，代表著無條件的愛、豐收與無盡的生命力。這是一張充滿溫暖與滋養Buff的絕對吉牌。",
+      "visual_symbols": ["優雅女性", "自然寶座", "麥穗", "森林與河流", "維納斯盾牌", "皇冠"],
+      "ai_prompt_hint": "An elegant maternal woman sitting on a luxurious throne decorated with fruits and plants. Wearing green and gold robes. Holding a scepter and a shield with the Venus symbol. Rich wheat fields and natural sunlight in the background.",
+      "image_file": "major_03_empress.png"
+    },
+    {
+      "id": 4,
+      "name_en": "The Emperor",
+      "name_zh": "皇帝",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["秩序", "權力", "結構", "領導力", "穩定"],
+        "reversed": ["暴政", "控制狂", "固執", "缺乏紀律"]
+      },
+      "core_meaning": "世俗秩序的建立者，代表著邏輯、規則與堅不可摧的意志。在遊戲中象徵著強大的防禦力與果斷的決策力。",
+      "visual_symbols": ["威嚴男性", "公羊頭石座", "紅金盔甲", "安卡權杖", "圓球", "古代建築背景"],
+      "ai_prompt_hint": "A powerful authoritative man sitting on a sturdy stone throne with ram heads. Wearing red and gold armor. Holding an Ankh scepter and an orb. Structured ancient architecture and strict arcane geometric patterns in the background.",
+      "image_file": "major_04_emperor.png"
+    },
+    {
+      "id": 5,
+      "name_en": "The Hierophant",
+      "name_zh": "教皇",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["信仰", "傳統", "教育", "精神指引", "體制"],
+        "reversed": ["叛逆", "盲從", "打破常規", "虛偽"]
+      },
+      "core_meaning": "神聖知識的傳遞者，象徵遵循規則與獲取精神指引。在遊戲中代表獲得系統提示、增益祝福或解鎖隱藏的古老知識。",
+      "visual_symbols": ["莊嚴教皇", "三重十字架", "兩名信徒", "交叉的鑰匙", "神聖殿堂"],
+      "ai_prompt_hint": "A wise majestic hierophant sitting in a sacred temple. Wearing ornate ceremonial robes and a papal tiara. Holding a triple cross. Two crossed golden keys at his feet. A glowing aura of divine knowledge.",
+      "image_file": "major_05_hierophant.png"
+    },
+    {
+      "id": 6,
+      "name_en": "The Lovers",
+      "name_zh": "戀人",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["愛", "和諧", "結合", "價值觀選擇", "吸引力"],
+        "reversed": ["失和", "錯誤的選擇", "誘惑", "分離"]
+      },
+      "core_meaning": "代表著深刻的連結與面臨人生十字路口的重大選擇。在遊戲中觸發強大的卡牌連攜羈絆 (Combo)，或是引導玩家進行陣營/路線分歧的抉擇。",
+      "visual_symbols": ["大天使", "赤裸男女", "生命之樹", "知識之樹", "雲端的太陽"],
+      "ai_prompt_hint": "A magnificent archangel with vibrant wings hovering above a beautiful couple. The man and woman stand in a mystical garden. A flaming tree and a tree with glowing fruits behind them. Ethereal romantic atmosphere.",
+      "image_file": "major_06_lovers.png"
+    },
+    {
+      "id": 7,
+      "name_en": "The Chariot",
+      "name_zh": "戰車",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["勝利", "意志力", "掌控", "堅定向前", "行動力"],
+        "reversed": ["失控", "受阻", "缺乏方向", "魯莽"]
+      },
+      "core_meaning": "憑藉強大的意志力駕馭矛盾力量，克服萬難取得勝利。在遊戲中象徵無視防禦的突進、快速推進關卡或突破當前困境的強勢力量。",
+      "visual_symbols": ["全副武裝的戰士", "華麗戰車", "黑白斯芬克斯", "星辰天篷", "城市遠景"],
+      "ai_prompt_hint": "A triumphant warrior in mystic armor driving a glorious chariot. Two sphinxes, one black and one white, pulling the chariot. A starry canopy above. Intense forward momentum and magical energy trails.",
+      "image_file": "major_07_chariot.png"
+    },
+    {
+      "id": 8,
+      "name_en": "Strength",
+      "name_zh": "力量",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["勇氣", "內在力量", "慈悲", "耐心", "以柔克剛"],
+        "reversed": ["自我懷疑", "軟弱", "失控的情緒", "恐懼"]
+      },
+      "core_meaning": "不是來自肉體的暴力，而是源自心靈的堅韌與慈悲，能夠馴服最狂野的獸性。遊戲中代表解除負面狀態、賦予堅不可摧的韌性與護盾。",
+      "visual_symbols": ["溫柔女性", "獅子", "無限符號", "花環", "平靜的自然"],
+      "ai_prompt_hint": "A serene woman gently closing the jaws of a fierce glowing lion. An ethereal glowing infinity symbol above her head. Beautiful garlands of flowers. A sense of calm inner power taming wild energy.",
+      "image_file": "major_08_strength.png"
+    },
+    {
+      "id": 9,
+      "name_en": "The Hermit",
+      "name_zh": "隱者",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["反省", "孤獨", "內在指引", "探索", "智慧"],
+        "reversed": ["孤立", "迷失", "拒絕建議", "逃避現實"]
+      },
+      "core_meaning": "暫時退隱於世俗之外，提著真理之燈照亮內心的黑暗。在遊戲中，代表視野擴張 (真視)、發現隱藏線索或是獲得關鍵的解謎提示。",
+      "visual_symbols": ["披風老者", "發光提燈", "手杖", "冰雪山峰", "六角星光芒"],
+      "ai_prompt_hint": "An old wise hermit wrapped in a heavy grey cloak standing on a snowy mountain peak. Holding a staff and a mystical lantern glowing with a brilliant six-pointed star inside. Quiet and introspective atmosphere.",
+      "image_file": "major_09_hermit.png"
+    },
+    {
+      "id": 10,
+      "name_en": "Wheel of Fortune",
+      "name_zh": "命運之輪",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["命運", "轉折", "好運", "業力", "循環"],
+        "reversed": ["厄運", "失去控制", "抗拒改變", "低谷"]
+      },
+      "core_meaning": "不可抗力的變動與宇宙的循環，好壞皆是過程。在遊戲中是一張極具戲劇性的卡牌，代表隨機事件的觸發、局勢的瞬間逆轉或重抽機會。",
+      "visual_symbols": ["巨輪", "斯芬克斯", "阿努比斯", "蛇", "四大神獸(人、鷹、牛、獅)"],
+      "ai_prompt_hint": "A massive mystical golden wheel suspended in the cosmos. A blue sphinx sitting on top, a red Anubis rising, and a descending snake. Four glowing ethereal creatures (angel, eagle, bull, lion) in the corners reading books. Arcane cosmic energy.",
+      "image_file": "major_10_wheel_of_fortune.png"
+    },
+    {
+      "id": 11,
+      "name_en": "Justice",
+      "name_zh": "正義",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["公平", "真理", "因果", "責任", "裁決"],
+        "reversed": ["不公", "偏見", "逃避責任", "失衡"]
+      },
+      "core_meaning": "客觀與平衡的絕對裁決，種下什麼因便得什麼果。在遊戲機制中象徵著數值的絕對平衡、因果報應 (反彈傷害)，或是對敵人進行審判的真實傷害。",
+      "visual_symbols": ["法官", "高舉的寶劍", "天平", "兩根柱子", "紫色帷幕"],
+      "ai_prompt_hint": "A stern and fair figure sitting between two pillars. Holding an upright glowing sword in one hand and perfectly balanced golden scales in the other. Wearing a red robe and a crown. Serious and absolute magical judgment.",
+      "image_file": "major_11_justice.png"
+    },
+    {
+      "id": 12,
+      "name_en": "The Hanged Man",
+      "name_zh": "倒吊人",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["犧牲", "視角轉換", "暫停", "放下", "新觀點"],
+        "reversed": ["無謂的犧牲", "拖延", "固執", "掙扎"]
+      },
+      "core_meaning": "以退為進的智慧，透過自願的犧牲與等待來獲得更高的領悟。遊戲中這張牌代表著「獻祭」機制，犧牲部分資源或生命值以換取強大的全域增益或看破敵人弱點。",
+      "visual_symbols": ["倒吊男子", "T字樹", "頭部發光", "安詳表情", "綁住單腳"],
+      "ai_prompt_hint": "A man hanging upside down by one ankle from a living wooden T-shaped tree. His other leg is crossed. He has a peaceful expression and a radiant glowing halo around his head. A mystical sacrifice for higher wisdom.",
+      "image_file": "major_12_hanged_man.png"
+    },
+    {
+      "id": 13,
+      "name_en": "Death",
+      "name_zh": "死神",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["結束", "轉變", "重生", "除舊佈新", "過渡"],
+        "reversed": ["抗拒改變", "停滯不前", "恐懼", "無法割捨"]
+      },
+      "core_meaning": "並非肉體的死亡，而是舊事物的消亡與新階段的必然開始。在遊戲中代表著場上狀態的全面重置、秒殺低血量敵人，或是浴火重生的蛻變機制。",
+      "visual_symbols": ["骷髏騎士", "白馬", "黑底白玫瑰旗幟", "國王倒地", "遠方破曉"],
+      "ai_prompt_hint": "A menacing but majestic skeleton knight in black armor riding a pale white horse. Holding a black flag with a mystical white rose. A king lies fallen on the ground. In the background, a bright glowing sunrise between two towers, promising rebirth.",
+      "image_file": "major_13_death.png"
+    },
+    {
+      "id": 14,
+      "name_en": "Temperance",
+      "name_zh": "節制",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["平衡", "調和", "治癒", "中庸", "結合"],
+        "reversed": ["極端", "失衡", "衝突", "消耗"]
+      },
+      "core_meaning": "煉金術般的完美融合，將對立的力量調和成新的能量。在遊戲中象徵強大的治癒力、資源的無損轉化，或是平衡敵我雙方狀態的神聖淨化。",
+      "visual_symbols": ["天使", "兩個聖杯", "水流的轉移", "一腳在水一腳在陸地", "太陽圖騰", "鳶尾花"],
+      "ai_prompt_hint": "A beautiful androgynous angel with large wings pouring glowing magical liquid flawlessly between two golden cups. One foot rests in crystal clear water, the other on solid earth. Golden iris flowers blooming. Harmonious magical alchemy.",
+      "image_file": "major_14_temperance.png"
+    },
+    {
+      "id": 15,
+      "name_en": "The Devil",
+      "name_zh": "惡魔",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["束縛", "誘惑", "物質主義", "沉迷", "陰暗面"],
+        "reversed": ["解脫", "重獲自由", "覺醒", "克服慾望"]
+      },
+      "core_meaning": "面對內心的陰暗面與無法自拔的渴望。在遊戲中這是一張危險的牌，代表高風險高報酬的禁忌交易、附帶詛咒的強大力量，或是使敵人陷入束縛狀態。",
+      "visual_symbols": ["巴風特(羊頭惡魔)", "鐵鍊", "被束縛的男女", "倒五角星", "火焰"],
+      "ai_prompt_hint": "A dark, imposing demonic creature with goat horns sitting on a dark cubic altar. An inverted glowing pentagram on his forehead. A naked man and woman are chained loosely to the altar. Dark red and shadow magical aura, conveying temptation and bondage.",
+      "image_file": "major_15_devil.png"
+    },
+    {
+      "id": 16,
+      "name_en": "The Tower",
+      "name_zh": "高塔",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["突變", "破壞", "啟示", "災難", "信仰崩塌"],
+        "reversed": ["避免災難", "恐懼改變", "重建", "內在崩潰"]
+      },
+      "core_meaning": "建立在虛假上的事物遭到毀滅性打擊，帶來震撼卻必要的覺醒。在遊戲中象徵強大的全體範圍傷害 (AOE)、破甲效果，或是打破僵局的劇烈環境變動。",
+      "visual_symbols": ["著火的高塔", "雷擊", "皇冠掉落", "墜落的人", "黑暗天空"],
+      "ai_prompt_hint": "A tall stone tower being struck by a devastating bolt of golden lightning. The top of the tower, shaped like a crown, is breaking off and engulfed in flames. Two figures falling through the dark sky. Explosive arcane destruction.",
+      "image_file": "major_16_tower.png"
+    },
+    {
+      "id": 17,
+      "name_en": "The Star",
+      "name_zh": "星星",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["希望", "靈感", "寧靜", "療癒", "願景"],
+        "reversed": ["絕望", "失去信心", "悲觀", "缺乏靈感"]
+      },
+      "core_meaning": "經歷高塔毀滅後的指路明燈，帶來深層的平靜與未來的希望。在遊戲中代表持續性的生命力恢復 (Regen)、獲得無消耗施法狀態，或是神聖的靈感啟發。",
+      "visual_symbols": ["裸體女性", "兩把水壺", "八角大星", "七顆小星", "池塘與土地", "聖䴉"],
+      "ai_prompt_hint": "A serene naked woman kneeling by a mystical pool. Pouring glowing water from two pitchers, one onto the land, one into the pool. A massive brilliant eight-pointed star in the night sky surrounded by seven smaller stars. Ethereal hope and cosmic tranquility.",
+      "image_file": "major_17_star.png"
+    },
+    {
+      "id": 18,
+      "name_en": "The Moon",
+      "name_zh": "月亮",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["幻覺", "恐懼", "潛意識", "不安", "直覺"],
+        "reversed": ["真相大白", "克服恐懼", "解開誤會", "內心平靜"]
+      },
+      "core_meaning": "充滿迷惘、幻象與潛意識暗流的未知領域。在遊戲中，這張牌能施放幻象干擾敵人、降低命中率，或是讓玩家進入無法被鎖定的潛行狀態。",
+      "visual_symbols": ["月亮", "狼與狗", "龍蝦爬出水面", "兩座塔", "彎曲的小路"],
+      "ai_prompt_hint": "A mysterious night scene with a large glowing moon that has a face, weeping golden tears. A wild wolf and a tame dog howling at the moon. A mystical crayfish emerging from a pool of water. A winding path leading between two dark ominous towers. Dreamlike and illusory.",
+      "image_file": "major_18_moon.png"
+    },
+    {
+      "id": 19,
+      "name_en": "The Sun",
+      "name_zh": "太陽",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["快樂", "成功", "生命力", "光明", "真相"],
+        "reversed": ["暫時的沮喪", "過度樂觀", "延遲的成功", "缺乏熱情"]
+      },
+      "core_meaning": "驅散所有陰霾，代表純粹的喜悅、成功與無盡的能量。這是遊戲中最強大的正面卡牌之一，賦予全屬性巨幅提升與驅散一切黑暗的無敵光環。",
+      "visual_symbols": ["巨大的太陽", "騎白馬的孩童", "向日葵", "紅旗", "石牆"],
+      "ai_prompt_hint": "A brilliant, majestic sun with a radiant face shining brightly in the sky. A joyful, naked child riding a magnificent white horse. Holding a bright red banner. Large glowing sunflowers growing over a brick wall. Radiant positive magical energy and ultimate victory.",
+      "image_file": "major_19_sun.png"
+    },
+    {
+      "id": 20,
+      "name_en": "Judgement",
+      "name_zh": "審判",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["覺醒", "救贖", "呼喚", "重生", "清算"],
+        "reversed": ["自我懷疑", "拒絕改變", "業力未了", "恐懼審判"]
+      },
+      "core_meaning": "天使吹響號角，帶來最終的清算與靈魂的昇華。在遊戲中代表起死回生的復活機制、終極覺醒，或是對戰局進行最終結算的強大指令。",
+      "visual_symbols": ["大天使加百列", "號角", "帶紅十字的白旗", "棺材", "甦醒的人們"],
+      "ai_prompt_hint": "A massive angelic figure appearing in the sky, blowing a golden trumpet with a white flag bearing a red cross. Below, ethereal figures are rising from stone tombs, reaching upward in awe. A moment of ultimate cosmic awakening and resurrection.",
+      "image_file": "major_20_judgement.png"
+    },
+    {
+      "id": 21,
+      "name_en": "The World",
+      "name_zh": "世界",
+      "type": "Major Arcana",
+      "keywords": {
+        "upright": ["完成", "圓滿", "旅程終點", "整合", "成就"],
+        "reversed": ["未完成", "缺乏結尾", "停滯", "無法統合"]
+      },
+      "core_meaning": "愚者旅程的完美結尾，象徵著四大元素的統合與宇宙的和諧。在遊戲中，打出此牌代表達成通關條件、觸發完美結局或是獲得遊戲內的最高榮譽與獎勵。",
+      "visual_symbols": ["舞者", "橢圓形花環", "兩根魔杖", "四大神獸(人、鷹、牛、獅)"],
+      "ai_prompt_hint": "A graceful mystical dancer floating in the center of a giant glowing laurel wreath. Holding two magical wands. In the four corners of the starry cosmos, the heads of a man, eagle, bull, and lion emerge. Absolute completion, cosmic harmony, and the ultimate realization of magic.",
+      "image_file": "major_21_world.png"
+    }
+  ]
+}
