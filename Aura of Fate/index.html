@@ -1,1 +1,94 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aura of Fate</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="tabletop" aria-label="Aura of Fate tarot table">
+        <header class="topbar">
+          <div>
+            <p class="kicker">Aura of Fate</p>
+            <h1>命運光環</h1>
+          </div>
+          <button class="deck-pool-button" id="deckStatus" type="button" disabled>載入牌庫中</button>
+        </header>
 
+        <section class="control-band" aria-label="reading setup">
+          <div class="button-fields">
+            <div class="field-group">
+              <p class="control-label">占卜情境</p>
+              <div class="choice-row" id="situationButtons" role="group" aria-label="占卜情境"></div>
+            </div>
+            <div class="field-group">
+              <p class="control-label">牌陣</p>
+              <div class="choice-row" id="spreadButtons" role="group" aria-label="牌陣"></div>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button class="primary-action" id="drawButton" type="button">洗牌抽牌</button>
+            <button class="ghost-action" id="resetButton" type="button">重新開始</button>
+          </div>
+        </section>
+
+        <section class="play-area">
+          <div class="deck-stack" id="deckStack" aria-hidden="true">
+            <img src="./assets/images/cards/back-3.png" alt="" />
+          </div>
+          <div class="spread-zone" id="spreadZone" aria-live="polite"></div>
+        </section>
+
+        <section class="reading-panel" id="readingPanel" hidden>
+          <div class="reading-heading">
+            <p class="kicker">Database Reading</p>
+            <h2 id="readingTitle">解析結果</h2>
+          </div>
+          <div class="summary-box" id="summaryBox"></div>
+          <div class="card-readings" id="cardReadings"></div>
+        </section>
+      </section>
+    </main>
+
+    <template id="cardTemplate">
+      <article class="drawn-card">
+        <button class="card-button" type="button">
+          <span class="card-inner">
+            <span class="card-face card-back">
+              <img src="./assets/images/cards/back-3.png" alt="" />
+            </span>
+            <span class="card-face card-front">
+              <img alt="" />
+            </span>
+          </span>
+        </button>
+        <div class="card-meta">
+          <span class="position"></span>
+          <strong class="name"></strong>
+          <span class="orientation"></span>
+        </div>
+      </article>
+    </template>
+
+    <section class="pool-modal" id="poolModal" aria-labelledby="poolTitle" aria-modal="true" role="dialog" hidden>
+      <div class="pool-backdrop" id="poolBackdrop"></div>
+      <div class="pool-dialog">
+        <header class="pool-header">
+          <div>
+            <p class="kicker">Card Pool</p>
+            <h2 id="poolTitle">牌池</h2>
+          </div>
+          <button class="icon-button" id="poolCloseButton" type="button" aria-label="關閉牌池">×</button>
+        </header>
+        <div class="pool-summary" id="poolSummary"></div>
+        <div class="pool-grid" id="poolGrid"></div>
+      </div>
+    </section>
+
+    <script src="./assets/data/database.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
