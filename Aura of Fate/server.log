@@ -1,0 +1,189 @@
+2026-07-06T13:44:32.895Z Aura of Fate is running at http://127.0.0.1:5174/
+2026-07-06T13:46:32.131Z uncaughtException: Error: listen EADDRINUSE: address already in use 127.0.0.1:5180
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+2026-07-06T13:46:39.063Z uncaughtException: Error: listen EADDRINUSE: address already in use 127.0.0.1:5180
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+2026-07-06T13:47:37.114Z Aura of Fate is running at http://127.0.0.1:5280/
+2026-07-06T13:48:01.011Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-06T13:57:56.163Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-06T14:08:23.990Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-06T14:27:17.448Z reading api error: Error: gemini-3.5-flash is currently experiencing high demand, spikes in demand are usually temporary. Please try again later.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:172:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:111:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:42:7)
+2026-07-06T14:31:19.837Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-06T14:37:50.758Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:178:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T14:44:32.491Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:178:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T14:44:33.068Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:178:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T14:44:37.960Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:178:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T14:45:30.198Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:178:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T14:45:47.533Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:178:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T14:46:04.489Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:178:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T14:49:29.649Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:178:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T14:50:31.152Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:178:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T14:51:23.565Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:178:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T14:52:08.981Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:178:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T14:53:40.628Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-06T14:53:47.633Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:179:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T14:53:59.802Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:179:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T14:55:19.375Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:179:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T15:06:21.349Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:179:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T15:07:02.183Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:179:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T15:15:02.853Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:179:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T15:16:34.080Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:179:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-06T15:33:01.797Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:179:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-07T05:32:38.036Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:179:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-07T05:46:36.033Z uncaughtException: Error: listen EADDRINUSE: address already in use 127.0.0.1:5173
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+2026-07-07T05:53:47.336Z uncaughtException: Error: listen EADDRINUSE: address already in use 127.0.0.1:5173
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+2026-07-07T05:54:50.163Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:179:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-07T06:11:23.923Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:179:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-07T06:11:41.069Z uncaughtException: Error: listen EADDRINUSE: address already in use 127.0.0.1:5173
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+2026-07-07T06:11:51.267Z reading api error: Error: You do not have enough quota to make this request.
+    at requestGeminiReading (C:\AI\Aura of Fate (命運光環)\dev-server.js:179:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async handleReadingRequest (C:\AI\Aura of Fate (命運光環)\dev-server.js:117:20)
+    at async Server.<anonymous> (C:\AI\Aura of Fate (命運光環)\dev-server.js:47:7)
+2026-07-07T06:18:09.069Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-07T06:19:27.978Z uncaughtException: Error: listen EADDRINUSE: address already in use 127.0.0.1:5173
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+2026-07-07T06:29:33.459Z uncaughtException: Error: listen EADDRINUSE: address already in use 127.0.0.1:5173
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+2026-07-07T06:37:27.647Z uncaughtException: Error: listen EADDRINUSE: address already in use 127.0.0.1:5173
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+2026-07-07T06:43:15.753Z uncaughtException: Error: listen EADDRINUSE: address already in use 127.0.0.1:5173
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+2026-07-07T06:47:49.053Z uncaughtException: Error: listen EADDRINUSE: address already in use 127.0.0.1:5173
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+2026-07-07T06:48:56.829Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-07T06:50:28.339Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-07T08:35:30.004Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-07T08:54:41.660Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-07T09:22:44.844Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-07T09:37:46.820Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-07T09:42:09.604Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-07T09:42:35.394Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-07T09:43:27.656Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-07T12:35:51.438Z Aura of Fate is running at http://127.0.0.1:5173/
+2026-07-07T12:37:08.751Z Aura of Fate is running at http://127.0.0.1:5173/

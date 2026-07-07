@@ -19,6 +19,15 @@
 
         <section class="control-band" aria-label="reading setup">
           <div class="button-fields">
+            <div class="field-group question-field">
+              <label class="control-label" for="questionInput">想詢問的問題</label>
+              <textarea
+                id="questionInput"
+                rows="2"
+                placeholder="例如：我最近適合換工作嗎？"
+              ></textarea>
+              <div class="context-status" id="questionContext" aria-live="polite">可直接抽牌，或先輸入問題。</div>
+            </div>
             <div class="field-group">
               <p class="control-label">占卜情境</p>
               <div class="choice-row" id="situationButtons" role="group" aria-label="占卜情境"></div>
@@ -48,6 +57,10 @@
             <h2 id="readingTitle">解析結果</h2>
           </div>
           <div class="summary-box" id="summaryBox"></div>
+          <section class="ai-reading" id="aiReading" hidden>
+            <p class="kicker">AI Reading</p>
+            <div class="ai-reading-content" id="aiReadingContent"></div>
+          </section>
           <div class="card-readings" id="cardReadings"></div>
         </section>
       </section>

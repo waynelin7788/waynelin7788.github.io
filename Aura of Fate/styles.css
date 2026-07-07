@@ -12,6 +12,7 @@
   --shadow: 0 24px 80px rgba(0, 0, 0, 0.48);
   --deck-width: 225px;
   --card-width: 285px;
+  --spread-card-width: var(--card-width);
 }
 
 * {
@@ -34,7 +35,8 @@ body.is-modal-open {
 }
 
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
 
@@ -160,7 +162,8 @@ h2 {
   font-size: 0.86rem;
 }
 
-input {
+input,
+textarea {
   width: 100%;
   min-height: 42px;
   border: 1px solid rgba(230, 218, 184, 0.25);
@@ -171,9 +174,60 @@ input {
   outline: none;
 }
 
-input:focus {
+textarea {
+  min-height: 64px;
+  resize: vertical;
+  padding: 10px 12px;
+  line-height: 1.55;
+}
+
+input:focus,
+textarea:focus {
   border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(216, 183, 104, 0.16);
+}
+
+input:disabled,
+textarea:disabled,
+button:disabled {
+  cursor: not-allowed;
+}
+
+textarea:disabled {
+  color: rgba(244, 239, 228, 0.66);
+  background: rgba(9, 10, 9, 0.38);
+  border-color: rgba(230, 218, 184, 0.12);
+}
+
+.question-field {
+  gap: 8px;
+}
+
+.context-status {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid rgba(230, 218, 184, 0.16);
+  border-radius: 999px;
+  padding: 4px 9px;
+  color: var(--muted);
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.context-status[data-tone="success"] {
+  color: #dff2e7;
+  border-color: rgba(78, 120, 102, 0.58);
+  background: rgba(78, 120, 102, 0.25);
+}
+
+.context-status[data-tone="warning"] {
+  color: #f4e2bd;
+  border-color: rgba(216, 183, 104, 0.54);
+  background: rgba(216, 183, 104, 0.14);
 }
 
 .choice-row {
@@ -206,6 +260,15 @@ input:focus {
   border-color: transparent;
   background: linear-gradient(180deg, #f0d88c, var(--gold));
   font-weight: 800;
+}
+
+.choice-button:disabled {
+  opacity: 0.62;
+  transform: none;
+}
+
+.choice-button.is-active:disabled {
+  opacity: 0.86;
 }
 
 .action-row {
@@ -285,13 +348,93 @@ input:focus {
 
 .spread-zone {
   display: grid;
-  grid-template-columns: repeat(var(--spread-count, 3), minmax(180px, var(--card-width)));
+  grid-template-columns: repeat(var(--spread-count, 3), minmax(150px, var(--spread-card-width)));
   justify-content: center;
+  align-items: center;
   gap: 28px;
 }
 
+.spread-zone[data-spread-size="5"] {
+  --spread-card-width: 190px;
+  grid-template-columns: repeat(5, minmax(105px, var(--spread-card-width)));
+  grid-template-areas:
+    "c0 c1 c2 c3 c4";
+  gap: 20px;
+}
+
+.spread-zone[data-spread-id="choice"] {
+  --spread-card-width: 178px;
+  grid-template-columns: repeat(6, minmax(88px, var(--spread-card-width)));
+  grid-template-areas:
+    "c0 c0 c4 c4 c2 c2"
+    "c1 c1 c5 c5 c3 c3";
+  gap: 20px;
+}
+
+.spread-zone[data-spread-id="celticCross"] {
+  --spread-card-width: 128px;
+  grid-template-columns: repeat(5, minmax(88px, var(--spread-card-width)));
+  grid-template-areas:
+    ".  c4 .  c6 ."
+    "c3 c0 c1 c7 ."
+    ".  c2 .  c8 ."
+    ".  c5 .  c9 .";
+  gap: 16px;
+}
+
+.spread-zone[data-spread-size="5"] .drawn-card[data-card-index="0"],
+.spread-zone[data-spread-id="choice"] .drawn-card[data-card-index="0"],
+.spread-zone[data-spread-id="celticCross"] .drawn-card[data-card-index="0"] {
+  grid-area: c0;
+}
+
+.spread-zone[data-spread-size="5"] .drawn-card[data-card-index="1"],
+.spread-zone[data-spread-id="choice"] .drawn-card[data-card-index="1"],
+.spread-zone[data-spread-id="celticCross"] .drawn-card[data-card-index="1"] {
+  grid-area: c1;
+}
+
+.spread-zone[data-spread-size="5"] .drawn-card[data-card-index="2"],
+.spread-zone[data-spread-id="choice"] .drawn-card[data-card-index="2"],
+.spread-zone[data-spread-id="celticCross"] .drawn-card[data-card-index="2"] {
+  grid-area: c2;
+}
+
+.spread-zone[data-spread-size="5"] .drawn-card[data-card-index="3"],
+.spread-zone[data-spread-id="choice"] .drawn-card[data-card-index="3"],
+.spread-zone[data-spread-id="celticCross"] .drawn-card[data-card-index="3"] {
+  grid-area: c3;
+}
+
+.spread-zone[data-spread-size="5"] .drawn-card[data-card-index="4"],
+.spread-zone[data-spread-id="choice"] .drawn-card[data-card-index="4"],
+.spread-zone[data-spread-id="celticCross"] .drawn-card[data-card-index="4"] {
+  grid-area: c4;
+}
+
+.spread-zone[data-spread-id="choice"] .drawn-card[data-card-index="5"],
+.spread-zone[data-spread-id="celticCross"] .drawn-card[data-card-index="5"] {
+  grid-area: c5;
+}
+
+.spread-zone[data-spread-id="celticCross"] .drawn-card[data-card-index="6"] {
+  grid-area: c6;
+}
+
+.spread-zone[data-spread-id="celticCross"] .drawn-card[data-card-index="7"] {
+  grid-area: c7;
+}
+
+.spread-zone[data-spread-id="celticCross"] .drawn-card[data-card-index="8"] {
+  grid-area: c8;
+}
+
+.spread-zone[data-spread-id="celticCross"] .drawn-card[data-card-index="9"] {
+  grid-area: c9;
+}
+
 .drawn-card {
-  width: min(100%, var(--card-width));
+  width: min(100%, var(--spread-card-width));
   display: grid;
   gap: 12px;
   justify-items: center;
@@ -305,7 +448,7 @@ input:focus {
 
 .card-button {
   width: 100%;
-  max-width: var(--card-width);
+  max-width: var(--spread-card-width);
   aspect-ratio: 2 / 3;
   padding: 0;
   border: 0;
@@ -432,6 +575,37 @@ input:focus {
   color: #efe5cd;
   background: rgba(216, 183, 104, 0.08);
   line-height: 1.7;
+}
+
+.ai-reading {
+  margin-bottom: 16px;
+  border: 1px solid rgba(216, 183, 104, 0.28);
+  border-radius: 8px;
+  padding: 14px;
+  background: rgba(9, 10, 9, 0.3);
+  line-height: 1.75;
+}
+
+.ai-reading[data-state="loading"] {
+  border-color: rgba(83, 109, 145, 0.5);
+}
+
+.ai-reading[data-state="success"] {
+  border-color: rgba(216, 183, 104, 0.42);
+  background: rgba(216, 183, 104, 0.08);
+}
+
+.ai-reading[data-state="fallback"] {
+  border-color: rgba(141, 76, 73, 0.48);
+  background: rgba(141, 76, 73, 0.12);
+}
+
+.ai-reading-content p {
+  margin-bottom: 0.85em;
+}
+
+.ai-reading-content p:last-child {
+  margin-bottom: 0;
 }
 
 .card-readings {
@@ -711,6 +885,21 @@ input:focus {
     grid-template-columns: repeat(var(--spread-count, 1), minmax(140px, var(--card-width)));
     gap: 12px;
   }
+
+  .spread-zone[data-spread-size="5"] {
+    --spread-card-width: 160px;
+    gap: 14px;
+  }
+
+  .spread-zone[data-spread-id="choice"] {
+    --spread-card-width: 148px;
+    gap: 14px;
+  }
+
+  .spread-zone[data-spread-id="celticCross"] {
+    --spread-card-width: 108px;
+    gap: 12px;
+  }
 }
 
 @media (max-width: 620px) {
@@ -733,8 +922,41 @@ input:focus {
     margin: 0 auto;
   }
 
+  .spread-zone[data-spread-size="5"],
+  .spread-zone[data-spread-id="choice"],
+  .spread-zone[data-spread-id="celticCross"] {
+    --spread-card-width: min(42vw, 160px);
+    grid-template-columns: repeat(2, minmax(0, var(--spread-card-width)));
+    max-width: min(100%, calc(var(--spread-card-width) * 2 + 12px));
+    gap: 12px;
+  }
+
+  .spread-zone[data-spread-size="5"] {
+    grid-template-areas:
+      "c0 c1"
+      "c2 c3"
+      "c4 c4";
+  }
+
+  .spread-zone[data-spread-id="choice"] {
+    grid-template-areas:
+      "c0 c2"
+      "c1 c3"
+      "c4 c5";
+  }
+
+  .spread-zone[data-spread-id="celticCross"] {
+    --spread-card-width: min(39vw, 150px);
+    grid-template-areas:
+      "c4 c6"
+      "c3 c0"
+      "c2 c1"
+      "c5 c7"
+      "c8 c9";
+  }
+
   .drawn-card {
-    width: var(--card-width);
+    width: var(--spread-card-width);
   }
 
   .pool-modal {
