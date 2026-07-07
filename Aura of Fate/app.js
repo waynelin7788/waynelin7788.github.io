@@ -426,8 +426,21 @@ async function renderAiReading(readingInput) {
     if (requestId !== state.aiRequestId) return;
 
     elements.aiReading.dataset.state = "fallback";
-    elements.aiReadingContent.textContent = `${error.message} 目前已保留本地資料庫解讀。`;
+    elements.aiReadingContent.textContent = aiFallbackMessage(error);
   }
+}
+
+function aiFallbackMessage(error) {
+  const message = String(error?.message || "");
+  const likelyMissingAiApi =
+    error instanceof SyntaxError ||
+    /Unexpected token|is not valid JSON|Failed to fetch|NetworkError|API KEY|API key/i.test(message);
+
+  if (likelyMissingAiApi) {
+    return "由於未使用 AI API KEY ，所以目前已保留本地資料庫解讀。";
+  }
+
+  return `${message} 目前已保留本地資料庫解讀。`;
 }
 
 function formatAiReading(text) {
