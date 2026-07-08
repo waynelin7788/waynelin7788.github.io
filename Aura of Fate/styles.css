@@ -712,6 +712,48 @@ textarea:disabled {
   margin-bottom: 0;
 }
 
+.manual-ai-fallback {
+  display: grid;
+  gap: 10px;
+}
+
+.manual-ai-prompt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--gold);
+  font-weight: 800;
+}
+
+.manual-ai-copy-button {
+  min-height: 36px;
+  border: 1px solid rgba(216, 183, 104, 0.42);
+  border-radius: 6px;
+  padding: 0 12px;
+  color: #17120a;
+  background: linear-gradient(180deg, #efd78a, var(--gold));
+  font-weight: 800;
+}
+
+.manual-ai-copy-button:hover {
+  filter: brightness(1.05);
+}
+
+.manual-ai-prompt {
+  width: 100%;
+  min-height: 240px;
+  max-height: 380px;
+  resize: vertical;
+  border: 1px solid rgba(230, 218, 184, 0.18);
+  border-radius: 8px;
+  padding: 12px;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.24);
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
 .card-readings {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

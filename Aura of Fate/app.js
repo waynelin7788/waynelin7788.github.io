@@ -577,21 +577,76 @@ async function renderAiReading(readingInput) {
     if (requestId !== state.aiRequestId) return;
 
     elements.aiReading.dataset.state = "fallback";
-    elements.aiReadingContent.textContent = aiFallbackMessage(error);
+    if (isLikelyMissingAiApi(error)) {
+      renderManualAiPromptFallback(readingInput);
+    } else {
+      elements.aiReadingContent.textContent = `${String(error?.message || "AI 解讀暫時無法產生。")} 目前已保留本地資料庫解讀。`;
+    }
   }
 }
 
-function aiFallbackMessage(error) {
+function isLikelyMissingAiApi(error) {
   const message = String(error?.message || "");
-  const likelyMissingAiApi =
+  return (
     error instanceof SyntaxError ||
-    /Unexpected token|is not valid JSON|Failed to fetch|NetworkError|API KEY|API key/i.test(message);
+    /Unexpected token|is not valid JSON|Failed to fetch|NetworkError|API KEY|API key/i.test(message)
+  );
+}
 
-  if (likelyMissingAiApi) {
-    return "由於未使用 AI API KEY ，所以目前已保留本地資料庫解讀。";
+function renderManualAiPromptFallback(readingInput) {
+  const manualPrompt = buildManualAiPrompt(readingInput);
+
+  elements.aiReadingContent.innerHTML = `
+    <div class="manual-ai-fallback">
+      <p>由於未使用 AI API KEY ，所以目前已保留本地資料庫解讀。</p>
+      <p class="small-note">可複製下方 Prompt，貼到你習慣使用的 AI LLM，例如 Gemini、ChatGPT、Copilot 或 Apple AI，手動取得 AI 解析。</p>
+      <div class="manual-ai-prompt-header">
+        <span>手動 AI Prompt</span>
+        <button class="manual-ai-copy-button" type="button">複製 Prompt</button>
+      </div>
+      <textarea class="manual-ai-prompt" readonly>${escapeHtml(manualPrompt)}</textarea>
+    </div>
+  `;
+
+  const button = elements.aiReadingContent.querySelector(".manual-ai-copy-button");
+  const textarea = elements.aiReadingContent.querySelector(".manual-ai-prompt");
+  button?.addEventListener("click", () => copyManualAiPrompt(manualPrompt, textarea, button));
+}
+
+async function copyManualAiPrompt(prompt, textarea, button) {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(prompt);
+    } else {
+      textarea.select();
+      document.execCommand("copy");
+      textarea.setSelectionRange(0, 0);
+    }
+
+    button.textContent = "已複製";
+    window.setTimeout(() => {
+      button.textContent = "複製 Prompt";
+    }, 1600);
+  } catch (error) {
+    textarea.select();
+    button.textContent = "請手動複製";
   }
+}
 
-  return `${message} 目前已保留本地資料庫解讀。`;
+function buildManualAiPrompt(readingInput) {
+  return [
+    "你是一位溫柔、清楚、有人味的 Aura of Fate 塔羅解讀者，像懂塔羅的朋友正在陪我整理狀態，不像客服、老師或正式報告。",
+    "你只能根據下方 JSON 提供的本地牌義資料解讀，不要自行新增未提供的牌義。",
+    "請結合我的問題、占卜情境、牌陣位置、正逆位、關鍵字、象徵、核心牌義、情境牌義與建議牌義，生成自然的繁體中文解讀。",
+    "請直接從「整體訊息」開始，不要自我介紹，不要寒暄，不要說「以下為你解析」。",
+    "結構只包含：「整體訊息」、「牌陣解讀」、「行動建議」。",
+    "整體訊息最多 2 句，簡單明瞭地回答目前的大方向。",
+    "牌陣解讀是主要價值區。每張牌請寫成一個小段落，包含牌義重點、正逆位狀態、牌陣位置意義，以及和我的問題的具體關聯。不要只重述關鍵字。",
+    "行動建議給 2 到 3 點，使用「1.」「2.」「3.」開頭；每點一句口語、具體、可執行的小行動。",
+    "避免恐嚇式語氣，也不要做醫療、法律、投資保證；必要時提醒尋求專業協助。",
+    "以下是本次抽牌資料：",
+    JSON.stringify(readingInput, null, 2),
+  ].join("\n\n");
 }
 
 function formatAiReading(text) {
