@@ -158,6 +158,9 @@ const state = {
   suggestionsOpen: false,
   readingLocked: false,
   aiRequestId: 0,
+  aiWaitVideoRequestId: 0,
+  aiWaitVideoPromise: null,
+  aiWaitVideoResolve: null,
   lastReadingInput: null,
   poolRendered: false,
   poolCloseTimer: null,
@@ -181,6 +184,8 @@ const elements = {
   summaryBox: document.querySelector("#summaryBox"),
   aiReading: document.querySelector("#aiReading"),
   aiReadingContent: document.querySelector("#aiReadingContent"),
+  aiWaitVideo: document.querySelector("#aiWaitVideo"),
+  aiWaitVideoPlayer: document.querySelector("#aiWaitVideoPlayer"),
   cardReadings: document.querySelector("#cardReadings"),
   cardTemplate: document.querySelector("#cardTemplate"),
   poolModal: document.querySelector("#poolModal"),
@@ -242,6 +247,8 @@ function bindEvents() {
   elements.deckStatus.addEventListener("click", openCardPool);
   elements.poolBackdrop.addEventListener("click", closeCardPool);
   elements.poolCloseButton.addEventListener("click", closeCardPool);
+  elements.aiWaitVideoPlayer?.addEventListener("ended", () => stopAiWaitVideo());
+  elements.aiWaitVideoPlayer?.addEventListener("error", () => stopAiWaitVideo());
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && !elements.poolModal.hidden) {
       closeCardPool();
@@ -468,6 +475,7 @@ function updateQuestionContext() {
 function drawReading() {
   if (state.deck.length === 0) return;
   lockReadingSetup();
+  stopAiWaitVideo();
 
   const spread = spreads[state.currentSpread];
   const shuffled = shuffle([...state.deck]);
@@ -553,6 +561,7 @@ async function renderAiReading(readingInput) {
   const requestId = (state.aiRequestId += 1);
   elements.aiReading.hidden = false;
   elements.aiReading.dataset.state = "loading";
+  startAiWaitVideo(requestId);
   elements.aiReadingContent.textContent = "正在依照本地牌義生成 AI 解讀...";
 
   try {
@@ -571,9 +580,15 @@ async function renderAiReading(readingInput) {
       throw new Error(result.error || "AI 解讀暫時無法產生。");
     }
 
+    await waitForAiWaitVideo(requestId);
+    if (requestId !== state.aiRequestId) return;
+
     elements.aiReading.dataset.state = "success";
     elements.aiReadingContent.innerHTML = formatAiReading(result.text);
   } catch (error) {
+    if (requestId !== state.aiRequestId) return;
+
+    await waitForAiWaitVideo(requestId);
     if (requestId !== state.aiRequestId) return;
 
     elements.aiReading.dataset.state = "fallback";
@@ -583,6 +598,61 @@ async function renderAiReading(readingInput) {
       elements.aiReadingContent.textContent = `${String(error?.message || "AI 解讀暫時無法產生。")} 目前已保留本地資料庫解讀。`;
     }
   }
+}
+
+function startAiWaitVideo(requestId) {
+  const shell = elements.aiWaitVideo;
+  const player = elements.aiWaitVideoPlayer;
+  if (!shell || !player) {
+    state.aiWaitVideoPromise = Promise.resolve();
+    return;
+  }
+
+  state.aiWaitVideoRequestId = requestId;
+  state.aiWaitVideoPromise = new Promise((resolve) => {
+    state.aiWaitVideoResolve = resolve;
+  });
+  player.pause();
+  player.currentTime = 0;
+  shell.hidden = false;
+  window.requestAnimationFrame(() => {
+    shell.classList.add("is-visible");
+  });
+
+  const playAttempt = player.play();
+  if (playAttempt?.catch) {
+    playAttempt.catch(() => {
+      if (state.aiWaitVideoRequestId === requestId) {
+        stopAiWaitVideo(requestId);
+      }
+    });
+  }
+}
+
+function waitForAiWaitVideo(requestId) {
+  if (requestId !== state.aiWaitVideoRequestId) return Promise.resolve();
+  return state.aiWaitVideoPromise || Promise.resolve();
+}
+
+function stopAiWaitVideo(requestId = state.aiWaitVideoRequestId) {
+  const shell = elements.aiWaitVideo;
+  const player = elements.aiWaitVideoPlayer;
+  if (!shell || !player) return;
+  if (requestId !== state.aiWaitVideoRequestId) return;
+
+  state.aiWaitVideoRequestId = 0;
+  const resolveWaitVideo = state.aiWaitVideoResolve;
+  state.aiWaitVideoPromise = null;
+  state.aiWaitVideoResolve = null;
+  shell.classList.remove("is-visible");
+  player.pause();
+  player.currentTime = 0;
+  resolveWaitVideo?.();
+  window.setTimeout(() => {
+    if (!shell.classList.contains("is-visible")) {
+      shell.hidden = true;
+    }
+  }, 220);
 }
 
 function isLikelyMissingAiApi(error) {
@@ -794,6 +864,7 @@ function buildSummary(situationLabel) {
 
 function resetTable() {
   state.aiRequestId += 1;
+  stopAiWaitVideo();
   state.currentDraw = [];
   state.readingLocked = false;
   closeQuestionSuggestions();

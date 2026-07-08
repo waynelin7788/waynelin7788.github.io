@@ -49,6 +49,37 @@ button {
   padding: 24px;
 }
 
+.ai-wait-video {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(6, 7, 7, 0.7);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+.ai-wait-video.is-visible {
+  opacity: 1;
+}
+
+.ai-wait-video[hidden] {
+  display: none;
+}
+
+.ai-wait-video-player {
+  width: min(92vw, 760px);
+  max-height: 82vh;
+  display: block;
+  object-fit: contain;
+  border: 1px solid rgba(230, 218, 184, 0.28);
+  border-radius: 8px;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.62);
+}
+
 .tabletop {
   position: relative;
   min-height: calc(100vh - 48px);
