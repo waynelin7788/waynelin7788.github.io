@@ -598,8 +598,8 @@ function renderManualAiPromptFallback(readingInput) {
 
   elements.aiReadingContent.innerHTML = `
     <div class="manual-ai-fallback">
-      <p>由於未使用 AI API KEY ，所以目前已保留本地資料庫解讀。</p>
-      <p class="small-note">可複製下方 Prompt，貼到你習慣使用的 AI LLM，例如 Gemini、ChatGPT、Copilot 或 Apple AI，手動取得 AI 解析。</p>
+      <p>目前未設定 AI API Key，因此系統將使用本地資料庫進行解讀。</p>
+      <p class="small-note">若想使用 AI 深度解讀，可複製下方 Prompt，貼到你慣用的 AI（例如 Gemini、ChatGPT、Copilot 或 Apple Intelligence）即可取得 AI 解讀。</p>
       <div class="manual-ai-prompt-header">
         <span>手動 AI Prompt</span>
         <button class="manual-ai-copy-button" type="button">複製 Prompt</button>
