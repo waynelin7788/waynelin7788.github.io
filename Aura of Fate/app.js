@@ -247,7 +247,11 @@ function bindEvents() {
   elements.deckStatus.addEventListener("click", openCardPool);
   elements.poolBackdrop.addEventListener("click", closeCardPool);
   elements.poolCloseButton.addEventListener("click", closeCardPool);
-  elements.aiWaitVideoPlayer?.addEventListener("ended", () => stopAiWaitVideo());
+  elements.aiWaitVideoPlayer?.addEventListener("ended", () => {
+    if (!elements.aiWaitVideoPlayer.loop) {
+      stopAiWaitVideo();
+    }
+  });
   elements.aiWaitVideoPlayer?.addEventListener("error", () => stopAiWaitVideo());
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && !elements.poolModal.hidden) {
@@ -613,6 +617,7 @@ function startAiWaitVideo(requestId) {
     state.aiWaitVideoResolve = resolve;
   });
   player.pause();
+  player.loop = true;
   player.currentTime = 0;
   shell.hidden = false;
   window.requestAnimationFrame(() => {
@@ -631,6 +636,9 @@ function startAiWaitVideo(requestId) {
 
 function waitForAiWaitVideo(requestId) {
   if (requestId !== state.aiWaitVideoRequestId) return Promise.resolve();
+  if (elements.aiWaitVideoPlayer) {
+    elements.aiWaitVideoPlayer.loop = false;
+  }
   return state.aiWaitVideoPromise || Promise.resolve();
 }
 
@@ -644,6 +652,7 @@ function stopAiWaitVideo(requestId = state.aiWaitVideoRequestId) {
   const resolveWaitVideo = state.aiWaitVideoResolve;
   state.aiWaitVideoPromise = null;
   state.aiWaitVideoResolve = null;
+  player.loop = false;
   shell.classList.remove("is-visible");
   player.pause();
   player.currentTime = 0;
