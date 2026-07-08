@@ -200,7 +200,16 @@ textarea:disabled {
 }
 
 .question-field {
+  position: relative;
   gap: 8px;
+}
+
+.question-helper-row {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .context-status {
@@ -228,6 +237,101 @@ textarea:disabled {
   color: #f4e2bd;
   border-color: rgba(216, 183, 104, 0.54);
   background: rgba(216, 183, 104, 0.14);
+}
+
+.suggested-questions {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.suggestion-toggle {
+  min-height: 30px;
+  border: 1px solid rgba(216, 183, 104, 0.36);
+  border-radius: 999px;
+  padding: 4px 10px;
+  color: #f4e2bd;
+  background: rgba(216, 183, 104, 0.1);
+  font-size: 0.8rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.suggestion-toggle:hover,
+.suggested-questions.is-open .suggestion-toggle {
+  border-color: rgba(216, 183, 104, 0.62);
+  color: var(--text);
+  background: rgba(216, 183, 104, 0.18);
+  transform: translateY(-1px);
+}
+
+.suggestion-toggle:focus-visible {
+  outline: 0;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(216, 183, 104, 0.16);
+}
+
+.suggestion-toggle:disabled {
+  opacity: 0.55;
+  transform: none;
+}
+
+.suggestion-list {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 8;
+  width: min(520px, calc(100vw - 72px));
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(230, 218, 184, 0.2);
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(20, 23, 21, 0.98);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+}
+
+.suggestion-list[hidden] {
+  display: none;
+}
+
+.suggestion-button {
+  width: 100%;
+  min-height: 38px;
+  border: 1px solid rgba(230, 218, 184, 0.18);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: #efe5cd;
+  background: rgba(9, 10, 9, 0.36);
+  text-align: left;
+  line-height: 1.45;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.suggestion-button:hover {
+  border-color: rgba(216, 183, 104, 0.5);
+  color: var(--text);
+  background: rgba(216, 183, 104, 0.1);
+  transform: translateY(-1px);
+}
+
+.suggestion-button:focus-visible {
+  outline: 0;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(216, 183, 104, 0.16);
+}
+
+.suggestion-button:disabled {
+  opacity: 0.55;
+  transform: none;
 }
 
 .choice-row {
@@ -914,6 +1018,25 @@ textarea:disabled {
 
   h1 {
     font-size: 2.2rem;
+  }
+
+  .question-helper-row {
+    display: grid;
+    justify-items: end;
+  }
+
+  .context-status {
+    justify-self: start;
+  }
+
+  .suggested-questions {
+    width: 100%;
+    display: grid;
+    justify-items: end;
+  }
+
+  .suggestion-list {
+    width: min(100%, 520px);
   }
 
   .spread-zone {

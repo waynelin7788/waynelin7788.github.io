@@ -26,7 +26,21 @@
                 rows="2"
                 placeholder="例如：我最近適合換工作嗎？"
               ></textarea>
-              <div class="context-status" id="questionContext" aria-live="polite">可直接抽牌，或先輸入問題。</div>
+              <div class="question-helper-row">
+                <div class="context-status" id="questionContext" aria-live="polite">可直接抽牌，或先輸入問題。</div>
+                <div class="suggested-questions" id="questionSuggestions">
+                  <button
+                    class="suggestion-toggle"
+                    id="suggestionToggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="suggestionList"
+                  >
+                    推薦問題
+                  </button>
+                  <div class="suggestion-list" id="suggestionList" role="menu" aria-label="推薦問題" hidden></div>
+                </div>
+              </div>
             </div>
             <div class="field-group">
               <p class="control-label">占卜情境</p>
