@@ -19,71 +19,87 @@
     </section>
 
     <main class="app-shell">
-      <section class="tabletop" aria-label="Aura of Fate tarot table">
+      <section class="tabletop" aria-label="Aura of Fate tarot reading">
         <header class="topbar">
-          <div>
+          <div class="brand-lockup">
             <p class="kicker">Aura of Fate</p>
-            <h1>命運光環</h1>
+            <img class="brand-logo" src="./assets/images/logo.png" alt="命運光環" />
           </div>
-          <button class="deck-pool-button" id="deckStatus" type="button" disabled>載入牌庫中</button>
+          <button
+            class="deck-pool-button"
+            id="deckStatus"
+            type="button"
+            aria-describedby="deckStatusHint"
+            data-tooltip="開啟本地 78 張塔羅牌庫"
+            disabled
+          >
+            <span class="deck-pool-main">載入牌庫中</span>
+            <span class="deck-pool-sub" id="deckStatusHint">點擊查看完整卡池</span>
+          </button>
         </header>
 
-        <section class="control-band" aria-label="reading setup">
-          <div class="button-fields">
-            <div class="field-group question-field">
-              <label class="control-label" for="questionInput">想詢問的問題</label>
-              <textarea
-                id="questionInput"
-                rows="2"
-                placeholder="例如：我最近適合換工作嗎？"
-              ></textarea>
-              <div class="question-helper-row">
-                <div class="context-status" id="questionContext" aria-live="polite">可直接抽牌，或先輸入問題。</div>
-                <div class="suggested-questions" id="questionSuggestions">
-                  <button
-                    class="suggestion-toggle"
-                    id="suggestionToggle"
-                    type="button"
-                    aria-expanded="false"
-                    aria-controls="suggestionList"
-                  >
-                    推薦問題
-                  </button>
-                  <div class="suggestion-list" id="suggestionList" role="menu" aria-label="推薦問題" hidden></div>
-                </div>
+        <section class="reading-stage" aria-label="占卜主畫面">
+          <section class="control-band" aria-label="reading setup">
+            <div class="choice-fields">
+              <div class="field-group">
+                <p class="control-label">占卜情境</p>
+                <div class="choice-row" id="situationButtons" role="group" aria-label="占卜情境"></div>
+              </div>
+              <div class="field-group">
+                <p class="control-label">牌陣</p>
+                <div class="choice-row" id="spreadButtons" role="group" aria-label="牌陣"></div>
               </div>
             </div>
-            <div class="field-group">
-              <p class="control-label">占卜情境</p>
-              <div class="choice-row" id="situationButtons" role="group" aria-label="占卜情境"></div>
-            </div>
-            <div class="field-group">
-              <p class="control-label">牌陣</p>
-              <div class="choice-row" id="spreadButtons" role="group" aria-label="牌陣"></div>
-            </div>
-          </div>
 
-          <div class="action-row">
-            <button class="primary-action" id="drawButton" type="button">洗牌抽牌</button>
-            <button class="ghost-action" id="resetButton" type="button">重新開始</button>
-          </div>
-        </section>
+            <div class="right-controls">
+              <div class="field-group question-field">
+                <label class="control-label" for="questionInput">想詢問的問題</label>
+                <textarea id="questionInput" rows="2" placeholder="我的靈性道路未來會如何展開？"></textarea>
+                <div class="question-helper-row">
+                  <div class="context-status" id="questionContext" aria-live="polite">可直接抽牌，或先輸入問題。</div>
+                  <div class="suggested-questions" id="questionSuggestions">
+                    <button
+                      class="suggestion-toggle"
+                      id="suggestionToggle"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls="suggestionList"
+                    >
+                      問題範例
+                    </button>
+                    <div class="suggestion-list" id="suggestionList" role="menu" aria-label="問題範例" hidden></div>
+                  </div>
+                </div>
+              </div>
 
-        <section class="play-area">
-          <div class="deck-stack" id="deckStack" aria-hidden="true">
-            <img src="./assets/images/cards/back-3.png" alt="" />
-          </div>
-          <div class="spread-zone" id="spreadZone" aria-live="polite"></div>
+              <div class="action-row">
+                <button class="primary-action" id="drawButton" type="button">再抽一次</button>
+                <button class="ghost-action" id="resetButton" type="button">重新開始</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="play-area" aria-label="抽出的牌卡">
+            <div class="deck-stack" id="deckStack" aria-hidden="true">
+              <img src="./assets/images/cards/back-3.png" alt="" />
+            </div>
+            <div class="spread-zone" id="spreadZone" aria-live="polite"></div>
+            <div class="stage-oracle" aria-hidden="true">
+              <p>信任旅程本身，宇宙正在為你鋪路。</p>
+            </div>
+          </section>
         </section>
 
         <section class="reading-panel" id="readingPanel" hidden>
           <div class="reading-heading">
-            <p class="kicker">Database Reading</p>
-            <h2 id="readingTitle">解析結果</h2>
+            <div>
+              <p class="kicker">Reading Result</p>
+              <h2 id="readingTitle">占卜結果</h2>
+            </div>
           </div>
           <div class="summary-box" id="summaryBox"></div>
           <section class="ai-reading" id="aiReading" hidden>
-            <p class="kicker">AI Reading</p>
+            <p class="kicker">AI 深度解讀</p>
             <div class="ai-reading-content" id="aiReadingContent"></div>
           </section>
           <div class="card-readings" id="cardReadings"></div>
@@ -117,9 +133,9 @@
         <header class="pool-header">
           <div>
             <p class="kicker">Card Pool</p>
-            <h2 id="poolTitle">牌池</h2>
+            <h2 id="poolTitle">本地牌庫</h2>
           </div>
-          <button class="icon-button" id="poolCloseButton" type="button" aria-label="關閉牌池">×</button>
+          <button class="icon-button" id="poolCloseButton" type="button" aria-label="關閉牌庫">×</button>
         </header>
         <div class="pool-summary" id="poolSummary"></div>
         <div class="pool-grid" id="poolGrid"></div>

@@ -204,11 +204,17 @@ async function init() {
 
   try {
     state.deck = await loadDeck();
-    elements.deckStatus.textContent = `${state.deck.length} 張牌`;
+    elements.deckStatus.innerHTML = `
+      <span class="deck-pool-main">查看牌庫</span>
+      <span class="deck-pool-sub">${state.deck.length} 張牌 · 點擊開啟卡池</span>
+    `;
     elements.deckStatus.disabled = false;
     elements.drawButton.disabled = false;
   } catch (error) {
-    elements.deckStatus.textContent = "牌庫載入失敗";
+    elements.deckStatus.innerHTML = `
+      <span class="deck-pool-main">牌庫載入失敗</span>
+      <span class="deck-pool-sub">請重新整理後再試</span>
+    `;
     elements.drawButton.disabled = true;
     console.error(error);
   }
@@ -775,7 +781,7 @@ function renderCardReading(drawn) {
 
   return `
     <article class="reading-card">
-      <p class="small-note">${position} · ${orientationLabel(orientation)}</p>
+      <p class="small-note card-position-line"><span class="reading-symbol-mini" aria-hidden="true"></span>${position} · ${orientationLabel(orientation)}</p>
       <h3>${escapeHtml(card.nameZh)} <span class="small-note">${escapeHtml(card.nameEn)}</span></h3>
       <div class="tag-row">
         ${keywords.map((keyword) => `<span class="tag">${escapeHtml(keyword)}</span>`).join("")}
