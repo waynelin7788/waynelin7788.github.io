@@ -49,6 +49,7 @@ button {
   padding: 24px;
 }
 
+.intro-video,
 .ai-wait-video {
   position: fixed;
   inset: 0;
@@ -62,15 +63,22 @@ button {
   transition: opacity 220ms ease;
 }
 
+.intro-video {
+  z-index: 30;
+  background: #060707;
+}
+
+.intro-video.is-visible,
 .ai-wait-video.is-visible {
   opacity: 1;
 }
 
+.intro-video[hidden],
 .ai-wait-video[hidden] {
   display: none;
 }
 
-.ai-wait-video-player {
+.overlay-video-player {
   width: min(92vw, 760px);
   max-height: 82vh;
   display: block;
@@ -78,6 +86,13 @@ button {
   border: 1px solid rgba(230, 218, 184, 0.28);
   border-radius: 8px;
   box-shadow: 0 28px 90px rgba(0, 0, 0, 0.62);
+}
+
+.intro-video-player {
+  width: min(100vw, 1180px);
+  max-height: 100vh;
+  border: 0;
+  border-radius: 0;
 }
 
 .tabletop {

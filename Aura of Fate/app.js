@@ -184,6 +184,8 @@ const elements = {
   summaryBox: document.querySelector("#summaryBox"),
   aiReading: document.querySelector("#aiReading"),
   aiReadingContent: document.querySelector("#aiReadingContent"),
+  introVideo: document.querySelector("#introVideo"),
+  introVideoPlayer: document.querySelector("#introVideoPlayer"),
   aiWaitVideo: document.querySelector("#aiWaitVideo"),
   aiWaitVideoPlayer: document.querySelector("#aiWaitVideoPlayer"),
   cardReadings: document.querySelector("#cardReadings"),
@@ -201,6 +203,7 @@ async function init() {
   renderChoiceButtons();
   renderQuestionSuggestions();
   bindEvents();
+  startIntroVideo();
 
   try {
     state.deck = await loadDeck();
@@ -253,6 +256,8 @@ function bindEvents() {
   elements.deckStatus.addEventListener("click", openCardPool);
   elements.poolBackdrop.addEventListener("click", closeCardPool);
   elements.poolCloseButton.addEventListener("click", closeCardPool);
+  elements.introVideoPlayer?.addEventListener("ended", stopIntroVideo);
+  elements.introVideoPlayer?.addEventListener("error", stopIntroVideo);
   elements.aiWaitVideoPlayer?.addEventListener("ended", () => {
     if (!elements.aiWaitVideoPlayer.loop) {
       stopAiWaitVideo();
@@ -663,6 +668,40 @@ function stopAiWaitVideo(requestId = state.aiWaitVideoRequestId) {
   player.pause();
   player.currentTime = 0;
   resolveWaitVideo?.();
+  window.setTimeout(() => {
+    if (!shell.classList.contains("is-visible")) {
+      shell.hidden = true;
+    }
+  }, 220);
+}
+
+function startIntroVideo() {
+  const shell = elements.introVideo;
+  const player = elements.introVideoPlayer;
+  if (!shell || !player) return;
+
+  player.pause();
+  player.currentTime = 0;
+  player.muted = true;
+  shell.hidden = false;
+  window.requestAnimationFrame(() => {
+    shell.classList.add("is-visible");
+  });
+
+  const playAttempt = player.play();
+  if (playAttempt?.catch) {
+    playAttempt.catch(stopIntroVideo);
+  }
+}
+
+function stopIntroVideo() {
+  const shell = elements.introVideo;
+  const player = elements.introVideoPlayer;
+  if (!shell || !player) return;
+
+  shell.classList.remove("is-visible");
+  player.pause();
+  player.currentTime = 0;
   window.setTimeout(() => {
     if (!shell.classList.contains("is-visible")) {
       shell.hidden = true;
