@@ -1,0 +1,307 @@
+
+/* Desktop fit and cleanup pass */
+.play-area::before {
+  content: none !important;
+}
+
+.spread-zone:empty::before {
+  content: "抽牌後，命運會在此展開";
+}
+
+.suggested-questions.is-open {
+  width: 100%;
+  grid-column: 1 / -1;
+  justify-self: stretch;
+}
+
+.suggested-questions.is-open .suggestion-toggle {
+  width: 100%;
+}
+
+.suggested-questions.is-open .suggestion-list {
+  position: static;
+  width: 100%;
+  margin-top: 8px;
+}
+
+@media (min-width: 1121px) {
+  :root {
+    --deck-width: 132px;
+    --card-width: 280px;
+  }
+
+  .reading-stage {
+    grid-template-columns: minmax(360px, 0.38fr) minmax(0, 1fr);
+    gap: clamp(16px, 2vw, 32px);
+  }
+
+  .control-band {
+    max-width: 560px;
+  }
+
+  .play-area {
+    min-width: 0;
+    min-height: clamp(430px, 42vw, 620px);
+    grid-template-columns: minmax(112px, var(--deck-width)) minmax(0, 1fr);
+    gap: clamp(12px, 1.6vw, 24px);
+    padding: 16px 0 58px;
+    overflow: visible;
+  }
+
+  .deck-stack {
+    width: var(--deck-width);
+  }
+
+  .spread-zone {
+    min-width: 0;
+    width: 100%;
+    justify-content: center;
+    align-content: center;
+  }
+
+  .spread-zone[data-spread-size="1"] {
+    --spread-card-width: clamp(230px, 20vw, 330px);
+    grid-template-columns: minmax(0, var(--spread-card-width));
+  }
+
+  .spread-zone[data-spread-size="3"] {
+    --spread-card-width: clamp(128px, 9vw, 176px);
+    grid-template-columns: repeat(3, minmax(0, var(--spread-card-width)));
+    gap: clamp(14px, 1.5vw, 24px);
+  }
+
+  .spread-zone[data-spread-size="5"] {
+    --spread-card-width: clamp(94px, 7.2vw, 142px);
+    grid-template-columns: repeat(5, minmax(0, var(--spread-card-width)));
+    grid-template-areas: "c0 c1 c2 c3 c4";
+    gap: clamp(10px, 1.1vw, 18px);
+  }
+
+  .spread-zone[data-spread-id="choice"] {
+    --spread-card-width: clamp(122px, 10vw, 174px);
+    grid-template-columns: repeat(3, minmax(0, var(--spread-card-width)));
+    grid-template-areas:
+      "c0 c4 c2"
+      "c1 c5 c3";
+    gap: clamp(18px, 2.1vw, 34px) clamp(22px, 2.4vw, 42px);
+  }
+
+  .spread-zone[data-spread-id="celticCross"] {
+    --spread-card-width: clamp(82px, 6.4vw, 122px);
+    grid-template-columns: repeat(5, minmax(0, var(--spread-card-width)));
+    gap: clamp(10px, 1vw, 16px);
+  }
+}
+
+@media (min-width: 1121px) and (max-width: 1360px) {
+  .brand-logo {
+    width: min(330px, 40vw);
+  }
+
+  .control-band {
+    max-width: 470px;
+    padding: 18px;
+  }
+
+  .choice-button {
+    min-height: 34px;
+    padding: 0 12px;
+  }
+
+  .primary-action,
+  .ghost-action {
+    min-height: 46px;
+  }
+}
+
+/* Desktop top-controls layout pass */
+.spread-zone:empty::before {
+  content: "抽牌後，命運會在此展開" !important;
+}
+
+@media (min-width: 1121px) {
+  :root {
+    --deck-width: 180px;
+    --card-width: 320px;
+  }
+
+  .reading-stage {
+    grid-template-columns: 1fr;
+    gap: clamp(22px, 2.5vw, 38px);
+  }
+
+  .control-band {
+    max-width: none;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 0.32fr);
+    align-items: end;
+  }
+
+  .button-fields {
+    grid-template-columns: minmax(360px, 0.9fr) minmax(0, 1fr);
+    align-items: start;
+    column-gap: clamp(18px, 2vw, 30px);
+  }
+
+  .question-field {
+    grid-row: span 2;
+  }
+
+  .question-field textarea {
+    min-height: 104px;
+  }
+
+  .play-area {
+    min-width: 0;
+    min-height: clamp(420px, 42vw, 620px);
+    grid-template-columns: minmax(150px, var(--deck-width)) minmax(0, 1fr);
+    gap: clamp(22px, 3vw, 52px);
+    padding: 6px 0 54px;
+    overflow: visible;
+  }
+
+  .deck-stack {
+    width: var(--deck-width);
+  }
+
+  .spread-zone {
+    min-width: 0;
+    width: 100%;
+    justify-content: center;
+    align-content: center;
+  }
+
+  .spread-zone[data-spread-size="1"] {
+    --spread-card-width: clamp(260px, 22vw, 360px);
+    grid-template-columns: minmax(0, var(--spread-card-width));
+  }
+
+  .spread-zone[data-spread-size="3"] {
+    --spread-card-width: clamp(170px, 15vw, 250px);
+    grid-template-columns: repeat(3, minmax(0, var(--spread-card-width)));
+    gap: clamp(20px, 2.4vw, 42px);
+  }
+
+  .spread-zone[data-spread-size="5"] {
+    --spread-card-width: clamp(136px, 11vw, 190px);
+    grid-template-columns: repeat(5, minmax(0, var(--spread-card-width)));
+    grid-template-areas: "c0 c1 c2 c3 c4";
+    gap: clamp(16px, 1.8vw, 30px);
+  }
+
+  .spread-zone[data-spread-id="choice"] {
+    --spread-card-width: clamp(160px, 13vw, 220px);
+    grid-template-columns: repeat(3, minmax(0, var(--spread-card-width)));
+    grid-template-areas:
+      "c0 c4 c2"
+      "c1 c5 c3";
+    gap: clamp(22px, 2.4vw, 40px) clamp(28px, 3vw, 58px);
+  }
+
+  .spread-zone[data-spread-id="celticCross"] {
+    --spread-card-width: clamp(112px, 8.5vw, 152px);
+    grid-template-columns: repeat(5, minmax(0, var(--spread-card-width)));
+    gap: clamp(12px, 1.4vw, 22px);
+  }
+}
+
+@media (min-width: 1121px) and (max-width: 1360px) {
+  .control-band {
+    max-width: none;
+  }
+}
+
+/* Desktop control and spread refinement */
+@media (min-width: 1121px) {
+  .control-band {
+    grid-template-columns: minmax(0, 1fr) minmax(380px, 0.42fr);
+    grid-template-areas: "choices right";
+    gap: 18px 26px;
+    align-items: start;
+    padding: 18px 24px;
+  }
+
+  .choice-fields {
+    grid-area: choices;
+    display: grid;
+    gap: 16px;
+    align-self: start;
+  }
+
+  .right-controls {
+    grid-area: right;
+    display: grid;
+    gap: 14px;
+    align-self: stretch;
+  }
+
+  .question-field textarea {
+    min-height: 82px;
+  }
+
+  .action-row {
+    align-self: end;
+    margin-top: 0;
+  }
+
+  .play-area {
+    min-height: clamp(450px, 44vw, 660px);
+  }
+
+  .spread-zone[data-spread-size="5"] {
+    --spread-card-width: clamp(164px, 13vw, 220px);
+    grid-template-columns: repeat(6, minmax(0, var(--spread-card-width)));
+    grid-template-areas:
+      "c0 c0 c1 c1 c2 c2"
+      ".  c3 c3 c4 c4 .";
+    gap: clamp(24px, 2.4vw, 42px) clamp(18px, 2vw, 34px);
+  }
+
+  .spread-zone[data-spread-id="choice"] {
+    --spread-card-width: clamp(176px, 14vw, 238px);
+    gap: clamp(24px, 2.6vw, 44px) clamp(34px, 3.2vw, 64px);
+  }
+
+  .spread-zone[data-spread-id="celticCross"] {
+    --spread-card-width: clamp(205px, 15.7vw, 268px);
+    grid-template-columns:
+      repeat(3, minmax(0, var(--spread-card-width)))
+      minmax(48px, 1fr)
+      minmax(0, var(--spread-card-width));
+    grid-template-areas:
+      ".  c4 .  . c6"
+      "c3 c0 c1 . c7"
+      ".  c2 .  . c8"
+      ".  c5 .  . c9";
+    gap: clamp(12px, 1.2vw, 18px);
+  }
+}
+
+/* Desktop card size normalization */
+@media (min-width: 1121px) {
+  .spread-zone[data-spread-size="3"] {
+    --spread-card-width: clamp(205px, 16vw, 260px);
+    grid-template-columns: repeat(3, minmax(0, var(--spread-card-width)));
+  }
+
+  .spread-zone[data-spread-size="5"] {
+    --spread-card-width: clamp(205px, 15vw, 245px);
+  }
+
+  .spread-zone[data-spread-id="choice"] {
+    --spread-card-width: clamp(205px, 15.5vw, 252px);
+  }
+}
+
+/* Card pool sizing */
+@media (min-width: 721px) {
+  .pool-grid {
+    grid-template-columns: repeat(auto-fill, minmax(205px, 205px));
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .pool-card {
+    width: 205px;
+  }
+}
+
