@@ -5,7 +5,13 @@ const dataPaths = {
   minorInterpretations: "./assets/data/minor-interpretations.json",
 };
 
-const aiReadingEndpoint = location.protocol === "file:" ? "http://127.0.0.1:5173/api/reading" : "./api/reading";
+const localHttpsApiOrigin = "https://localhost:5173";
+const aiReadingEndpoint = location.protocol === "file:" ? `${localHttpsApiOrigin}/api/reading` : "./api/reading";
+const aiSpeechEndpoint = location.protocol === "file:" ? `${localHttpsApiOrigin}/api/speech` : "./api/speech";
+const voiceFlowStatusEndpoint = location.protocol === "file:" ? `${localHttpsApiOrigin}/api/voice-flow-status` : "./api/voice-flow-status";
+const voiceFlowGreetingAudioUrl = "./assets/videos/voice-divination-greeting.mp3";
+const guidedVoiceQuestion = "我現在腦袋很亂，不知道下一步該怎麼走，可以給我一些方向嗎？";
+const maxSpeechChunkCharacters = 1200;
 
 const situations = {
   love: "感情",
@@ -158,12 +164,26 @@ const state = {
   suggestionsOpen: false,
   readingLocked: false,
   aiRequestId: 0,
+  speechRequestId: 0,
+  speechAudio: null,
+  speechObjectUrl: null,
+  speechAudioResolve: null,
+  speechIsActive: false,
+  speechWaitVideoRequestId: 0,
+  voiceFlowEnabled: false,
+  voiceFlowActive: false,
+  voiceFlowAudio: null,
+  voiceRecognition: null,
+  voiceFallbackTimer: null,
+  voiceFallbackStarted: false,
+  autoRevealActive: false,
   aiWaitVideoRequestId: 0,
   aiWaitVideoPromise: null,
   aiWaitVideoResolve: null,
   lastReadingInput: null,
   poolRendered: false,
   poolCloseTimer: null,
+  poolSelectedCardId: null,
 };
 
 const elements = {
@@ -177,6 +197,7 @@ const elements = {
   spreadButtons: document.querySelector("#spreadButtons"),
   drawButton: document.querySelector("#drawButton"),
   resetButton: document.querySelector("#resetButton"),
+  cancelVoiceFallbackButton: document.querySelector("#cancelVoiceFallbackButton"),
   deckStack: document.querySelector("#deckStack"),
   spreadZone: document.querySelector("#spreadZone"),
   readingPanel: document.querySelector("#readingPanel"),
@@ -184,10 +205,16 @@ const elements = {
   summaryBox: document.querySelector("#summaryBox"),
   aiReading: document.querySelector("#aiReading"),
   aiReadingContent: document.querySelector("#aiReadingContent"),
+  aiCopyButton: document.querySelector("#aiCopyButton"),
+  aiSpeechButton: document.querySelector("#aiSpeechButton"),
+  voiceDivinationButton: document.querySelector("#voiceDivinationButton"),
+  voiceFlowStatus: document.querySelector("#voiceFlowStatus"),
   introVideo: document.querySelector("#introVideo"),
   introVideoPlayer: document.querySelector("#introVideoPlayer"),
   aiWaitVideo: document.querySelector("#aiWaitVideo"),
   aiWaitVideoPlayer: document.querySelector("#aiWaitVideoPlayer"),
+  speechWaitVideo: document.querySelector("#speechWaitVideo"),
+  speechWaitVideoPlayer: document.querySelector("#speechWaitVideoPlayer"),
   cardReadings: document.querySelector("#cardReadings"),
   cardTemplate: document.querySelector("#cardTemplate"),
   poolModal: document.querySelector("#poolModal"),
@@ -195,6 +222,7 @@ const elements = {
   poolCloseButton: document.querySelector("#poolCloseButton"),
   poolSummary: document.querySelector("#poolSummary"),
   poolGrid: document.querySelector("#poolGrid"),
+  poolCardDetail: document.querySelector("#poolCardDetail"),
 };
 
 init();
@@ -213,6 +241,7 @@ async function init() {
     `;
     elements.deckStatus.disabled = false;
     elements.drawButton.disabled = false;
+    void loadVoiceFlowAvailability();
   } catch (error) {
     elements.deckStatus.innerHTML = `
       <span class="deck-pool-main">牌庫載入失敗</span>
@@ -248,6 +277,7 @@ function choiceButtonTemplate(group, value, label, isActive) {
 function bindEvents() {
   elements.drawButton.addEventListener("click", drawReading);
   elements.resetButton.addEventListener("click", resetTable);
+  elements.cancelVoiceFallbackButton?.addEventListener("click", cancelGuidedVoiceFlow);
   elements.questionInput.addEventListener("input", handleQuestionInput);
   elements.suggestionToggle.addEventListener("click", toggleQuestionSuggestions);
   elements.suggestionList.addEventListener("click", handleSuggestionClick);
@@ -256,6 +286,12 @@ function bindEvents() {
   elements.deckStatus.addEventListener("click", openCardPool);
   elements.poolBackdrop.addEventListener("click", closeCardPool);
   elements.poolCloseButton.addEventListener("click", closeCardPool);
+  elements.poolGrid.addEventListener("click", handlePoolCardClick);
+  elements.poolGrid.addEventListener("keydown", handlePoolCardKeydown);
+  elements.poolCardDetail.addEventListener("click", handlePoolCardDetailClick);
+  elements.aiCopyButton?.addEventListener("click", copyAiReadingContent);
+  elements.aiSpeechButton?.addEventListener("click", toggleAiSpeech);
+  elements.voiceDivinationButton?.addEventListener("click", startVoiceDivination);
   elements.introVideoPlayer?.addEventListener("ended", stopIntroVideo);
   elements.introVideoPlayer?.addEventListener("error", stopIntroVideo);
   elements.aiWaitVideoPlayer?.addEventListener("ended", () => {
@@ -264,9 +300,14 @@ function bindEvents() {
     }
   });
   elements.aiWaitVideoPlayer?.addEventListener("error", () => stopAiWaitVideo());
+  elements.speechWaitVideoPlayer?.addEventListener("error", () => stopSpeechWaitVideo());
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && !elements.poolModal.hidden) {
-      closeCardPool();
+      if (state.poolSelectedCardId !== null) {
+        closePoolCardDetail();
+      } else {
+        closeCardPool();
+      }
     }
     if (event.key === "Escape" && state.suggestionsOpen) {
       closeQuestionSuggestions();
@@ -456,6 +497,204 @@ function inferSituationFromQuestion(question) {
   return scores[0]?.score > 0 ? scores[0].situation : "advice";
 }
 
+function inferSpreadFromQuestion(question, situation) {
+  const normalized = question.replace(/\s+/g, "");
+  if (/(選擇|比較|哪個|A[或、]?B|兩個|要不要)/i.test(normalized)) return "choice";
+  if (/(感情|愛情|對方|關係|復合|曖昧|伴侶)/.test(normalized) || situation === "love") return "relationship";
+  if (/(工作|職涯|轉職|升遷|事業|面試)/.test(normalized) || situation === "work") return "career";
+  if (/(阻礙|困難|卡關|挑戰|如何面對)/.test(normalized)) return "challenge";
+  if (/(今天|今日|本日|提醒|建議)/.test(normalized)) return "daily";
+  return "timeline";
+}
+
+async function loadVoiceFlowAvailability() {
+  try {
+    const response = await fetch(voiceFlowStatusEndpoint);
+    const result = await response.json();
+    state.voiceFlowEnabled = Boolean(response.ok && result.ok && result.enabled);
+  } catch (error) {
+    state.voiceFlowEnabled = false;
+  }
+
+  if (elements.voiceDivinationButton) {
+    elements.voiceDivinationButton.hidden = !state.voiceFlowEnabled;
+  }
+}
+
+function setVoiceFlowStatus(message) {
+  if (!elements.voiceFlowStatus) return;
+  elements.voiceFlowStatus.textContent = message;
+  elements.voiceFlowStatus.hidden = !message;
+}
+
+async function startVoiceDivination() {
+  if (!state.voiceFlowEnabled || state.voiceFlowActive || state.readingLocked) return;
+
+  if (!window.isSecureContext) {
+    setVoiceFlowStatus("手機語音輸入需要 HTTPS 安全連線；目前的 http 家用 Wi‑Fi 網址無法使用麥克風。");
+    return;
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    setVoiceFlowStatus("此瀏覽器尚未支援語音辨識，請改用文字輸入問題。");
+    return;
+  }
+
+  state.voiceFlowActive = true;
+  state.voiceFallbackStarted = false;
+  setVoiceFallbackCancelVisible(false);
+  elements.voiceDivinationButton.disabled = true;
+  setVoiceFlowStatus("命運正在回應你…");
+
+  try {
+    await playVoiceFlowGreeting();
+    startQuestionRecognition(SpeechRecognition);
+  } catch (error) {
+    cancelVoiceFlow();
+    setVoiceFlowStatus(String(error?.message || "開場語音暫時無法播放，請稍後再試。"));
+  }
+}
+
+function playVoiceFlowGreeting() {
+  return new Promise((resolve, reject) => {
+    const audio = new Audio(voiceFlowGreetingAudioUrl);
+    state.voiceFlowAudio = audio;
+    audio.addEventListener("ended", () => {
+      if (state.voiceFlowAudio === audio) state.voiceFlowAudio = null;
+      resolve();
+    }, { once: true });
+    audio.addEventListener("error", () => {
+      if (state.voiceFlowAudio === audio) state.voiceFlowAudio = null;
+      reject(new Error("開場語音播放失敗，請再試一次。"));
+    }, { once: true });
+    audio.play().catch(() => reject(new Error("瀏覽器未允許語音播放，請再點一次開始語音占卜。")));
+  });
+}
+
+function startQuestionRecognition(SpeechRecognition) {
+  const recognition = new SpeechRecognition();
+  state.voiceRecognition = recognition;
+  recognition.lang = "zh-TW";
+  recognition.interimResults = false;
+  recognition.continuous = false;
+  recognition.maxAlternatives = 1;
+  setVoiceFlowStatus("請說出你的問題，我正在聆聽…");
+
+  recognition.addEventListener("result", (event) => {
+    const question = Array.from(event.results)
+      .map((result) => result[0]?.transcript || "")
+      .join("")
+      .trim();
+    if (!question) {
+      cancelVoiceFlow();
+      setVoiceFlowStatus("沒有聽清楚問題，請再試一次。");
+      return;
+    }
+
+    applyVoiceQuestion(question);
+    state.voiceRecognition = null;
+    setVoiceFlowStatus("已收到問題，正在展開牌陣…");
+    window.setTimeout(startAutomatedDraw, 420);
+  }, { once: true });
+
+  recognition.addEventListener("error", (event) => {
+    if (event.error === "no-speech") {
+      state.voiceRecognition = null;
+      startGuidedVoiceQuestion();
+      return;
+    }
+
+    cancelVoiceFlow();
+    const message = event.error === "not-allowed"
+      ? "瀏覽器沒有取得麥克風使用權。請確認使用 HTTPS 網址，並在網站設定中允許麥克風。"
+      : "沒有聽清楚問題，請再試一次。";
+    setVoiceFlowStatus(message);
+  }, { once: true });
+  recognition.addEventListener("end", () => {
+    if (state.voiceRecognition !== recognition) return;
+    state.voiceRecognition = null;
+    startGuidedVoiceQuestion();
+  }, { once: true });
+  recognition.start();
+}
+
+function applyVoiceQuestion(question) {
+  state.currentQuestion = question;
+  elements.questionInput.value = question;
+  state.inferredSituation = inferSituationFromQuestion(question);
+  state.situationManuallySelected = false;
+  state.currentSituation = state.inferredSituation || "advice";
+  state.currentSpread = inferSpreadFromQuestion(question, state.currentSituation);
+  updateChoiceState(elements.situationButtons, state.currentSituation);
+  updateChoiceState(elements.spreadButtons, state.currentSpread);
+  renderQuestionSuggestions();
+  updateQuestionContext();
+}
+
+function startGuidedVoiceQuestion() {
+  if (!state.voiceFlowActive || state.voiceFallbackStarted) return;
+
+  state.voiceFallbackStarted = true;
+  setVoiceFallbackCancelVisible(true);
+  setVoiceFlowStatus("目前沒有收到語音內容，麥克風已暫停。5 秒內可取消並重新開始。\n正在為你整理問題…");
+  state.voiceFallbackTimer = window.setTimeout(() => {
+    state.voiceFallbackTimer = null;
+    if (!state.voiceFlowActive) return;
+
+    setVoiceFallbackCancelVisible(false);
+    applyVoiceQuestion(guidedVoiceQuestion);
+    setVoiceFlowStatus(`我先替你問：「${guidedVoiceQuestion}」正在展開牌陣…`);
+    window.setTimeout(startAutomatedDraw, 700);
+  }, 5000);
+}
+
+function setVoiceFallbackCancelVisible(isVisible) {
+  if (!elements.cancelVoiceFallbackButton) return;
+  elements.cancelVoiceFallbackButton.hidden = !isVisible;
+  elements.resetButton.hidden = isVisible;
+}
+
+function cancelGuidedVoiceFlow() {
+  if (!state.voiceFallbackStarted) return;
+
+  cancelVoiceFlow();
+  state.currentQuestion = "";
+  state.inferredSituation = null;
+  state.situationManuallySelected = false;
+  state.currentSituation = "love";
+  state.currentSpread = "daily";
+  elements.questionInput.value = "";
+  updateChoiceState(elements.situationButtons, state.currentSituation);
+  updateChoiceState(elements.spreadButtons, state.currentSpread);
+  renderQuestionSuggestions();
+  updateQuestionContext();
+  setVoiceFlowStatus("已取消自動提問，你可以重新開始。");
+}
+
+function startAutomatedDraw() {
+  if (!state.voiceFlowActive || state.deck.length === 0) return;
+  state.autoRevealActive = true;
+  drawReading();
+  state.currentDraw.forEach((_, index) => {
+    window.setTimeout(() => revealCard(index), 720 * (index + 1));
+  });
+}
+
+function cancelVoiceFlow() {
+  state.voiceFlowActive = false;
+  state.autoRevealActive = false;
+  state.voiceFallbackStarted = false;
+  window.clearTimeout(state.voiceFallbackTimer);
+  state.voiceFallbackTimer = null;
+  setVoiceFallbackCancelVisible(false);
+  state.voiceRecognition?.abort();
+  state.voiceRecognition = null;
+  state.voiceFlowAudio?.pause();
+  state.voiceFlowAudio = null;
+  if (elements.voiceDivinationButton) elements.voiceDivinationButton.disabled = false;
+}
+
 function updateQuestionContext() {
   if (!elements.questionContext) return;
 
@@ -576,6 +815,8 @@ async function renderAiReading(readingInput) {
   const requestId = (state.aiRequestId += 1);
   elements.aiReading.hidden = false;
   elements.aiReading.dataset.state = "loading";
+  setAiCopyAvailability(false);
+  setAiSpeechAvailability(false);
   startAiWaitVideo(requestId);
   elements.aiReadingContent.textContent = "正在依照本地牌義生成 AI 解讀...";
 
@@ -600,6 +841,12 @@ async function renderAiReading(readingInput) {
 
     elements.aiReading.dataset.state = "success";
     elements.aiReadingContent.innerHTML = formatAiReading(result.text);
+    setAiCopyAvailability(true);
+    setAiSpeechAvailability(true);
+    if (state.voiceFlowActive) {
+      setVoiceFlowStatus("解析完成，正在準備為你朗讀…");
+      void toggleAiSpeech();
+    }
   } catch (error) {
     if (requestId !== state.aiRequestId) return;
 
@@ -607,10 +854,16 @@ async function renderAiReading(readingInput) {
     if (requestId !== state.aiRequestId) return;
 
     elements.aiReading.dataset.state = "fallback";
+    setAiCopyAvailability(false);
+    setAiSpeechAvailability(false);
     if (isLikelyMissingAiApi(error)) {
       renderManualAiPromptFallback(readingInput);
     } else {
       elements.aiReadingContent.textContent = `${String(error?.message || "AI 解讀暫時無法產生。")} 目前已保留本地資料庫解讀。`;
+    }
+    if (state.voiceFlowActive) {
+      cancelVoiceFlow();
+      setVoiceFlowStatus("AI 解析暫時無法完成，已切換為手動閱讀模式。");
     }
   }
 }
@@ -707,6 +960,258 @@ function stopIntroVideo() {
       shell.hidden = true;
     }
   }, 220);
+}
+
+function setAiCopyAvailability(isAvailable) {
+  const button = elements.aiCopyButton;
+  if (!button) return;
+
+  button.hidden = !isAvailable;
+  button.disabled = !isAvailable;
+  if (!isAvailable) {
+    button.textContent = "複製內容";
+  }
+}
+
+function setAiSpeechAvailability(isAvailable) {
+  const button = elements.aiSpeechButton;
+  if (!button) return;
+
+  button.hidden = !isAvailable;
+  button.disabled = !isAvailable;
+  if (!isAvailable) {
+    button.textContent = "朗讀內容";
+  }
+}
+
+async function toggleAiSpeech() {
+  const button = elements.aiSpeechButton;
+  if (!button) return;
+
+  if (state.speechIsActive) {
+    stopAiSpeech();
+    return;
+  }
+
+  const text = elements.aiReadingContent?.innerText?.trim();
+  if (!text) return;
+
+  const requestId = (state.speechRequestId += 1);
+  const chunks = splitSpeechText(text);
+  state.speechIsActive = true;
+  button.disabled = false;
+  button.textContent = "停止朗讀";
+  startSpeechWaitVideo(requestId);
+
+  try {
+    let nextAudioPromise = requestSpeechAudio(chunks[0], requestId);
+
+    for (let index = 0; index < chunks.length; index += 1) {
+      if (requestId !== state.speechRequestId) return;
+      const audioBlob = await nextAudioPromise;
+      if (requestId !== state.speechRequestId) return;
+
+      const playbackPromise = playSpeechAudio(audioBlob, requestId);
+      if (index + 1 < chunks.length) {
+        nextAudioPromise = requestSpeechAudio(chunks[index + 1], requestId);
+      }
+      await playbackPromise;
+    }
+  } catch (error) {
+    if (requestId === state.speechRequestId) {
+      window.alert(String(error?.message || "語音朗讀暫時無法使用。"));
+    }
+  } finally {
+    if (requestId === state.speechRequestId) {
+      stopAiSpeech(false);
+      if (state.voiceFlowActive) {
+        state.voiceFlowActive = false;
+        state.autoRevealActive = false;
+        if (elements.voiceDivinationButton) elements.voiceDivinationButton.disabled = false;
+        setVoiceFlowStatus("本次解讀已朗讀完畢。");
+      }
+    }
+  }
+}
+
+async function requestSpeechAudio(text, requestId) {
+  const response = await fetch(aiSpeechEndpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text }),
+  });
+
+  if (requestId !== state.speechRequestId) return null;
+
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    throw new Error(result.error || "語音朗讀暫時無法使用。");
+  }
+
+  return response.blob();
+}
+
+function splitSpeechText(text) {
+  const sentences = text.replace(/\s+/g, " ").match(/[^。！？!?]+[。！？!?]?/gu) || [text];
+  const chunks = [];
+  let current = "";
+
+  for (let sentence of sentences) {
+    if (current && current.length + sentence.length > maxSpeechChunkCharacters) {
+      chunks.push(current.trim());
+      current = "";
+    }
+
+    while (sentence.length > maxSpeechChunkCharacters) {
+      chunks.push(sentence.slice(0, maxSpeechChunkCharacters));
+      sentence = sentence.slice(maxSpeechChunkCharacters);
+    }
+    current += sentence;
+  }
+  if (current.trim()) chunks.push(current.trim());
+
+  return chunks;
+}
+
+function playSpeechAudio(blob, requestId) {
+  return new Promise((resolve, reject) => {
+    if (requestId !== state.speechRequestId) {
+      resolve();
+      return;
+    }
+
+    const audio = new Audio(URL.createObjectURL(blob));
+    stopSpeechWaitVideo(requestId);
+    state.speechAudio = audio;
+    state.speechObjectUrl = audio.src;
+    state.speechAudioResolve = resolve;
+
+    audio.addEventListener("ended", () => {
+      revokeSpeechObjectUrl();
+      state.speechAudio = null;
+      state.speechAudioResolve = null;
+      resolve();
+    }, { once: true });
+    audio.addEventListener("error", () => {
+      revokeSpeechObjectUrl();
+      state.speechAudio = null;
+      state.speechAudioResolve = null;
+      reject(new Error("語音播放失敗，請再試一次。"));
+    }, { once: true });
+    audio.play().catch(() => {
+      revokeSpeechObjectUrl();
+      state.speechAudio = null;
+      state.speechAudioResolve = null;
+      reject(new Error("瀏覽器未允許語音播放，請再按一次朗讀。"));
+    });
+  });
+}
+
+function stopAiSpeech(invalidateRequest = true) {
+  if (invalidateRequest) state.speechRequestId += 1;
+  state.speechIsActive = false;
+  stopSpeechWaitVideo();
+  state.speechAudio?.pause();
+  state.speechAudio = null;
+  revokeSpeechObjectUrl();
+  const resolvePlayback = state.speechAudioResolve;
+  state.speechAudioResolve = null;
+  resolvePlayback?.();
+  if (elements.aiSpeechButton) {
+    elements.aiSpeechButton.disabled = false;
+    elements.aiSpeechButton.textContent = "朗讀內容";
+  }
+}
+
+function startSpeechWaitVideo(requestId) {
+  const shell = elements.speechWaitVideo;
+  const player = elements.speechWaitVideoPlayer;
+  if (!shell || !player) return;
+
+  state.speechWaitVideoRequestId = requestId;
+  player.pause();
+  player.loop = true;
+  player.currentTime = 0;
+  shell.hidden = false;
+  window.requestAnimationFrame(() => {
+    shell.classList.add("is-visible");
+  });
+
+  const playAttempt = player.play();
+  if (playAttempt?.catch) {
+    playAttempt.catch(() => {
+      if (state.speechWaitVideoRequestId === requestId) {
+        stopSpeechWaitVideo(requestId);
+      }
+    });
+  }
+}
+
+function stopSpeechWaitVideo(requestId = state.speechWaitVideoRequestId) {
+  const shell = elements.speechWaitVideo;
+  const player = elements.speechWaitVideoPlayer;
+  if (!shell || !player) return;
+  if (requestId !== state.speechWaitVideoRequestId) return;
+
+  state.speechWaitVideoRequestId = 0;
+  player.loop = false;
+  shell.classList.remove("is-visible");
+  player.pause();
+  player.currentTime = 0;
+  window.setTimeout(() => {
+    if (!shell.classList.contains("is-visible")) {
+      shell.hidden = true;
+    }
+  }, 220);
+}
+
+function revokeSpeechObjectUrl() {
+  if (state.speechObjectUrl) {
+    URL.revokeObjectURL(state.speechObjectUrl);
+    state.speechObjectUrl = null;
+  }
+}
+
+async function copyAiReadingContent() {
+  const button = elements.aiCopyButton;
+  const text = elements.aiReadingContent?.innerText?.trim();
+  if (!button || !text) return;
+
+  await copyTextWithButtonFeedback(text, button, "複製內容");
+}
+
+async function copyTextWithButtonFeedback(text, button, defaultLabel) {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      copyTextWithTemporaryTextarea(text);
+    }
+
+    button.textContent = "已複製";
+    window.setTimeout(() => {
+      button.textContent = defaultLabel;
+    }, 1600);
+  } catch (error) {
+    copyTextWithTemporaryTextarea(text);
+    button.textContent = "已複製";
+    window.setTimeout(() => {
+      button.textContent = defaultLabel;
+    }, 1600);
+  }
+}
+
+function copyTextWithTemporaryTextarea(text) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  textarea.style.top = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  textarea.remove();
 }
 
 function isLikelyMissingAiApi(error) {
@@ -875,6 +1380,7 @@ function openCardPool() {
 }
 
 function closeCardPool() {
+  closePoolCardDetail();
   elements.poolModal.classList.remove("is-open");
   document.body.classList.remove("is-modal-open");
   state.poolCloseTimer = window.setTimeout(() => {
@@ -897,7 +1403,7 @@ function renderCardPool() {
 
 function poolCardTemplate(card) {
   return `
-    <article class="pool-card" data-card-id="${card.id}">
+    <article class="pool-card" data-card-id="${card.id}" tabindex="0" role="button" aria-label="查看 ${escapeHtml(card.nameZh)} 的牌意">
       <img src="./assets/images/cards/${card.imageFile}" alt="${escapeHtml(card.nameZh)}" loading="lazy" />
       <div class="pool-card-meta">
         <strong>${escapeHtml(card.nameZh)}</strong>
@@ -906,6 +1412,81 @@ function poolCardTemplate(card) {
       </div>
     </article>
   `;
+}
+
+function handlePoolCardClick(event) {
+  const poolCard = event.target.closest(".pool-card");
+  if (!poolCard) return;
+  openPoolCardDetail(poolCard.dataset.cardId);
+}
+
+function handlePoolCardKeydown(event) {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  const poolCard = event.target.closest(".pool-card");
+  if (!poolCard) return;
+  event.preventDefault();
+  openPoolCardDetail(poolCard.dataset.cardId);
+}
+
+function openPoolCardDetail(cardId) {
+  const card = state.deck.find((item) => String(item.id) === String(cardId));
+  if (!card) return;
+
+  if (String(state.poolSelectedCardId) === String(card.id)) {
+    closePoolCardDetail();
+    return;
+  }
+
+  state.poolSelectedCardId = card.id;
+  elements.poolGrid.querySelectorAll(".pool-card").forEach((poolCard) => {
+    const isSelected = poolCard.dataset.cardId === String(card.id);
+    poolCard.classList.toggle("is-selected", isSelected);
+    poolCard.setAttribute("aria-pressed", String(isSelected));
+  });
+
+  const uprightKeywords = card.keywords?.upright ?? [];
+  const reversedKeywords = card.keywords?.reversed ?? [];
+  const situationMeaning = card.interpretation?.situations?.[state.currentSituation];
+  elements.poolCardDetail.innerHTML = `
+    <button class="pool-card-detail-card" type="button" aria-label="收起 ${escapeHtml(card.nameZh)} 的牌意">
+      <img src="./assets/images/cards/${card.imageFile}" alt="${escapeHtml(card.nameZh)}" />
+    </button>
+    <div class="pool-card-detail-copy">
+      <p class="kicker">${escapeHtml(typeLabel(card.type))}</p>
+      <h3>${escapeHtml(card.nameZh)}</h3>
+      <p class="pool-card-detail-en">${escapeHtml(card.nameEn)}</p>
+      <p>${escapeHtml(card.coreMeaning || "暫無牌意資料。")}</p>
+      ${poolKeywordTemplate("正位關鍵字", uprightKeywords)}
+      ${poolKeywordTemplate("逆位關鍵字", reversedKeywords)}
+      ${situationMeaning ? `<div class="pool-card-situation"><strong>目前情境解讀：${escapeHtml(situations[state.currentSituation] || "目前情境")}</strong><p>${escapeHtml(situationMeaning)}</p></div>` : ""}
+      <button class="pool-card-detail-close" type="button">點擊牌卡收起</button>
+    </div>
+  `;
+  elements.poolCardDetail.hidden = false;
+  window.requestAnimationFrame(() => elements.poolCardDetail.classList.add("is-open"));
+}
+
+function poolKeywordTemplate(label, keywords) {
+  if (!keywords.length) return "";
+  return `<div class="pool-card-keywords"><strong>${label}</strong><div>${keywords.map((keyword) => `<span>${escapeHtml(keyword)}</span>`).join("")}</div></div>`;
+}
+
+function handlePoolCardDetailClick(event) {
+  if (event.target.closest(".pool-card-detail-card, .pool-card-detail-close")) {
+    closePoolCardDetail();
+  }
+}
+
+function closePoolCardDetail() {
+  if (state.poolSelectedCardId === null) return;
+  state.poolSelectedCardId = null;
+  elements.poolCardDetail.classList.remove("is-open");
+  elements.poolCardDetail.hidden = true;
+  elements.poolCardDetail.innerHTML = "";
+  elements.poolGrid.querySelectorAll(".pool-card.is-selected").forEach((poolCard) => {
+    poolCard.classList.remove("is-selected");
+    poolCard.setAttribute("aria-pressed", "false");
+  });
 }
 
 function buildSummary(situationLabel) {
@@ -918,6 +1499,8 @@ function buildSummary(situationLabel) {
 
 function resetTable() {
   state.aiRequestId += 1;
+  cancelVoiceFlow();
+  stopAiSpeech();
   stopAiWaitVideo();
   state.currentDraw = [];
   state.readingLocked = false;

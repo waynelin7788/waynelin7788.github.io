@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Aura of Fate</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles/01-foundation.css" />
+    <link rel="stylesheet" href="./styles/02-immersive-theme.css" />
+    <link rel="stylesheet" href="./styles/03-desktop-layout.css" />
+    <link rel="stylesheet" href="./styles/04-icons-mobile.css" />
   </head>
   <body>
     <section class="intro-video" id="introVideo" aria-hidden="true" hidden>
@@ -23,6 +26,17 @@
         class="overlay-video-player ai-wait-video-player"
         id="aiWaitVideoPlayer"
         src="./assets/videos/scroll-2.mp4"
+        preload="auto"
+        muted
+        playsinline
+      ></video>
+    </section>
+
+    <section class="speech-wait-video" id="speechWaitVideo" aria-hidden="true" hidden>
+      <video
+        class="overlay-video-player speech-wait-video-player"
+        id="speechWaitVideoPlayer"
+        src="./assets/videos/speech-wait.mp4"
         preload="auto"
         muted
         playsinline
@@ -85,8 +99,11 @@
 
               <div class="action-row">
                 <button class="primary-action" id="drawButton" type="button">再抽一次</button>
+                <button class="voice-divination-button" id="voiceDivinationButton" type="button" hidden>開始語音占卜</button>
+                <button class="ghost-action" id="cancelVoiceFallbackButton" type="button" hidden>取消並重新開始</button>
                 <button class="ghost-action" id="resetButton" type="button">重新開始</button>
               </div>
+              <p class="voice-flow-status" id="voiceFlowStatus" aria-live="polite" hidden></p>
             </div>
           </section>
 
@@ -110,7 +127,13 @@
           </div>
           <div class="summary-box" id="summaryBox"></div>
           <section class="ai-reading" id="aiReading" hidden>
-            <p class="kicker">AI 深度解讀</p>
+            <div class="ai-reading-toolbar">
+              <p class="kicker">AI 深度解讀</p>
+              <div class="ai-reading-actions">
+                <button class="ai-speech-button" id="aiSpeechButton" type="button" hidden>朗讀內容</button>
+                <button class="ai-copy-button" id="aiCopyButton" type="button" hidden>複製內容</button>
+              </div>
+            </div>
             <div class="ai-reading-content" id="aiReadingContent"></div>
           </section>
           <div class="card-readings" id="cardReadings"></div>
@@ -150,6 +173,7 @@
         </header>
         <div class="pool-summary" id="poolSummary"></div>
         <div class="pool-grid" id="poolGrid"></div>
+        <section class="pool-card-detail" id="poolCardDetail" aria-live="polite" hidden></section>
       </div>
     </section>
 
