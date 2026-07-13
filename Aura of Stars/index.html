@@ -1,1 +1,2872 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura of Stars</title>
+  <style>:root {
+  color-scheme: dark;
+  --ink: #f5f2ff;
+  --muted: #b9b3cb;
+  --subtle: #817a98;
+  --line: rgba(229, 221, 255, .16);
+  --panel: rgba(22, 18, 42, .78);
+  --field: rgba(255, 255, 255, .055);
+  --accent: #ccaeff;
+  --accent-strong: #a66cff;
+  --danger: #ff9eaa;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  color: var(--ink);
+  background: #070510;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.shell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 48px 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 13% 14%, rgba(134, 74, 255, .26), transparent 27rem),
+    radial-gradient(circle at 93% 76%, rgba(45, 119, 255, .18), transparent 28rem),
+    linear-gradient(135deg, #100826 0%, #070510 60%);
+}
+.stars, .stars::before, .stars::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background-image: radial-gradient(circle, rgba(255,255,255,.76) 1px, transparent 1.5px);
+  background-size: 92px 92px;
+  background-position: 7px 13px;
+  opacity: .45;
+}
+.stars::before { transform: rotate(28deg) scale(1.34); opacity: .22; }
+.stars::after { background-size: 151px 151px; background-position: 33px 54px; opacity: .2; }
+.card {
+  position: relative;
+  width: min(100%, 760px);
+  padding: clamp(28px, 6vw, 56px);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: linear-gradient(140deg, rgba(36,30,67,.88), var(--panel));
+  box-shadow: 0 28px 90px rgba(0,0,0,.45);
+  backdrop-filter: blur(18px);
+}
+.header-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.account-button { border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; background: transparent; color: var(--ink); font: inherit; font-size: .8rem; cursor: pointer; }
+.account-button:hover { border-color: var(--accent); color: var(--accent); }
+.auth-dialog { width: min(100% - 32px, 500px); color: var(--ink); background: #17112c; border: 1px solid var(--line); border-radius: 20px; padding: 30px; box-shadow: 0 24px 80px rgba(0, 0, 0, .55); }
+.auth-dialog::backdrop { background: rgba(4, 2, 12, .72); backdrop-filter: blur(4px); }
+.auth-dialog form { display: grid; gap: 14px; }
+.auth-dialog label { display: grid; gap: 7px; color: var(--muted); font-size: .9rem; }
+.auth-dialog input { width: 100%; }
+.dialog-close { position: absolute; top: 13px; right: 17px; color: var(--muted); background: none; border: 0; font-size: 1.6rem; cursor: pointer; }
+.saved-panel { padding-top: 8px; }
+.profile-list { display: grid; gap: 12px; margin: 26px 0; }
+.profile-item { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 14px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--field); }
+.profile-item h3 { margin: 0 0 5px; font-size: 1rem; }
+.profile-item p { margin: 0; color: var(--muted); font-size: .88rem; }
+.profile-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.profile-delete { border-color: rgba(255, 158, 170, .5); color: var(--danger); }
+.header { display:flex; justify-content:space-between; align-items:center; gap:16px; }
+.brand { color:var(--ink); font-size:12px; font-weight:750; letter-spacing:.16em; text-decoration:none; }
+.brand-mark { color:var(--accent); font-size:19px; margin-right:8px; }
+.step-label, .eyebrow { color:var(--accent); font-size:12px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; }
+.intro { margin: 54px 0 32px; }
+.eyebrow { margin:0 0 14px; }
+h1, h2 { max-width: 620px; margin:0; font-family: Georgia, "Times New Roman", serif; font-size:clamp(32px, 5vw, 50px); font-weight:500; letter-spacing:-.045em; line-height:1.1; }
+h2 { font-size:clamp(29px, 4vw, 42px); }
+h3 { margin:28px 0 -10px; color:var(--muted); font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.lede { max-width: 610px; margin:17px 0 0; color:var(--muted); font-size:16px; line-height:1.75; }
+.form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; }
+.field { display:grid; gap:8px; }
+.field.full { grid-column:1/-1; }
+label, .field-title { font-size:14px; font-weight:650; }
+.hint { color:var(--subtle); font-size:12px; line-height:1.45; }
+input, select, textarea {
+  width:100%;
+  padding:13px 14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  outline: none;
+  color:var(--ink);
+  background:var(--field);
+  font:inherit;
+  transition:border-color .18s, background .18s;
+}
+textarea { min-height:88px; resize:vertical; }
+input:focus, select:focus, textarea:focus { border-color:var(--accent); background:rgba(205,174,255,.1); }
+select option { color: #1a122b; background: #f8f5ff; }
+input[type="checkbox"] { width:18px; height:18px; accent-color:var(--accent-strong); }
+.toggle-row { display:flex; align-items:flex-start; gap:11px; margin-top:4px; color:var(--muted); font-size:14px; line-height:1.55; }
+.error { min-height:18px; color:var(--danger); font-size:12px; }
+.form-status { min-height:20px; margin:0 0 16px; color:var(--danger); font-size:14px; font-weight:650; }
+.privacy-note { display:flex; gap:11px; margin:28px 0; padding:15px; border:1px solid rgba(204,174,255,.2); border-radius:14px; color:var(--muted); background:rgba(204,174,255,.055); font-size:13px; line-height:1.55; }
+.privacy-note strong { color:var(--ink); }
+.actions { display:flex; justify-content:flex-end; gap:12px; }
+.button { min-height:46px; padding:0 21px; border:1px solid transparent; border-radius:999px; cursor:pointer; font:inherit; font-weight:700; transition: transform .18s, background .18s; }
+.button:hover { transform:translateY(-1px); }
+.button-primary { color:#180a30; background:linear-gradient(110deg, #e2d0ff, #b473ff); }
+.button-secondary { color:var(--ink); border-color:var(--line); background:transparent; }
+.review { margin-top:8px; }
+.review-orbit { display:grid; place-items:center; width:47px; height:47px; margin-bottom:21px; border:1px solid rgba(204,174,255,.38); border-radius:50%; color:var(--accent); font-size:21px; }
+dl { display:grid; grid-template-columns:155px 1fr; gap:0; margin:31px 0 16px; border-top:1px solid var(--line); }
+.draft-meta { margin-top:27px; border-color:rgba(204,174,255,.38); }
+.draft-meta dd { color:var(--accent); }
+dt, dd { margin:0; padding:14px 0; border-bottom:1px solid var(--line); font-size:14px; line-height:1.45; }
+dt { color:var(--subtle); } dd { color:var(--ink); text-align:right; overflow-wrap:anywhere; }
+.review-warning { margin:20px 0 0; color:var(--muted); font-size:13px; line-height:1.6; }
+.chart-result { margin-top: 34px; }
+.chart-result h3 { margin: 0 0 13px; }
+.chart-summary { margin: 0 0 14px; color: var(--accent); font-size: 14px; line-height: 1.65; }
+.palace-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.palace { position: relative; display: grid; min-height: 79px; align-content: center; gap: 5px; padding: 12px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,255,255,.025); cursor:pointer; transition:background .18s, box-shadow .18s, transform .18s; }
+.palace:hover, .palace:focus-visible, .palace.is-selected { z-index:1; outline:0; background:rgba(204,174,255,.15); box-shadow:inset 0 0 0 1px rgba(204,174,255,.72); }
+.palace:focus-visible { box-shadow:inset 0 0 0 2px #f0e8ff; }
+.palace.is-related-self { background:rgba(204,174,255,.24); box-shadow:inset 0 0 0 2px #e4d4ff; }
+.palace.is-related-opposite { background:rgba(120,191,255,.16); box-shadow:inset 0 0 0 1px rgba(120,191,255,.78); }
+.palace.is-related-trine { background:rgba(137,221,195,.13); box-shadow:inset 0 0 0 1px rgba(137,221,195,.65); }
+.palace.is-related-adjacent { background:rgba(255,212,139,.10); box-shadow:inset 0 0 0 1px rgba(255,212,139,.45); }
+.palace.is-decade-active { box-shadow:inset 0 0 0 2px rgba(255,212,139,.9), 0 0 20px rgba(255,212,139,.13); }
+.palace.is-fly-source { box-shadow:inset 0 0 0 2px #ffd48b; }
+.palace.is-fly-target { box-shadow:inset 0 0 0 2px #8dc7ff; }
+.palace:nth-child(4n) { border-right: 0; }
+.palace:nth-last-child(-n+4) { border-bottom: 0; }
+.palace span { color: var(--subtle); font-size: 13px; font-weight:600; }
+.palace strong { font-size: 15px; font-weight:800; }
+.palace small { display:flex; flex-wrap:wrap; gap:4px 7px; color:var(--accent); font-size:13px; line-height:1.45; }
+.palace small i { font-style:normal; }
+.palace small .star-major { color:#fff7ff; font-weight:800; font-size:1.08em; }
+.palace small .star-supporting, .palace small .star-auxiliary { color:#e6c9ff; font-weight:650; }
+.palace small .star-malefic { color:#ffbfc9; font-weight:650; }
+.palace small .star-miscellaneous { color:#9ee4d0; }
+.palace small .star-spirit { color:#b6b2c7; font-size:.88em; }
+.palace small.borrowed-stars { color:#89ddc3; font-size:11px; line-height:1.35; }
+.palace small b { margin-left:2px; color:#ffd48b; font-size:10px; font-weight:700; }
+.palace u { color:#89ddc3; font-size:11px; text-decoration:none; }
+.palace em { position:absolute; right:9px; top:9px; color:var(--accent); font-size:11px; font-style:normal; }
+.palace em.body-palace-label { left:9px; right:auto; color:var(--accent); font-weight:700; }
+.palace.is-body { padding-top:31px; }
+.palace em.decade-trigger { z-index:4; padding:3px 5px; border-radius:7px; cursor:pointer; }
+.palace em.decade-trigger:hover, .palace em.decade-trigger:focus-visible { outline:0; color:#251139; background:#f0d8a5; }
+.palace.is-life { background: rgba(180, 115, 255, .18); }
+.palace.is-body { box-shadow: inset 0 0 0 1px rgba(204,174,255,.5); }
+.chart-view { margin-top: 18px; }
+.chart-view-header { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; }
+.chart-header-actions { display:flex; align-items:center; gap:10px; }
+.report-open { min-height:38px; padding:0 14px; font-size:13px; }
+.chart-view-header .review-orbit { flex:0 0 auto; margin:0; }
+.chart-view-grid { position:relative; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-template-areas:"zi chou yin mao" "hai center center chen" "xu center center si" "you shen wei wu"; gap:1px; margin-top:30px; border:1px solid var(--line); border-radius:18px; overflow:hidden; background:var(--line); }
+.chart-view-grid .palace { min-height:154px; padding:17px; border:0; }
+.chart-view-grid .palace strong { font-size:17px; }
+.chart-view-grid .palace small { font-size:14px; }
+.chart-view-grid .palace em { right:13px; top:13px; font-size:12px; font-weight:700; }
+.chart-view-grid .palace em.body-palace-label { left:13px; right:auto; }
+.chart-view-grid .palace.is-body { padding-top:40px; }
+.chart-view-grid .palace--zi { grid-area:zi; }
+.chart-view-grid .palace--chou { grid-area:chou; }
+.chart-view-grid .palace--yin { grid-area:yin; }
+.chart-view-grid .palace--mao { grid-area:mao; }
+.chart-view-grid .palace--chen { grid-area:chen; }
+.chart-view-grid .palace--si { grid-area:si; }
+.chart-view-grid .palace--wu { grid-area:wu; }
+.chart-view-grid .palace--wei { grid-area:wei; }
+.chart-view-grid .palace--shen { grid-area:shen; }
+.chart-view-grid .palace--you { grid-area:you; }
+.chart-view-grid .palace--xu { grid-area:xu; }
+.chart-view-grid .palace--hai { grid-area:hai; }
+.chart-center { grid-area:center; display:grid; place-content:center; gap:9px; padding:22px; text-align:center; background:linear-gradient(145deg,rgba(81,42,123,.38),rgba(25,19,53,.96)); }
+.chart-center strong { font-size:21px; font-weight:850; }
+.chart-center span { color:var(--accent); font-size:17px; font-weight:800; }
+.chart-center small { max-width:260px; color:var(--subtle); font-size:14px; line-height:1.75; }
+.palace-relation-lines { position:absolute; z-index:2; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
+.relation-axis { stroke:rgba(204,174,255,.20); stroke-width:1; stroke-dasharray:4 5; }
+.relation-link { fill:none; stroke-width:2; }
+.relation-link--opposite { stroke:rgba(120,191,255,.9); }
+.relation-link--trine { stroke:rgba(137,221,195,.76); stroke-dasharray:5 4; }
+.chart-view-grid .palace, .chart-center { z-index:3; }
+.pattern-panel { margin-top:26px; padding:22px; border:1px solid rgba(137,221,195,.32); border-radius:18px; background:rgba(137,221,195,.025); }
+.pattern-panel-header { display:flex; justify-content:space-between; align-items:flex-start; gap:24px; margin-bottom:17px; }
+.pattern-panel-header .eyebrow { margin:0 0 7px; }
+.pattern-panel-header h3 { margin:0; font-size:18px; }
+.pattern-panel-header p:last-child { max-width:390px; margin:0; color:var(--muted); font-size:13px; line-height:1.65; }
+.pattern-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; }
+.pattern-card { padding:15px; border:1px solid var(--line); border-radius:13px; background:rgba(12,8,29,.28); }
+.pattern-card.is-formed { border-color:rgba(137,221,195,.56); background:rgba(137,221,195,.075); }
+.pattern-card header { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.pattern-card h4 { margin:0; color:var(--ink); font-size:15px; }
+.pattern-status { padding:4px 7px; border:1px solid var(--line); border-radius:999px; color:var(--subtle); font-size:11px; font-weight:800; }
+.pattern-card.is-formed .pattern-status { border-color:rgba(137,221,195,.7); color:#172c25; background:#89ddc3; }
+.pattern-card dl { display:grid; grid-template-columns:1fr; gap:8px; margin:12px 0 0; border:0; }
+.pattern-card dl div { display:grid; gap:3px; }
+.pattern-card dt, .pattern-card dd { padding:0; border:0; text-align:left; }
+.pattern-card dt { color:var(--accent); font-size:11px; font-weight:800; }
+.pattern-card dd { color:var(--muted); font-size:12px; line-height:1.55; }
+.chart-patterns { display:flex; flex-wrap:wrap; justify-content:center; gap:5px; margin-top:5px; }
+.chart-patterns span { padding:4px 7px; border:1px solid rgba(137,221,195,.45); border-radius:999px; color:#89ddc3; background:rgba(137,221,195,.08); font-size:11px; font-weight:800; }
+.chart-patterns small { color:var(--subtle); font-size:11px; }
+.plain-analysis-panel { margin-top:26px; padding:22px; border:1px solid rgba(204,174,255,.34); border-radius:18px; background:linear-gradient(145deg, rgba(204,174,255,.08), rgba(255,255,255,.02)); }
+.plain-analysis-header { display:grid; gap:10px; margin-bottom:18px; }
+.plain-analysis-header .eyebrow { margin:0 0 7px; }
+.plain-analysis-header h3 { margin:0; font-size:20px; }
+.plain-analysis-header p:last-child { max-width:none; margin:0; color:var(--muted); font-size:13px; line-height:1.65; }
+.plain-analysis-topics { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 16px; }
+.plain-analysis-topics button { padding:8px 12px; border:1px solid var(--line); border-radius:999px; color:var(--muted); background:rgba(255,255,255,.025); font:inherit; font-size:13px; cursor:pointer; transition:border-color .18s, background .18s, color .18s; }
+.plain-analysis-topics button:hover, .plain-analysis-topics button:focus-visible { outline:0; border-color:var(--accent); color:var(--ink); }
+.plain-analysis-topics button.is-active { border-color:#f3d59a; color:#241536; background:#f3d59a; font-weight:800; }
+.plain-analysis-grid { display:grid; grid-template-columns:minmax(0, 1fr); gap:14px; }
+.plain-analysis-card { padding:20px 22px; border:1px solid var(--line); border-radius:14px; background:rgba(12,8,29,.34); }
+.plain-analysis-card h4 { margin:0 0 13px; color:#f3d59a; font-size:16px; }
+.plain-analysis-card dl { display:grid; grid-template-columns:1fr; gap:14px; margin:0; border:0; }
+.plain-analysis-card dl div { display:grid; grid-template-columns:1fr; gap:5px; }
+.plain-analysis-card dt, .plain-analysis-card dd { padding:0; border:0; text-align:left; }
+.plain-analysis-card dt { color:var(--accent); font-size:12px; font-weight:800; }
+.plain-analysis-card dd { margin:0; color:var(--muted); font-size:14px; line-height:1.75; }
+.plain-analysis-card .analysis-action { margin-top:2px; padding-top:10px; border-top:1px solid var(--line); }
+.plain-analysis-card .analysis-action dt, .plain-analysis-card .analysis-action dd { color:#eee5ff; }
+.annual-panel { margin-top:26px; padding:18px; border:1px solid var(--line); border-radius:16px; background:rgba(255,255,255,.02); }
+.annual-panel-header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.annual-panel h3 { margin:0 auto 0 0; }
+.annual-panel label { display:flex; align-items:center; gap:7px; color:var(--subtle); font-size:13px; }
+.annual-panel input { width:82px; padding:7px 8px; border:1px solid var(--line); border-radius:8px; color:var(--ink); background:rgba(17,12,40,.8); font:inherit; }
+.annual-year-apply { min-height:34px; padding:0 13px; font-size:13px; }
+.annual-summary { margin:14px 0; color:var(--accent); font-size:13px; line-height:1.6; }
+.decade-panel { margin-top:18px; padding:18px; border:1px solid rgba(255,212,139,.28); border-radius:16px; background:rgba(255,212,139,.025); }
+.decade-panel h3 { margin:0 auto 0 0; }
+.decade-panel .annual-panel-header { align-items:center; }
+.decade-palace-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; margin-top:14px; }
+.decade-palace { padding:8px; border:1px solid var(--line); border-radius:9px; color:var(--muted); background:rgba(255,255,255,.025); font-size:11px; line-height:1.45; }
+.decade-palace.is-decade-life { color:#28143b; border-color:#f3d59a; background:#f3d59a; font-weight:800; }
+.decade-subheading { margin:17px 0 10px !important; color:#ffd48b !important; }
+.decade-theme { margin:14px 0 0; color:var(--muted); font-size:13px; line-height:1.7; }
+.temporal-panel { margin-top:18px; padding:18px; border:1px solid rgba(137,221,195,.28); border-radius:16px; background:rgba(137,221,195,.025); }
+.temporal-panel h3 { margin:0 auto 0 0; }
+.temporal-panel .annual-panel-header { align-items:center; }
+.temporal-time { display:flex; align-items:center; gap:7px; color:var(--subtle); font-size:13px; }
+.temporal-time summary { cursor:pointer; }
+.temporal-time input { width:94px; margin-top:6px; padding:7px 8px; }
+.temporal-tabs { display:flex; gap:7px; margin:16px 0 4px; }
+.temporal-tabs button { padding:7px 11px; border:1px solid var(--line); border-radius:999px; color:var(--muted); background:transparent; font:inherit; font-size:12px; cursor:pointer; }
+.temporal-tabs button.is-active { color:#132921; border-color:#89ddc3; background:#89ddc3; font-weight:800; }
+.temporal-layer { margin-top:16px; padding-top:15px; border-top:1px solid var(--line); }
+.temporal-layer h3 { margin:0 0 9px; color:#89ddc3; }
+.temporal-layer p { margin:0 0 12px; color:var(--muted); font-size:13px; line-height:1.7; }
+.flying-transformations-panel { margin-top:18px; padding:18px; border:1px solid rgba(204,174,255,.3); border-radius:16px; background:rgba(204,174,255,.025); }
+.flying-transformations-panel h3 { margin:0; }
+.transformation-tabs { display:flex; flex-wrap:wrap; gap:7px; margin:16px 0 4px; }
+.transformation-tabs button { padding:7px 10px; border:1px solid var(--line); border-radius:999px; color:var(--muted); background:transparent; font:inherit; font-size:12px; cursor:pointer; }
+.transformation-tabs button.is-active { color:#1d1038; border-color:var(--accent); background:var(--accent); font-weight:800; }
+.fly-route-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; margin-top:14px; }
+.fly-route { min-height:42px; padding:8px; border:1px solid var(--line); border-radius:9px; color:var(--muted); background:rgba(255,255,255,.025); font:inherit; font-size:12px; line-height:1.45; text-align:left; cursor:pointer; }
+.fly-route:hover { border-color:var(--accent); color:var(--ink); background:rgba(204,174,255,.1); }
+.fly-route.is-active { color:var(--ink); border-color:var(--accent); background:rgba(204,174,255,.16); box-shadow:inset 0 0 0 1px rgba(204,174,255,.42); }
+.fly-route.is-self { border-color:rgba(255,212,139,.55); color:#ffd48b; }
+.flying-route-lines { position:absolute; z-index:2; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
+.transformations-panel { margin-top:26px; }
+.transformations-panel h3 { margin:0 0 13px; }
+.transformations-list { display:flex; flex-wrap:wrap; gap:8px; }
+.transformations-list span { padding:8px 10px; border:1px solid rgba(204,174,255,.3); border-radius:999px; color:var(--accent); background:rgba(204,174,255,.06); font-size:12px; }
+.palace-insight-panel { position:fixed; z-index:20; top:20px; right:20px; bottom:20px; width:min(430px, calc(100vw - 40px)); padding:25px; overflow:auto; border:1px solid rgba(204,174,255,.35); border-radius:22px; background:linear-gradient(160deg,rgba(38,29,72,.98),rgba(15,11,34,.98)); box-shadow:0 26px 90px rgba(0,0,0,.55); transform:translateX(calc(100% + 44px)); transition:transform .28s ease; }
+.palace-insight-panel.is-open { transform:translateX(0); }
+.insight-handle { display:none; }
+.insight-header { display:flex; gap:16px; justify-content:space-between; align-items:flex-start; padding-bottom:18px; border-bottom:1px solid var(--line); }
+.insight-header .eyebrow { margin-bottom:8px; }
+.insight-header h2 { font-size:28px; }
+.insight-subtitle { margin:8px 0 0; color:var(--muted); font-size:13px; line-height:1.55; }
+.insight-close { display:grid; flex:0 0 auto; place-items:center; width:34px; height:34px; border:1px solid var(--line); border-radius:50%; color:var(--muted); background:transparent; font:inherit; font-size:25px; cursor:pointer; }
+.insight-close:hover { color:var(--ink); border-color:var(--accent); }
+.insight-content { display:grid; gap:20px; padding-top:20px; }
+.insight-section { padding-bottom:19px; border-bottom:1px solid var(--line); }
+.insight-section:last-child { border-bottom:0; }
+.insight-section h3 { margin:0 0 10px; color:var(--accent); font-size:12px; }
+.insight-section p { margin:0; color:var(--muted); font-size:14px; line-height:1.75; }
+.insight-tags { display:flex; flex-wrap:wrap; gap:7px; }
+.insight-tag { padding:6px 9px; border:1px solid var(--line); border-radius:999px; color:#eee5ff; background:rgba(255,255,255,.04); font-size:12px; }
+.insight-tag b { margin-left:4px; color:#ffd48b; }
+.star-explanations { display:grid; gap:11px; }
+.star-explanation { padding:12px; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.025); }
+.star-explanation header { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:5px; }
+.star-explanation strong { color:var(--ink); font-size:14px; }
+.star-explanation span { color:var(--accent); font-size:12px; }
+.star-explanation p { font-size:13px; line-height:1.6; }
+.combination-reading { border:1px solid rgba(243,213,154,.34); border-radius:13px; background:rgba(255,212,139,.045); }
+.combination-reading summary { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px; color:#f3d59a; font-size:14px; font-weight:800; cursor:pointer; }
+.combination-reading summary span { color:var(--muted); font-size:12px; font-weight:500; }
+.combination-reading[open] summary { border-bottom:1px solid rgba(243,213,154,.22); }
+.combination-card-list { display:grid; gap:9px; padding:12px; }
+.combination-card { padding:12px; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.025); }
+.combination-card strong { color:#eee5ff; font-size:13px; }
+.combination-card p { margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.65; }
+.empty-palace-reading { padding:14px; border:1px solid rgba(137,221,195,.38); border-radius:13px; background:rgba(137,221,195,.045); }
+.empty-palace-reading h3 { margin:0 0 8px; color:#89ddc3; font-size:13px; }
+.empty-palace-summary { margin:0; color:#eee5ff; font-size:13px; font-weight:750; line-height:1.6; }
+.empty-palace-reading dl { display:grid; grid-template-columns:1fr; gap:9px; margin:13px 0 0; border:0; }
+.empty-palace-reading dl div { display:grid; gap:3px; }
+.empty-palace-reading dt, .empty-palace-reading dd { padding:0; border:0; text-align:left; }
+.empty-palace-reading dt { color:var(--accent); font-size:11px; font-weight:800; }
+.empty-palace-reading dd { color:var(--muted); font-size:12px; line-height:1.6; }
+.insight-columns { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.insight-columns div { padding:12px; border-radius:12px; background:rgba(255,255,255,.035); }
+.insight-columns strong { display:block; margin-bottom:5px; color:var(--accent); font-size:12px; }
+.insight-columns p { font-size:13px; }
+.notice { padding:12px; border-left:2px solid #ffd48b; border-radius:0 10px 10px 0; color:var(--muted); background:rgba(255,212,139,.06); font-size:13px; line-height:1.65; }
+.insight-backdrop { display:none; }
+.review-status { min-height:20px; margin:18px 0 0; color:var(--accent); font-size:14px; font-weight:650; }
+.footnote { margin:35px 0 0; color:var(--subtle); font-size:12px; text-align:center; }
+.hidden { display:none !important; }
+.guest-mode .header-actions, .guest-mode #saved-panel, .guest-mode #draft-save, .guest-mode #report-save, .guest-mode #report-image, .guest-mode #auth-dialog { display:none !important; }
+.report-view { margin-top:18px; }
+.report-header { display:flex; justify-content:space-between; align-items:flex-start; gap:22px; padding-bottom:20px; border-bottom:1px solid var(--line); }
+.report-header .eyebrow { margin-bottom:8px; }
+.report-header h2 { font-size:clamp(28px, 4vw, 42px); }
+.report-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; max-width:430px; }
+.report-actions .button { min-height:37px; padding:0 13px; font-size:12px; }
+.report-status { min-height:19px; margin:14px 0; color:var(--accent); font-size:13px; }
+.report-document { display:grid; gap:16px; }
+.report-section { padding:19px; border:1px solid var(--line); border-radius:15px; background:rgba(255,255,255,.025); }
+.report-section h3 { margin:0 0 12px; color:#f3d59a; font-size:16px; letter-spacing:0; text-transform:none; }
+.report-section p { margin:0; color:var(--muted); font-size:14px; line-height:1.75; }
+.report-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.report-item { padding:12px; border:1px solid var(--line); border-radius:10px; background:rgba(12,8,29,.22); }
+.report-item h4 { margin:0 0 5px; color:var(--ink); font-size:14px; }
+.report-item p { font-size:12px; line-height:1.6; }
+@media print {
+  body { color:#1a1630; background:#fff; }
+  .shell { display:block; min-height:0; padding:0; background:#fff; }
+  .stars, .card > :not(#report-view-panel) { display:none !important; }
+  .card { width:100%; max-width:none; padding:0; border:0; border-radius:0; box-shadow:none; background:#fff; }
+  .report-view { display:block !important; margin:0; }
+  .report-actions, .report-status { display:none !important; }
+  .report-header { padding:0 0 15px; }
+  .report-section, .report-item { break-inside:avoid; background:#fff; border-color:#d5cfdf; }
+  .report-section h3, .report-item h4 { color:#2a1748; }
+  .report-section p, .report-item p { color:#372f44; }
+}
+@media (max-width:560px) {
+  .shell { padding:20px 12px; }
+  .card { border-radius:22px; padding:28px 22px; }
+  .intro { margin:39px 0 28px; }
+  .form-grid { grid-template-columns:1fr; }
+  .field.full { grid-column:auto; }
+  dl { grid-template-columns:1fr; }
+  dt { padding-bottom:3px; border-bottom:0; }
+  dd { padding-top:3px; text-align:left; }
+  .actions { flex-direction:column-reverse; }
+  .button { width:100%; }
+  .palace-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .chart-view-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .chart-view-grid { grid-template-areas:none; }
+  .chart-view-grid .chart-center { display:none; }
+  .palace-relation-lines { display:none; }
+  .chart-view-grid .palace { grid-area:auto !important; min-height:112px; padding:13px; }
+  .chart-view-grid .palace strong { font-size:15px; }
+  .chart-view-grid .palace small { font-size:12px; }
+  .annual-panel-header { align-items:flex-start; }
+  .chart-header-actions { align-items:flex-end; flex-direction:column-reverse; }
+  .report-header { display:block; }
+  .report-actions { justify-content:flex-start; max-width:none; margin-top:15px; }
+  .report-list { grid-template-columns:1fr; }
+  .pattern-panel-header { display:block; }
+  .pattern-panel-header p:last-child { margin-top:10px; }
+  .pattern-grid { grid-template-columns:1fr; }
+  .plain-analysis-card { padding:17px; }
+  .annual-panel h3 { width:100%; }
+  .decade-panel h3 { width:100%; }
+  .temporal-panel h3 { width:100%; }
+  .fly-route-list { grid-template-columns:1fr; }
+  .decade-palace-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .palace:nth-child(4n) { border-right: 1px solid var(--line); }
+  .palace:nth-last-child(-n+4) { border-bottom: 1px solid var(--line); }
+  .palace:nth-child(3n) { border-right: 0; }
+  .palace:nth-last-child(-n+3) { border-bottom: 0; }
+  .palace-insight-panel { top:auto; right:0; bottom:0; left:0; width:100%; max-height:min(78vh, 680px); padding:12px 21px 28px; border-radius:22px 22px 0 0; transform:translateY(calc(100% + 24px)); }
+  .palace-insight-panel.is-open { transform:translateY(0); }
+  .insight-handle { display:block; width:42px; height:4px; margin:0 auto 14px; border-radius:99px; background:rgba(255,255,255,.32); }
+  .insight-header h2 { font-size:25px; }
+  .insight-backdrop.is-open { position:fixed; z-index:19; inset:0; display:block; background:rgba(4,2,12,.56); }
+}
+</style>
+</head>
+<body>
+  <main class="shell">
+    <div class="stars" aria-hidden="true"></div>
+    <section class="card" aria-labelledby="page-title">
+      <header class="header">
+        <a class="brand" href="#" aria-label="Aura of Stars home">
+          <span class="brand-mark">&#10022;</span>
+          <span>AURA OF STARS</span>
+        </a>
+        <div class="header-actions">
+          <button class="account-button hidden" type="button" id="my-charts-button">我的命盤</button>
+          <button class="account-button" type="button" id="account-button">登入／建立帳號</button>
+        </div>
+        <span class="step-label" id="step-label"></span>
+      </header>
 
+      <div class="intro">
+        <p class="eyebrow" id="eyebrow"></p>
+        <h1 id="page-title"></h1>
+        <p class="lede" id="lede"></p>
+      </div>
+
+      <form id="profile-form" novalidate>
+        <div id="form-fields"></div>
+        <div class="privacy-note" id="privacy-note"></div>
+        <p class="form-status" id="form-status" role="alert" aria-live="assertive"></p>
+        <div class="actions">
+          <button class="button button-primary" type="button" id="next-button" onclick="proceedToReview()"></button>
+        </div>
+      </form>
+
+      <section class="saved-panel hidden" id="saved-panel" aria-live="polite">
+        <p class="eyebrow">我的命盤</p>
+        <h2>已安全保存的命盤</h2>
+        <p class="lede">這些資料僅在您登入後顯示，並由您的帳戶權限保護。</p>
+        <div class="profile-list" id="profile-list"></div>
+        <div class="actions review-actions">
+          <button class="button button-primary" type="button" id="saved-new">建立新的命盤</button>
+        </div>
+      </section>
+
+      <section class="review hidden" id="review-panel" aria-live="polite">
+        <div class="review-orbit" aria-hidden="true">&#10022;</div>
+        <p class="eyebrow" id="review-eyebrow"></p>
+        <h2 id="review-title"></h2>
+        <p class="lede" id="review-lede"></p>
+        <dl id="review-list"></dl>
+        <p class="review-warning" id="review-warning"></p>
+        <p class="review-status" id="review-status" role="status" aria-live="polite"></p>
+        <div class="actions review-actions">
+          <button class="button button-secondary" type="button" id="review-back"></button>
+          <button class="button button-primary" type="button" id="review-confirm"></button>
+        </div>
+      </section>
+
+      <section class="review hidden" id="draft-panel" aria-live="polite">
+        <div class="review-orbit" aria-hidden="true">&#10022;</div>
+        <p class="eyebrow" id="draft-eyebrow"></p>
+        <h2 id="draft-title"></h2>
+        <p class="lede" id="draft-lede"></p>
+        <dl class="draft-meta" id="draft-meta"></dl>
+        <h3 id="draft-input-title"></h3>
+        <dl id="draft-list"></dl>
+        <section class="chart-result hidden" id="chart-result" aria-live="polite">
+          <h3>命盤結構</h3>
+          <p class="chart-summary" id="chart-summary"></p>
+          <div class="palace-grid" id="palace-grid"></div>
+          <p class="review-warning" id="chart-warning"></p>
+        </section>
+        <p class="review-warning" id="draft-warning"></p>
+        <p class="review-status" id="draft-status" role="status" aria-live="polite"></p>
+        <div class="actions review-actions">
+          <button class="button button-secondary" type="button" id="draft-new"></button>
+          <button class="button button-secondary hidden" type="button" id="open-chart-button">開啟命盤</button>
+          <button class="button button-primary" type="button" id="draft-save">加密儲存命盤資料</button>
+        </div>
+      </section>
+
+      <section class="chart-view hidden" id="chart-view-panel" aria-live="polite">
+        <div class="chart-view-header">
+          <div>
+            <p class="eyebrow">已建立命盤</p>
+            <h2 id="chart-view-title">命盤</h2>
+            <p class="chart-summary" id="chart-view-summary"></p>
+          </div>
+          <div class="chart-header-actions">
+            <button class="button button-secondary report-open" type="button" id="open-report-button">完整解析報告</button>
+            <div class="review-orbit" aria-hidden="true">✦</div>
+          </div>
+        </div>
+        <div class="chart-view-grid" id="chart-view-grid"></div>
+        <section class="pattern-panel" aria-labelledby="pattern-title">
+          <div class="pattern-panel-header">
+            <div>
+              <p class="eyebrow">格局自動判定</p>
+              <h3 id="pattern-title">以多項盤面條件交叉檢核</h3>
+            </div>
+            <p>格局需同時符合星曜位置、宮位關係與輔助條件；未成立不代表命盤較弱。</p>
+          </div>
+          <div class="pattern-grid" id="pattern-grid"></div>
+        </section>
+        <section class="plain-analysis-panel" aria-labelledby="plain-analysis-title">
+          <div class="plain-analysis-header">
+            <div>
+              <p class="eyebrow">白話命盤解析</p>
+              <h3 id="plain-analysis-title">從盤面整理出的生活指南</h3>
+            </div>
+            <p>每個主題均依十二宮、星曜、四化與當前運勢整理；用來認識傾向與規劃行動，不作絕對預測。</p>
+          </div>
+          <div class="plain-analysis-topics" id="plain-analysis-topics" role="tablist" aria-label="命盤解析主題"></div>
+          <div class="plain-analysis-grid" id="plain-analysis-grid"></div>
+        </section>
+        <section class="annual-panel" aria-label="流年與小限">
+          <div class="annual-panel-header">
+            <h3>流年與小限</h3>
+            <label>目標年
+              <input id="annual-year-input" type="number" min="1900" max="2200" step="1">
+            </label>
+            <button class="button button-secondary annual-year-apply" type="button" id="annual-year-apply">更新</button>
+          </div>
+          <p class="annual-summary" id="annual-summary"></p>
+          <div class="transformations-list" id="annual-transformations-list"></div>
+        </section>
+        <section class="temporal-panel" aria-label="流月與流日">
+          <div class="annual-panel-header">
+            <h3>時間分析</h3>
+            <label>日期<input id="temporal-date-input" type="date"></label>
+            <details class="temporal-time"><summary>流時（進階）</summary><input id="temporal-time-input" type="time" value="12:00"></details>
+            <button class="button button-secondary annual-year-apply" type="button" id="temporal-apply">套用</button>
+          </div>
+          <div class="temporal-tabs" role="tablist" aria-label="時間層級">
+            <button type="button" class="is-active" data-temporal-layer="monthly">流月</button>
+            <button type="button" data-temporal-layer="daily">流日</button>
+            <button type="button" data-temporal-layer="hourly">流時</button>
+          </div>
+          <p class="annual-summary" id="temporal-summary"></p>
+          <section class="temporal-layer" data-layer="monthly"><h3>本月重點</h3><p id="monthly-theme"></p><div class="transformations-list" id="monthly-transformations"></div></section>
+          <section class="temporal-layer hidden" data-layer="daily"><h3>指定日期分析</h3><p id="daily-theme"></p><div class="transformations-list" id="daily-transformations"></div></section>
+          <section class="temporal-layer hidden" data-layer="hourly"><h3>流時提示</h3><p id="hourly-theme"></p><div class="transformations-list" id="hourly-transformations"></div></section>
+        </section>
+        <section class="decade-panel" aria-label="大限互動">
+          <div class="annual-panel-header">
+            <h3>大限互動</h3>
+            <label>虛歲
+              <input id="decade-age-input" type="number" min="1" max="130" step="1">
+            </label>
+            <button class="button button-secondary annual-year-apply" type="button" id="decade-age-apply">套用</button>
+          </div>
+          <p class="annual-summary" id="decade-summary"></p>
+          <div class="decade-palace-grid" id="decade-palace-grid"></div>
+          <h3 class="decade-subheading">大限四化</h3>
+          <div class="transformations-list" id="decade-transformations-list"></div>
+          <p class="decade-theme" id="decade-theme"></p>
+        </section>
+        <section class="transformations-panel">
+          <h3>生年四化</h3>
+          <div class="transformations-list" id="transformations-list"></div>
+        </section>
+        <section class="flying-transformations-panel" aria-label="四化飛星">
+          <div class="annual-panel-header"><h3>四化飛星</h3></div>
+          <div class="transformation-tabs" role="tablist" aria-label="四化圖層">
+            <button type="button" class="is-active" data-fly-layer="birth">生年四化</button>
+            <button type="button" data-fly-layer="life">命宮宮干</button>
+            <button type="button" data-fly-layer="palace">十二宮宮干</button>
+            <button type="button" data-fly-layer="decade">大限四化</button>
+            <button type="button" data-fly-layer="year">流年四化</button>
+          </div>
+          <p class="annual-summary" id="fly-summary"></p>
+          <div class="fly-route-list" id="fly-route-list"></div>
+        </section>
+        <p class="review-warning" id="chart-view-warning"></p>
+      </section>
+
+      <section class="report-view hidden" id="report-view-panel" aria-live="polite">
+        <div class="report-header">
+          <div>
+            <p class="eyebrow">命盤解析報告</p>
+            <h2 id="report-title">完整命盤解析</h2>
+            <p class="chart-summary" id="report-summary"></p>
+          </div>
+          <div class="report-actions">
+            <button class="button button-secondary" type="button" id="report-back">返回命盤</button>
+            <button class="button button-secondary" type="button" id="report-save">儲存解析結果</button>
+            <button class="button button-secondary" type="button" id="report-image">匯出十二宮圖</button>
+            <button class="button button-secondary" type="button" id="report-pdf">匯出 PDF</button>
+            <button class="button button-secondary" type="button" id="report-ai-prompt">產生並複製 AI Prompt</button>
+            <button class="button button-primary" type="button" id="report-copy">複製文字</button>
+          </div>
+        </div>
+        <p class="report-status" id="report-status"></p>
+        <article class="report-document" id="report-document"></article>
+      </section>
+
+      <aside class="palace-insight-panel" id="palace-insight-panel" aria-label="宮位詳細解析" aria-live="polite" aria-hidden="true" hidden>
+        <div class="insight-handle" aria-hidden="true"></div>
+        <div class="insight-header">
+          <div>
+            <p class="eyebrow">宮位解析</p>
+            <h2 id="insight-title">選擇一個宮位</h2>
+            <p class="insight-subtitle" id="insight-subtitle">點擊命盤上的十二宮，查看星曜與互動解讀。</p>
+          </div>
+          <button class="insight-close" type="button" id="insight-close" aria-label="關閉宮位解析">×</button>
+        </div>
+        <div class="insight-content" id="insight-content"></div>
+      </aside>
+      <div class="insight-backdrop" id="insight-backdrop" aria-hidden="true"></div>
+
+      <p class="footnote" id="footnote"></p>
+    </section>
+  </main>
+  <dialog class="auth-dialog" id="auth-dialog" aria-labelledby="auth-title">
+    <form id="auth-form" novalidate>
+      <button class="dialog-close" type="button" id="auth-close" aria-label="關閉">×</button>
+      <p class="eyebrow">安全帳戶</p>
+      <h2 id="auth-title">登入以儲存命盤</h2>
+      <p class="lede">帳戶密碼會以 scrypt 雜湊處理；命盤資料則以 AES-256-GCM 加密後保存。</p>
+      <label>電子郵件<input type="email" id="auth-email" autocomplete="email" required></label>
+      <label>密碼<input type="password" id="auth-password" autocomplete="current-password" minlength="12" required></label>
+      <label id="password-confirm-field" class="hidden">確認密碼<input type="password" id="auth-password-confirm" autocomplete="new-password" minlength="12"></label>
+      <label id="display-name-field" class="hidden">顯示名稱（選填）<input type="text" id="auth-display-name" maxlength="80" autocomplete="name"></label>
+      <p class="form-status" id="auth-status" role="alert"></p>
+      <div class="actions"><button class="button button-secondary" type="button" id="auth-mode">建立帳號</button><button class="button button-primary" type="submit" id="auth-submit">登入</button></div>
+    </form>
+  </dialog>
+  <script>window.AURA_GUEST_MODE = true;
+window.AURA_OFFLINE_MODE = true;
+function createHmac() { throw new Error("Fingerprinting is unavailable in the offline preview."); }
+const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+const SHICHEN = Object.freeze([
+  { code: "zi", name_zh_tw: "\u5b50\u6642", start_hour: 23 },
+  { code: "chou", name_zh_tw: "\u4e11\u6642", start_hour: 1 },
+  { code: "yin", name_zh_tw: "\u5bc5\u6642", start_hour: 3 },
+  { code: "mao", name_zh_tw: "\u536f\u6642", start_hour: 5 },
+  { code: "chen", name_zh_tw: "\u8fb0\u6642", start_hour: 7 },
+  { code: "si", name_zh_tw: "\u5df3\u6642", start_hour: 9 },
+  { code: "wu", name_zh_tw: "\u5348\u6642", start_hour: 11 },
+  { code: "wei", name_zh_tw: "\u672a\u6642", start_hour: 13 },
+  { code: "shen", name_zh_tw: "\u7533\u6642", start_hour: 15 },
+  { code: "you", name_zh_tw: "\u9149\u6642", start_hour: 17 },
+  { code: "xu", name_zh_tw: "\u620c\u6642", start_hour: 19 },
+  { code: "hai", name_zh_tw: "\u4ea5\u6642", start_hour: 21 }
+]);
+
+function parseDate(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) throw new RangeError("Birth date must use YYYY-MM-DD.");
+  const [year, month, day] = match.slice(1).map(Number);
+  const test = new Date(Date.UTC(year, month - 1, day));
+  if (test.getUTCFullYear() !== year || test.getUTCMonth() !== month - 1 || test.getUTCDate() !== day) {
+    throw new RangeError("Birth date is not a real calendar date.");
+  }
+  return { year, month, day };
+}
+
+function parseTime(value) {
+  if (typeof value !== "string" || !TIME_PATTERN.test(value)) {
+    throw new RangeError("Birth time must use HH:mm.");
+  }
+  const [hour, minute] = value.split(":").map(Number);
+  return { hour, minute };
+}
+
+function getFormatter(timezone) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+    calendar: "iso8601",
+    numberingSystem: "latn",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+  });
+}
+
+function getLocalParts(epochMilliseconds, timezone) {
+  const parts = getFormatter(timezone).formatToParts(new Date(epochMilliseconds));
+  return Object.fromEntries(parts
+    .filter((part) => part.type !== "literal")
+    .map((part) => [part.type, Number(part.value)]));
+}
+
+function getOffsetMinutes(epochMilliseconds, timezone) {
+  const parts = getLocalParts(epochMilliseconds, timezone);
+  const asUtc = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second);
+  return Math.round((asUtc - epochMilliseconds) / 60000);
+}
+
+function offsetToIso(minutes) {
+  const sign = minutes >= 0 ? "+" : "-";
+  const absolute = Math.abs(minutes);
+  return sign + String(Math.floor(absolute / 60)).padStart(2, "0") + ":" + String(absolute % 60).padStart(2, "0");
+}
+
+function localDateTimeToIso(epochMilliseconds, timezone) {
+  const parts = getLocalParts(epochMilliseconds, timezone);
+  const offsetMinutes = getOffsetMinutes(epochMilliseconds, timezone);
+  return `${String(parts.year).padStart(4, "0")}-${String(parts.month).padStart(2, "0")}-${String(parts.day).padStart(2, "0")}T${String(parts.hour).padStart(2, "0")}:${String(parts.minute).padStart(2, "0")}:00${offsetToIso(offsetMinutes)}`;
+}
+
+function dayOfYear({ year, month, day }) {
+  return Math.floor((Date.UTC(year, month - 1, day) - Date.UTC(year, 0, 0)) / 86_400_000);
+}
+
+// NOAA's fractional-year approximation. It is accurate to well under a minute,
+// which is sufficient for minute-precision birth records and shichen boundaries.
+function equationOfTimeMinutes(date, time) {
+  const fractionalYear = (2 * Math.PI / 365) * (dayOfYear(date) - 1 + ((time.hour - 12) / 24));
+  return 229.18 * (0.000075
+    + 0.001868 * Math.cos(fractionalYear)
+    - 0.032077 * Math.sin(fractionalYear)
+    - 0.014615 * Math.cos(2 * fractionalYear)
+    - 0.040849 * Math.sin(2 * fractionalYear));
+}
+
+function resolveLocalDateTime(date, time, timezone) {
+  const localAsUtc = Date.UTC(date.year, date.month - 1, date.day, time.hour, time.minute, 0);
+  let epoch = localAsUtc;
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    epoch = localAsUtc - getOffsetMinutes(epoch, timezone) * 60_000;
+  }
+  const roundTrip = getLocalParts(epoch, timezone);
+  if (roundTrip.year !== date.year || roundTrip.month !== date.month || roundTrip.day !== date.day
+    || roundTrip.hour !== time.hour || roundTrip.minute !== time.minute) {
+    throw new RangeError("Birth time does not exist in the supplied timezone.");
+  }
+  return { epoch, offset_minutes: getOffsetMinutes(epoch, timezone) };
+}
+
+function getShichen(hour) {
+  if (!Number.isInteger(hour) || hour < 0 || hour > 23) throw new RangeError("Hour must be an integer from 0 to 23.");
+  if (hour === 23 || hour === 0) return SHICHEN[0];
+  return SHICHEN.find((entry) => hour >= entry.start_hour && hour < entry.start_hour + 2);
+}
+
+function normalizeBirthTime({
+  birthDate,
+  birthTime,
+  birthTimezone,
+  timePrecision,
+  useTrueSolarTime = false,
+  longitude = null
+}) {
+  if (timePrecision === "unknown") {
+    return {
+      status: "time_unknown",
+      original_time: null,
+      timezone: birthTimezone,
+      utc_offset_minutes: null,
+      standard_local_datetime: null,
+      true_solar_datetime: null,
+      effective_datetime: null,
+      shichen_code: null,
+      shichen_name_zh_tw: null,
+      time_precision: timePrecision,
+      can_calculate_single_chart: false,
+      warnings: ["A single chart cannot be calculated when birth time is unknown."]
+    };
+  }
+
+  const date = parseDate(birthDate);
+  const time = parseTime(birthTime);
+  const resolved = resolveLocalDateTime(date, time, birthTimezone);
+  const standardLocalDatetime = birthDate + "T" + birthTime + ":00" + offsetToIso(resolved.offset_minutes);
+  const warnings = timePrecision === "estimated"
+    ? ["Estimated birth time can affect the resulting chart."]
+    : [];
+
+  if (useTrueSolarTime) {
+    const standardMeridianLongitude = resolved.offset_minutes / 4;
+    const equationOfTime = equationOfTimeMinutes(date, time);
+    const longitudeCorrection = 4 * (longitude - standardMeridianLongitude);
+    const totalCorrection = equationOfTime + longitudeCorrection;
+    const correctionMinutes = Math.round(totalCorrection);
+    const trueSolarEpoch = resolved.epoch + correctionMinutes * 60_000;
+    const trueSolarParts = getLocalParts(trueSolarEpoch, birthTimezone);
+    const trueSolarDatetime = localDateTimeToIso(trueSolarEpoch, birthTimezone);
+    const shichen = getShichen(trueSolarParts.hour);
+    return {
+      status: "ready",
+      original_time: birthTime,
+      timezone: birthTimezone,
+      utc_offset_minutes: resolved.offset_minutes,
+      standard_local_datetime: standardLocalDatetime,
+      true_solar_datetime: trueSolarDatetime,
+      effective_datetime: trueSolarDatetime,
+      true_solar_correction_minutes: correctionMinutes,
+      true_solar_correction_seconds: Math.round(totalCorrection * 60),
+      equation_of_time_minutes: Number(equationOfTime.toFixed(3)),
+      longitude_correction_minutes: Number(longitudeCorrection.toFixed(3)),
+      standard_meridian_longitude: standardMeridianLongitude,
+      shichen_code: shichen.code,
+      shichen_name_zh_tw: shichen.name_zh_tw,
+      time_precision: timePrecision,
+      can_calculate_single_chart: true,
+      warnings
+    };
+  }
+
+  const shichen = getShichen(time.hour);
+
+  return {
+    status: "ready",
+    original_time: birthTime,
+    timezone: birthTimezone,
+    utc_offset_minutes: resolved.offset_minutes,
+    standard_local_datetime: standardLocalDatetime,
+    true_solar_datetime: null,
+    effective_datetime: standardLocalDatetime,
+    shichen_code: shichen.code,
+    shichen_name_zh_tw: shichen.name_zh_tw,
+    time_precision: timePrecision,
+    can_calculate_single_chart: true,
+    warnings
+  };
+}
+
+
+const RAW_INPUT_SCHEMA_VERSION = "ziwei-raw-input-1.0";
+const NORMALIZED_INPUT_SCHEMA_VERSION = "ziwei-normalized-input-1.0";
+const SUPPORTED_GENDER_PARAMETERS = Object.freeze(["male", "female"]);
+const SUPPORTED_CALENDAR_TYPES = Object.freeze(["solar", "lunar"]);
+const SUPPORTED_TIME_PRECISIONS = Object.freeze([
+  "exact",
+  "hour",
+  "shichen",
+  "estimated",
+  "unknown"
+]);
+
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const RAW_TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+function isRealDate(value) {
+  if (typeof value !== "string" || !DATE_PATTERN.test(value)) return false;
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year
+    && date.getUTCMonth() === month - 1
+    && date.getUTCDate() === day;
+}
+
+function isIanaTimezone(value) {
+  if (typeof value !== "string" || value.length === 0) return false;
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: value });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function isFiniteCoordinate(value, minimum, maximum) {
+  return typeof value === "number"
+    && Number.isFinite(value)
+    && value >= minimum
+    && value <= maximum;
+}
+
+function cleanOptionalString(value) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function canonicalize(value) {
+  if (Array.isArray(value)) return value.map(canonicalize);
+  if (value && typeof value === "object") {
+    return Object.keys(value).sort().reduce((result, key) => {
+      result[key] = canonicalize(value[key]);
+      return result;
+    }, {});
+  }
+  return value;
+}
+
+function validateRawInput(input) {
+  const errors = {};
+  if (!input || typeof input !== "object") {
+    return { valid: false, errors: { input: "Input must be an object." } };
+  }
+
+  const profileName = cleanOptionalString(input.profile_name);
+  if (profileName.length < 1 || profileName.length > 80) {
+    errors.profile_name = "Profile name must contain 1 to 80 characters.";
+  }
+  if (!SUPPORTED_GENDER_PARAMETERS.includes(input.gender)) {
+    errors.gender = "Gender parameter is not supported by the current calculation rules.";
+  }
+  if (!SUPPORTED_CALENDAR_TYPES.includes(input.calendar_type)) {
+    errors.calendar_type = "Calendar type must be solar or lunar.";
+  }
+  if (!isRealDate(input.birth_date)) {
+    errors.birth_date = "Birth date must be a real YYYY-MM-DD date.";
+  }
+  if (!SUPPORTED_TIME_PRECISIONS.includes(input.time_precision)) {
+    errors.time_precision = "Time precision is invalid.";
+  }
+  if (input.time_precision === "unknown") {
+    if (input.birth_time !== null) errors.birth_time = "Unknown time must use null.";
+  } else if (typeof input.birth_time !== "string" || !RAW_TIME_PATTERN.test(input.birth_time)) {
+    errors.birth_time = "Birth time must use HH:mm.";
+  }
+  if (!isIanaTimezone(input.birth_timezone)) {
+    errors.birth_timezone = "Birth timezone must be a valid IANA timezone.";
+  }
+  if (typeof input.use_true_solar_time !== "boolean") {
+    errors.use_true_solar_time = "True solar time must be a boolean.";
+  }
+  if (input.calendar_type === "lunar" && typeof input.is_leap_month !== "boolean") {
+    errors.is_leap_month = "Lunar input must specify leap-month status.";
+  }
+  if (input.use_true_solar_time) {
+    if (!isFiniteCoordinate(input.latitude, -90, 90)) errors.latitude = "Latitude is required for true solar time.";
+    if (!isFiniteCoordinate(input.longitude, -180, 180)) errors.longitude = "Longitude is required for true solar time.";
+  }
+
+  return { valid: Object.keys(errors).length === 0, errors };
+}
+
+function normalizeRawInput(rawInput) {
+  const validation = validateRawInput(rawInput);
+  if (!validation.valid) {
+    const error = new Error("Raw chart input failed validation.");
+    error.validation = validation;
+    throw error;
+  }
+
+  return {
+    schema_version: NORMALIZED_INPUT_SCHEMA_VERSION,
+    calendar: {
+      input_type: rawInput.calendar_type,
+      solar_date: rawInput.calendar_type === "solar" ? rawInput.birth_date : null,
+      lunar_date: rawInput.calendar_type === "lunar" ? rawInput.birth_date : null,
+      is_leap_month: rawInput.calendar_type === "lunar" ? rawInput.is_leap_month : false
+    },
+    time: rawInput.calendar_type === "solar"
+      ? normalizeBirthTime({
+        birthDate: rawInput.birth_date,
+        birthTime: rawInput.birth_time,
+        birthTimezone: rawInput.birth_timezone,
+        timePrecision: rawInput.time_precision,
+        useTrueSolarTime: rawInput.use_true_solar_time,
+        longitude: rawInput.longitude
+      })
+      : {
+        status: "pending_calendar_conversion",
+        original_time: rawInput.birth_time,
+        timezone: rawInput.birth_timezone,
+        time_precision: rawInput.time_precision,
+        can_calculate_single_chart: false,
+        warnings: ["Lunar input must be converted to a solar date before time normalization."]
+      },
+    location: {
+      country: cleanOptionalString(rawInput.birth_country) || null,
+      region: cleanOptionalString(rawInput.birth_region) || null,
+      city: cleanOptionalString(rawInput.birth_city) || null,
+      latitude: rawInput.latitude ?? null,
+      longitude: rawInput.longitude ?? null
+    },
+    person: {
+      gender_parameter: rawInput.gender
+    }
+  };
+}
+
+function createChartInputFingerprint({ ownerId, normalizedInput, secret }) {
+  if (typeof ownerId !== "string" || ownerId.length === 0) throw new TypeError("ownerId is required.");
+  if (typeof secret !== "string" || secret.length < 32) throw new TypeError("A 32-character minimum server secret is required.");
+  const payload = JSON.stringify(canonicalize({ owner_id: ownerId, normalized_input: normalizedInput }));
+  return createHmac("sha256", secret).update(payload).digest("hex");
+}
+
+
+const CHART_ENGINE_VERSION = "ziwei-core-chart-0.5";
+
+const BRANCHES = Object.freeze([
+  { code: "zi", name_zh_tw: "子" },
+  { code: "chou", name_zh_tw: "丑" },
+  { code: "yin", name_zh_tw: "寅" },
+  { code: "mao", name_zh_tw: "卯" },
+  { code: "chen", name_zh_tw: "辰" },
+  { code: "si", name_zh_tw: "巳" },
+  { code: "wu", name_zh_tw: "午" },
+  { code: "wei", name_zh_tw: "未" },
+  { code: "shen", name_zh_tw: "申" },
+  { code: "you", name_zh_tw: "酉" },
+  { code: "xu", name_zh_tw: "戌" },
+  { code: "hai", name_zh_tw: "亥" }
+]);
+
+const PALACE_NAMES = Object.freeze([
+  "命宮", "兄弟宮", "夫妻宮", "子女宮", "財帛宮", "疾厄宮",
+  "遷移宮", "交友宮", "官祿宮", "田宅宮", "福德宮", "父母宮"
+]);
+
+const STEMS = Object.freeze(["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]);
+
+const BUREAU_TABLE = Object.freeze([
+  ["水二局", "火六局", "木三局", "土五局", "金四局", "火六局"], // 甲、己
+  ["火六局", "土五局", "金四局", "木三局", "水二局", "土五局"], // 乙、庚
+  ["土五局", "木三局", "水二局", "金四局", "火六局", "木三局"], // 丙、辛
+  ["木三局", "金四局", "火六局", "水二局", "土五局", "金四局"], // 丁、壬
+  ["金四局", "水二局", "土五局", "火六局", "木三局", "水二局"]  // 戊、癸
+]);
+const BUREAU_VALUES = Object.freeze({ "水二局": 2, "木三局": 3, "金四局": 4, "土五局": 5, "火六局": 6 });
+const MAJOR_STARS = Object.freeze([
+  { name_zh_tw: "紫微", series: "ziwei", offset: 0 },
+  { name_zh_tw: "天機", series: "ziwei", offset: -1 },
+  { name_zh_tw: "太陽", series: "ziwei", offset: -3 },
+  { name_zh_tw: "武曲", series: "ziwei", offset: -4 },
+  { name_zh_tw: "天同", series: "ziwei", offset: -5 },
+  { name_zh_tw: "廉貞", series: "ziwei", offset: -8 },
+  { name_zh_tw: "天府", series: "tianfu", offset: 0 },
+  { name_zh_tw: "太陰", series: "tianfu", offset: 1 },
+  { name_zh_tw: "貪狼", series: "tianfu", offset: 2 },
+  { name_zh_tw: "巨門", series: "tianfu", offset: 3 },
+  { name_zh_tw: "天相", series: "tianfu", offset: 4 },
+  { name_zh_tw: "天梁", series: "tianfu", offset: 5 },
+  { name_zh_tw: "七殺", series: "tianfu", offset: 6 },
+  { name_zh_tw: "破軍", series: "tianfu", offset: 10 }
+]);
+const MAJOR_STAR_ATTRIBUTES = Object.freeze({
+  "\u7d2b\u5fae": { five_element: "\u571f", yin_yang: "\u9670" }, "\u5929\u6a5f": { five_element: "\u6728", yin_yang: "\u9670" }, "\u592a\u967d": { five_element: "\u706b", yin_yang: "\u967d" }, "\u6b66\u66f2": { five_element: "\u91d1", yin_yang: "\u9670" }, "\u5929\u540c": { five_element: "\u6c34", yin_yang: "\u967d" }, "\u5ec9\u8c9e": { five_element: "\u706b", yin_yang: "\u9670" }, "\u5929\u5e9c": { five_element: "\u571f", yin_yang: "\u967d" }, "\u592a\u9670": { five_element: "\u6c34", yin_yang: "\u9670" }, "\u8caa\u72fc": { five_element: "\u6728", yin_yang: "\u967d" }, "\u5de8\u9580": { five_element: "\u6c34", yin_yang: "\u9670" }, "\u5929\u76f8": { five_element: "\u6c34", yin_yang: "\u967d" }, "\u5929\u6881": { five_element: "\u571f", yin_yang: "\u967d" }, "\u4e03\u6bba": { five_element: "\u91d1", yin_yang: "\u9670" }, "\u7834\u8ecd": { five_element: "\u6c34", yin_yang: "\u9670" }
+});
+
+// Zhongzhou brightness baseline, transcribed from fortel-ziweidoushu@1.3.4
+// (MIT), src/model/majorStar.ts. Branch order: 子、丑、寅、卯、辰、巳、午、未、申、酉、戌、亥.
+// That source defines four energy levels rather than a six-grade table.
+const STAR_DIGNITY_STANDARD = Object.freeze({
+  id: "fortel-ziweidoushu-1.3.4-zhongzhou",
+  school_zh_tw: "\u4e2d\u5dde\u6d3e",
+  source_url: "https://github.com/airicyu/fortel-ziweidoushu/blob/main/src/model/majorStar.ts",
+  source_version: "1.3.4",
+  scope_zh_tw: "\u5341\u56db\u4e3b\u661f\u00d7\u5341\u4e8c\u5730\u652f",
+  scale_zh_tw: ["\u5edf", "\u65fa", "\u5e73", "\u9677"]
+});
+const OPEN_STAR_DIGNITY_STANDARD = Object.freeze({
+  id: "iztro-2.5.8-default",
+  school_zh_tw: "iztro \u516c\u958b\u57fa\u6e96\uff08\u975e\u4e2d\u5dde\u6d3e\u8072\u7a31\uff09",
+  source_url: "https://github.com/SylarLong/iztro/blob/v2.5.8/src/data/stars.ts",
+  source_version: "2.5.8",
+  license: "MIT",
+  scope_zh_tw: "\u6587\u660c\u3001\u6587\u66f2\u3001\u706b\u661f\u3001\u9234\u661f\u3001\u64ce\u7f8a\u3001\u9640\u7f85\u00d7\u5341\u4e8c\u5730\u652f",
+  scale_zh_tw: ["\u5edf", "\u65fa", "\u5f97", "\u5229", "\u5e73", "\u4e0d", "\u9677", "\u9592"]
+});
+const DIGNITY_LABEL_BY_LEVEL = Object.freeze({ 2: "\u5edf", 1: "\u65fa", 0: "\u5e73", "-1": "\u9677" });
+const MAJOR_STAR_DIGNITY_LEVELS = Object.freeze({
+  "\u7d2b\u5fae": [0, 2, 2, 1, -1, 1, 2, 2, 1, 0, 0, 1],
+  "\u5929\u6a5f": [2, -1, 1, 1, 2, 0, 2, -1, 0, 1, 2, 0],
+  "\u592a\u967d": [-1, -1, 1, 2, 1, 1, 2, 0, 0, 0, -1, -1],
+  "\u6b66\u66f2": [1, 2, 0, -1, 2, 0, 1, 2, 0, 1, 2, 0],
+  "\u5929\u540c": [1, -1, 0, 2, 0, 2, -1, -1, 1, 0, 0, 2],
+  "\u5ec9\u8c9e": [0, 1, 2, 0, 1, -1, 0, 2, 2, 0, 1, -1],
+  "\u5929\u5e9c": [2, 2, 2, 0, 2, 0, 1, 2, 0, -1, 2, 1],
+  "\u592a\u9670": [2, 2, 0, -1, 0, -1, -1, 0, 0, 1, 1, 2],
+  "\u8caa\u72fc": [1, 2, 0, 0, 2, -1, 1, 2, 0, 0, 2, -1],
+  "\u5de8\u9580": [1, 1, 2, 2, 0, 0, 1, -1, 2, 2, 1, 1],
+  "\u5929\u76f8": [2, 2, 2, -1, 1, 0, 1, 0, 2, -1, 0, 0],
+  "\u5929\u6881": [2, 1, 2, 2, 1, -1, 2, 1, -1, 0, 1, -1],
+  "\u4e03\u6bba": [1, 2, 2, -1, 1, 0, 1, 1, 2, 0, 2, 0],
+  "\u7834\u8ecd": [2, 1, -1, 1, 1, 0, 2, 2, -1, -1, 1, 0]
+});
+const OPEN_STAR_DIGNITIES = Object.freeze({
+  "\u6587\u660c": ["\u9677", "\u5229", "\u5f97", "\u5edf", "\u9677", "\u5229", "\u5f97", "\u5edf", "\u9677", "\u5229", "\u5f97", "\u5edf"],
+  "\u6587\u66f2": ["\u5e73", "\u65fa", "\u5f97", "\u5edf", "\u9677", "\u65fa", "\u5f97", "\u5edf", "\u9677", "\u65fa", "\u5f97", "\u5edf"],
+  "\u706b\u661f": ["\u5edf", "\u5229", "\u9677", "\u5f97", "\u5edf", "\u5229", "\u9677", "\u5f97", "\u5edf", "\u5229", "\u9677", "\u5f97"],
+  "\u9234\u661f": ["\u5edf", "\u5229", "\u9677", "\u5f97", "\u5edf", "\u5229", "\u9677", "\u5f97", "\u5edf", "\u5229", "\u9677", "\u5f97"],
+  "\u64ce\u7f8a": ["", "\u9677", "\u5edf", "", "\u9677", "\u5edf", "", "\u9677", "\u5edf", "", "\u9677", "\u5edf"],
+  "\u9640\u7f85": ["\u9677", "", "\u5edf", "\u9677", "", "\u5edf", "\u9677", "", "\u5edf", "\u9677", "", "\u5edf"]
+});
+const BIRTH_YEAR_TRANSFORMATIONS = Object.freeze({
+  甲: [["祿", "廉貞"], ["權", "破軍"], ["科", "武曲"], ["忌", "太陽"]],
+  乙: [["祿", "天機"], ["權", "天梁"], ["科", "紫微"], ["忌", "太陰"]],
+  丙: [["祿", "天同"], ["權", "天機"], ["科", "文昌"], ["忌", "廉貞"]],
+  丁: [["祿", "太陰"], ["權", "天同"], ["科", "天機"], ["忌", "巨門"]],
+  戊: [["祿", "貪狼"], ["權", "太陰"], ["科", "右弼"], ["忌", "天機"]],
+  己: [["祿", "武曲"], ["權", "貪狼"], ["科", "天梁"], ["忌", "文曲"]],
+  庚: [["祿", "太陽"], ["權", "武曲"], ["科", "天府"], ["忌", "天同"]],
+  辛: [["祿", "巨門"], ["權", "太陽"], ["科", "文曲"], ["忌", "文昌"]],
+  壬: [["祿", "天梁"], ["權", "紫微"], ["科", "左輔"], ["忌", "武曲"]],
+  癸: [["祿", "破軍"], ["權", "巨門"], ["科", "太陰"], ["忌", "貪狼"]]
+});
+
+const LU_CUN_BRANCH_BY_STEM = Object.freeze({
+  甲: 2, 乙: 3, 丙: 5, 丁: 6, 戊: 5,
+  己: 6, 庚: 8, 辛: 9, 壬: 11, 癸: 0
+});
+
+const KUI_YUE_BRANCH_BY_STEM = Object.freeze({
+  甲: [1, 7], 乙: [0, 8], 丙: [11, 9], 丁: [11, 9], 戊: [1, 7],
+  己: [0, 8], 庚: [1, 7], 辛: [6, 2], 壬: [3, 5], 癸: [3, 5]
+});
+
+const TIAN_MA_BRANCH_BY_YEAR_BRANCH = Object.freeze({
+  寅: 8, 午: 8, 戌: 8,
+  申: 2, 子: 2, 辰: 2,
+  巳: 11, 酉: 11, 丑: 11,
+  亥: 5, 卯: 5, 未: 5
+});
+
+const FIRE_BELL_START_BY_YEAR_BRANCH = Object.freeze({
+  寅: [1, 3], 午: [1, 3], 戌: [1, 3],
+  申: [2, 10], 子: [2, 10], 辰: [2, 10],
+  巳: [3, 10], 酉: [3, 10], 丑: [3, 10],
+  亥: [9, 10], 卯: [9, 10], 未: [9, 10]
+});
+
+const LIFE_RULER_BY_LIFE_BRANCH = Object.freeze([
+  "貪狼", "巨門", "祿存", "文曲", "廉貞", "武曲",
+  "破軍", "武曲", "廉貞", "文曲", "祿存", "巨門"
+]);
+
+const BODY_RULER_BY_YEAR_BRANCH = Object.freeze({
+  子: "火星", 丑: "天相", 寅: "天梁", 卯: "天同", 辰: "文昌", 巳: "天機",
+  午: "火星", 未: "天相", 申: "天梁", 酉: "天同", 戌: "文昌", 亥: "天機"
+});
+
+const TWELVE_GROWTH_STAGES = Object.freeze(["長生", "沐浴", "冠帶", "臨官", "帝旺", "衰", "病", "死", "墓", "絕", "胎", "養"]);
+const GROWTH_START_BY_BUREAU = Object.freeze({ 2: 8, 3: 11, 4: 5, 5: 8, 6: 2 });
+const SMALL_LIMIT_START_BY_YEAR_BRANCH = Object.freeze({
+  寅: 4, 午: 4, 戌: 4,
+  申: 10, 子: 10, 辰: 10,
+  巳: 7, 酉: 7, 丑: 7,
+  亥: 1, 卯: 1, 未: 1
+});
+const LONELY_STARS_BY_YEAR_BRANCH = Object.freeze({
+  寅: [5, 1], 午: [5, 1], 戌: [5, 1],
+  申: [11, 7], 子: [11, 7], 辰: [11, 7],
+  巳: [8, 4], 酉: [8, 4], 丑: [8, 4],
+  亥: [2, 10], 卯: [2, 10], 未: [2, 10]
+});
+const BOSHI_TWELVE = Object.freeze(["\u535a\u58eb", "\u529b\u58eb", "\u9752\u9f8d", "\u5c0f\u8017", "\u5c07\u8ecd", "\u594f\u66f8", "\u98db\u5ec9", "\u559c\u795e", "\u75c5\u7b26", "\u5927\u8017", "\u4f0f\u5175", "\u5b98\u5e9c"]);
+const SUIQIAN_TWELVE = Object.freeze(["\u592a\u6b72", "\u6666\u6c23", "\u55aa\u9580", "\u8cab\u7d22", "\u5b98\u7b26", "\u5c0f\u8017", "\u5927\u8017", "\u9f8d\u5fb7", "\u767d\u864e", "\u5929\u5fb7", "\u540a\u5ba2", "\u75c5\u7b26"]);
+const JIANGQIAN_TWELVE = Object.freeze(["\u5c07\u661f", "\u6500\u978d", "\u6b72\u9a5b", "\u606f\u795e", "\u83ef\u84cb", "\u52ab\u715e", "\u707d\u715e", "\u5929\u715e", "\u6307\u80cc", "\u54b8\u6c60", "\u6708\u715e", "\u4ea1\u795e"]);
+const JIANGQIAN_START_BY_YEAR_BRANCH = Object.freeze({ "\u7533": 0, "\u5b50": 0, "\u8fb0": 0, "\u4ea5": 3, "\u536f": 3, "\u672a": 3, "\u5bc5": 6, "\u5348": 6, "\u620c": 6, "\u5df3": 9, "\u9149": 9, "\u4e11": 9 });
+
+function modulo(value, divisor) {
+  return ((value % divisor) + divisor) % divisor;
+}
+
+function starDignity(name, branchIndex) {
+  const majorLevel = MAJOR_STAR_DIGNITY_LEVELS[name]?.[branchIndex];
+  if (majorLevel !== undefined) {
+    return { dignity: DIGNITY_LABEL_BY_LEVEL[majorLevel], dignity_level: majorLevel, dignity_standard: STAR_DIGNITY_STANDARD.id };
+  }
+  const openDignity = OPEN_STAR_DIGNITIES[name]?.[branchIndex];
+  if (openDignity) return { dignity: openDignity, dignity_standard: OPEN_STAR_DIGNITY_STANDARD.id };
+  return {};
+}
+
+function chineseLunarDate(solarDate) {
+  const date = new Date(`${solarDate}T12:00:00Z`);
+  const parts = new Intl.DateTimeFormat("zh-TW-u-ca-chinese", {
+    timeZone: "UTC",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric"
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts
+    .filter((part) => ["relatedYear", "month", "day"].includes(part.type))
+    .map((part) => [part.type, part.value]));
+  const monthText = values.month || "";
+  const number = ({ 正: 1, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10, 冬: 11, 臘: 12 })[monthText.replace("閏", "").charAt(0)];
+  if (!Number.isInteger(Number(values.relatedYear)) || !number || !Number.isInteger(Number(values.day))) {
+    throw new Error("The runtime could not convert this solar date to a Chinese lunar date.");
+  }
+  return {
+    year: Number(values.relatedYear),
+    month: number,
+    day: Number(values.day),
+    is_leap_month: monthText.startsWith("閏"),
+    display_zh_tw: `${values.relatedYear}年${monthText}${values.day}日`
+  };
+}
+
+function yearPillar(lunarYear) {
+  const offset = modulo(lunarYear - 4, 60);
+  return {
+    heavenly_stem: STEMS[offset % 10],
+    earthly_branch: BRANCHES[offset % 12].name_zh_tw,
+    display_zh_tw: `${STEMS[offset % 10]}${BRANCHES[offset % 12].name_zh_tw}`
+  };
+}
+
+function palaceStem(yearStem, branchIndex) {
+  const yearStemIndex = STEMS.indexOf(yearStem);
+  if (yearStemIndex < 0) throw new Error("A known year stem is required to determine the palace stem.");
+  // 五虎遁：甲己丙寅、乙庚戊寅、丙辛庚寅、丁壬壬寅、戊癸甲寅。
+  const yinStemIndex = modulo(yearStemIndex * 2 + 2, STEMS.length);
+  return STEMS[modulo(yinStemIndex + branchIndex - 2, STEMS.length)];
+}
+
+function determineFiveElementBureau({ yearStem, lifeBranchIndex }) {
+  const yearStemIndex = STEMS.indexOf(yearStem);
+  const row = yearStemIndex % 5;
+  const branchGroup = Math.floor(lifeBranchIndex / 2);
+  const name_zh_tw = BUREAU_TABLE[row][branchGroup];
+  return {
+    name_zh_tw,
+    value: BUREAU_VALUES[name_zh_tw],
+    life_palace_stem: palaceStem(yearStem, lifeBranchIndex),
+    life_palace_branch: BRANCHES[lifeBranchIndex].name_zh_tw
+  };
+}
+
+function purpleStarIndex({ lunarDay, bureauValue }) {
+  const quotient = Math.ceil(lunarDay / bureauValue);
+  const remainder = quotient * bureauValue - lunarDay;
+  const direction = remainder % 2 === 0 ? 1 : -1;
+  // 寅起數商；餘數為偶順行、為奇逆行。所有計數採包含起點的傳統口訣。
+  return modulo(2 + quotient - 1 + direction * remainder, BRANCHES.length);
+}
+
+function placeMajorStars(palaces, { lunarDay, bureauValue }) {
+  const ziweiIndex = purpleStarIndex({ lunarDay, bureauValue });
+  // 紫微、天府同寅申；其餘宮位以寅申軸鏡射定位天府。
+  const tianfuIndex = modulo(4 - ziweiIndex, BRANCHES.length);
+  MAJOR_STARS.forEach((star) => {
+    const origin = star.series === "ziwei" ? ziweiIndex : tianfuIndex;
+    const palaceIndex = modulo(origin + star.offset, BRANCHES.length);
+    palaces[palaceIndex].stars.push({
+      name_zh_tw: star.name_zh_tw,
+      series: star.series,
+      category: "major",
+      ...(MAJOR_STAR_ATTRIBUTES[star.name_zh_tw] || {}),
+      ...starDignity(star.name_zh_tw, palaceIndex)
+    });
+  });
+  return {
+    ziwei: BRANCHES[ziweiIndex],
+    tianfu: BRANCHES[tianfuIndex]
+  };
+}
+
+function placeAuxiliaryStars(palaces, { lunarMonth, shichenCode }) {
+  const shichenIndex = BRANCHES.findIndex((branch) => branch.code === shichenCode);
+  if (shichenIndex < 0) throw new Error("A known shichen is required to place auxiliary stars.");
+  const placements = [
+    ["左輔", modulo(4 + lunarMonth - 1, 12), "month"], // 辰起正月順數
+    ["右弼", modulo(10 - (lunarMonth - 1), 12), "month"], // 戌起正月逆數
+    ["文昌", modulo(10 - shichenIndex, 12), "time"], // 戌起子時逆數
+    ["文曲", modulo(4 + shichenIndex, 12), "time"] // 辰起子時順數
+  ];
+  placements.forEach(([name_zh_tw, index, basis]) => {
+    palaces[index].stars.push({ name_zh_tw, category: "auxiliary", basis, transformations: [], ...starDignity(name_zh_tw, index) });
+  });
+}
+
+function addStar(palaces, index, name_zh_tw, category, basis) {
+  palaces[index].stars.push({ name_zh_tw, category, basis, transformations: [], ...starDignity(name_zh_tw, index) });
+}
+
+function placeCoreSupportingStars(palaces, { yearStem, yearBranch, shichenCode }) {
+  const shichenIndex = BRANCHES.findIndex((branch) => branch.code === shichenCode);
+  const luCunIndex = LU_CUN_BRANCH_BY_STEM[yearStem];
+  const kuiYueIndices = KUI_YUE_BRANCH_BY_STEM[yearStem];
+  const tianMaIndex = TIAN_MA_BRANCH_BY_YEAR_BRANCH[yearBranch];
+  const fireBellStart = FIRE_BELL_START_BY_YEAR_BRANCH[yearBranch];
+  if (shichenIndex < 0 || luCunIndex === undefined || !kuiYueIndices || tianMaIndex === undefined || !fireBellStart) {
+    throw new Error("Known year stem, year branch, and shichen are required to place supporting stars.");
+  }
+
+  addStar(palaces, luCunIndex, "祿存", "supporting", "year_stem");
+  addStar(palaces, modulo(luCunIndex + 1, 12), "擎羊", "malefic", "year_stem");
+  addStar(palaces, modulo(luCunIndex - 1, 12), "陀羅", "malefic", "year_stem");
+  addStar(palaces, kuiYueIndices[0], "天魁", "supporting", "year_stem");
+  addStar(palaces, kuiYueIndices[1], "天鉞", "supporting", "year_stem");
+  addStar(palaces, tianMaIndex, "天馬", "supporting", "year_branch");
+  addStar(palaces, modulo(fireBellStart[0] + shichenIndex, 12), "火星", "malefic", "year_branch_and_time");
+  addStar(palaces, modulo(fireBellStart[1] + shichenIndex, 12), "鈴星", "malefic", "year_branch_and_time");
+  addStar(palaces, modulo(11 - shichenIndex, 12), "地空", "malefic", "time");
+  addStar(palaces, modulo(11 + shichenIndex, 12), "地劫", "malefic", "time");
+}
+
+function placeMiscellaneousStars(palaces, { lunarMonth, yearBranch }) {
+  const yearBranchIndex = BRANCHES.findIndex((branch) => branch.name_zh_tw === yearBranch);
+  const lonelyStars = LONELY_STARS_BY_YEAR_BRANCH[yearBranch];
+  if (yearBranchIndex < 0 || !lonelyStars) throw new Error("A known year branch is required to place miscellaneous stars.");
+  addStar(palaces, modulo(3 - yearBranchIndex, 12), "紅鸞", "miscellaneous", "year_branch");
+  addStar(palaces, modulo(9 - yearBranchIndex, 12), "天喜", "miscellaneous", "year_branch");
+  addStar(palaces, modulo(9 + lunarMonth - 1, 12), "天刑", "miscellaneous", "month");
+  addStar(palaces, modulo(1 + lunarMonth - 1, 12), "天姚", "miscellaneous", "month");
+  addStar(palaces, modulo(6 - yearBranchIndex, 12), "天哭", "miscellaneous", "year_branch");
+  addStar(palaces, modulo(6 + yearBranchIndex, 12), "天虛", "miscellaneous", "year_branch");
+  addStar(palaces, lonelyStars[0], "孤辰", "miscellaneous", "year_branch");
+  addStar(palaces, lonelyStars[1], "寡宿", "miscellaneous", "year_branch");
+}
+
+function addTwelveSeries(palaces, startIndex, names, subgroup, direction = 1) {
+  names.forEach((name_zh_tw, offset) => palaces[modulo(startIndex + direction * offset, 12)].stars.push({ name_zh_tw, category: "spirit", subgroup, basis: subgroup, transformations: [] }));
+}
+
+function placeTwelveSpiritSeries(palaces, { yearBranch, yearStem, gender }) {
+  const yearBranchIndex = BRANCHES.findIndex((branch) => branch.name_zh_tw === yearBranch);
+  const luCunIndex = LU_CUN_BRANCH_BY_STEM[yearStem];
+  const jiangqianStart = JIANGQIAN_START_BY_YEAR_BRANCH[yearBranch];
+  const stemIndex = STEMS.indexOf(yearStem);
+  if (yearBranchIndex < 0 || luCunIndex === undefined || jiangqianStart === undefined || stemIndex < 0) throw new Error("Known birth data is required to place the twelve spirit series.");
+  const forward = (gender === "male" && stemIndex % 2 === 0) || (gender === "female" && stemIndex % 2 === 1);
+  addTwelveSeries(palaces, luCunIndex, BOSHI_TWELVE, "\u535a\u58eb\u5341\u4e8c\u795e", forward ? 1 : -1);
+  addTwelveSeries(palaces, yearBranchIndex, SUIQIAN_TWELVE, "\u6b72\u524d\u5341\u4e8c\u795e");
+  addTwelveSeries(palaces, jiangqianStart, JIANGQIAN_TWELVE, "\u5c07\u524d\u5341\u4e8c\u795e");
+}
+
+function addDecadeLimits(palaces, { lifeBranchIndex, bureauValue, yearStem, gender }) {
+  const stemIndex = STEMS.indexOf(yearStem);
+  if (stemIndex < 0) throw new Error("A known year stem is required to assign decade limits.");
+  const isYangYear = stemIndex % 2 === 0;
+  const forward = (gender === "male" && isYangYear) || (gender === "female" && !isYangYear);
+  const direction = forward ? 1 : -1;
+  for (let order = 0; order < 12; order += 1) {
+    const palaceIndex = modulo(lifeBranchIndex + direction * order, 12);
+    palaces[palaceIndex].decade_limit = {
+      start_age: bureauValue + order * 10,
+      end_age: bureauValue + order * 10 + 9,
+      direction: forward ? "forward" : "backward"
+    };
+  }
+}
+
+function calculateChartRulers({ lifeBranchIndex, yearBranch }) {
+  const life_ruler = LIFE_RULER_BY_LIFE_BRANCH[lifeBranchIndex];
+  const body_ruler = BODY_RULER_BY_YEAR_BRANCH[yearBranch];
+  if (!life_ruler || !body_ruler) throw new Error("Known life branch and year branch are required to calculate chart rulers.");
+  return { life_ruler, body_ruler };
+}
+
+function addTwelveGrowthStages(palaces, { bureauValue, yearStem, gender }) {
+  const stemIndex = STEMS.indexOf(yearStem);
+  const startIndex = GROWTH_START_BY_BUREAU[bureauValue];
+  if (stemIndex < 0 || startIndex === undefined) throw new Error("A known bureau and year stem are required to assign twelve growth stages.");
+  const forward = (gender === "male" && stemIndex % 2 === 0) || (gender === "female" && stemIndex % 2 === 1);
+  palaces.forEach((palace, index) => {
+    const offset = forward ? modulo(index - startIndex, 12) : modulo(startIndex - index, 12);
+    palace.twelve_growth_stage = TWELVE_GROWTH_STAGES[offset];
+  });
+}
+
+function describeTransformations(palaces, yearStem) {
+  const rules = BIRTH_YEAR_TRANSFORMATIONS[yearStem];
+  if (!rules) throw new Error("A known year stem is required to describe transformations.");
+  return rules.map(([kind, starName]) => {
+    const palace = palaces.find((entry) => entry.stars.some((star) => star.name_zh_tw === starName));
+    if (!palace) throw new Error(`Transformation target ${starName} has not been placed.`);
+    return {
+      kind,
+      name_zh_tw: `化${kind}`,
+      star_name_zh_tw: starName,
+      branch: palace.branch,
+      palace_name_zh_tw: palace.name_zh_tw
+    };
+  });
+}
+
+function describeFlyingTransformations(palaces, sourcePalace, stem) {
+  return describeTransformations(palaces, stem).map((transformation) => ({
+    ...transformation,
+    source_branch: sourcePalace.branch,
+    source_branch_name_zh_tw: sourcePalace.branch_name_zh_tw,
+    source_palace_name_zh_tw: sourcePalace.name_zh_tw,
+    source_stem_branch_zh_tw: sourcePalace.stem_branch_zh_tw,
+    is_self_transformation: sourcePalace.branch === transformation.branch
+  }));
+}
+
+function calculatePalaceStemTransformations(palaces) {
+  return palaces.map((palace) => ({
+    source_branch: palace.branch,
+    source_branch_name_zh_tw: palace.branch_name_zh_tw,
+    source_palace_name_zh_tw: palace.name_zh_tw,
+    source_stem_branch_zh_tw: palace.stem_branch_zh_tw,
+    heavenly_stem: palace.heavenly_stem,
+    transformations: describeFlyingTransformations(palaces, palace, palace.heavenly_stem)
+  }));
+}
+
+function calculateAnnualContext({ targetYear, birthLunarYear, gender, palaces }) {
+  if (!Number.isInteger(targetYear) || targetYear < 1900 || targetYear > 2200) throw new Error("Target year must be between 1900 and 2200.");
+  const pillar = yearPillar(targetYear);
+  const targetBranchIndex = BRANCHES.findIndex((branch) => branch.name_zh_tw === pillar.earthly_branch);
+  const birthAge = targetYear - birthLunarYear + 1;
+  const minorStart = SMALL_LIMIT_START_BY_YEAR_BRANCH[yearPillar(birthLunarYear).earthly_branch];
+  const direction = gender === "male" ? 1 : -1;
+  const minorIndex = modulo(minorStart + direction * (birthAge - 1), 12);
+  return {
+    target_year: targetYear,
+    age: birthAge,
+    pillar,
+    annual_life_palace: {
+      branch: BRANCHES[targetBranchIndex].code,
+      branch_name_zh_tw: BRANCHES[targetBranchIndex].name_zh_tw,
+      palace_name_zh_tw: palaces[targetBranchIndex].name_zh_tw
+    },
+    minor_limit: {
+      branch: BRANCHES[minorIndex].code,
+      branch_name_zh_tw: BRANCHES[minorIndex].name_zh_tw,
+      palace_name_zh_tw: palaces[minorIndex].name_zh_tw,
+      direction: direction === 1 ? "forward" : "backward"
+    },
+    annual_transformations: describeTransformations(palaces, pillar.heavenly_stem)
+  };
+}
+
+function calculateDecadeContext({ targetAge, palaces }) {
+  if (!Number.isInteger(targetAge) || targetAge < 1 || targetAge > 130) throw new Error("Target age must be between 1 and 130.");
+  const decadeLifeIndex = palaces.findIndex((palace) => palace.decade_limit && targetAge >= palace.decade_limit.start_age && targetAge <= palace.decade_limit.end_age);
+  if (decadeLifeIndex < 0) return null;
+  const decadeLifePalace = palaces[decadeLifeIndex];
+  return {
+    target_age: targetAge,
+    start_age: decadeLifePalace.decade_limit.start_age,
+    end_age: decadeLifePalace.decade_limit.end_age,
+    direction: decadeLifePalace.decade_limit.direction,
+    decade_life_palace: {
+      branch: decadeLifePalace.branch,
+      branch_name_zh_tw: decadeLifePalace.branch_name_zh_tw,
+      palace_name_zh_tw: decadeLifePalace.name_zh_tw,
+      stem_branch_zh_tw: decadeLifePalace.stem_branch_zh_tw,
+      heavenly_stem: decadeLifePalace.heavenly_stem
+    },
+    decade_palaces: palaces.map((palace, index) => ({
+      branch: palace.branch,
+      branch_name_zh_tw: palace.branch_name_zh_tw,
+      natal_palace_name_zh_tw: palace.name_zh_tw,
+      decade_palace_name_zh_tw: PALACE_NAMES[modulo(decadeLifeIndex - index, 12)]
+    })),
+    decade_transformations: describeTransformations(palaces, decadeLifePalace.heavenly_stem)
+  };
+}
+
+function branchTimeIndex(targetTime = "12:00") {
+  const match = /^(\d{2}):(\d{2})$/.exec(targetTime);
+  if (!match || Number(match[1]) > 23 || Number(match[2]) > 59) throw new Error("Target time must be HH:MM.");
+  return Math.floor(((Number(match[1]) + 1) % 24) / 2);
+}
+function pillarFromOffset(offset) {
+  return { heavenly_stem: STEMS[modulo(offset, 10)], earthly_branch: BRANCHES[modulo(offset, 12)].name_zh_tw };
+}
+function temporalPalace(palaces, index, label) {
+  const palace = palaces[modulo(index, 12)];
+  return { label_zh_tw: label, branch: palace.branch, branch_name_zh_tw: palace.branch_name_zh_tw, palace_name_zh_tw: palace.name_zh_tw };
+}
+function todayInTimezone(timezone = "Asia/Taipei") {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: timezone, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+}
+function calculateTemporalContext({ targetDate, targetTime, palaces }) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(targetDate || "")) throw new Error("Target date must be YYYY-MM-DD.");
+  const lunar = chineseLunarDate(targetDate);
+  const timeIndex = branchTimeIndex(targetTime);
+  const yearly = yearPillar(lunar.year);
+  const yearStemIndex = STEMS.indexOf(yearly.heavenly_stem);
+  const monthly = { heavenly_stem: STEMS[modulo(yearStemIndex * 2 + 2 + lunar.month - 1, 10)], earthly_branch: BRANCHES[modulo(2 + lunar.month - 1, 12)].name_zh_tw };
+  const [year, month, day] = targetDate.split("-").map(Number);
+  const dayOffset = Date.UTC(year, month - 1, day) / 86400000 + 25576;
+  const daily = pillarFromOffset(dayOffset);
+  const dayStemIndex = STEMS.indexOf(daily.heavenly_stem);
+  const hourly = { heavenly_stem: STEMS[modulo((dayStemIndex % 5) * 2 + timeIndex, 10)], earthly_branch: BRANCHES[timeIndex].name_zh_tw };
+  const annualIndex = BRANCHES.findIndex((branch) => branch.name_zh_tw === yearly.earthly_branch);
+  const monthlyIndex = modulo(annualIndex + lunar.month - 1, 12);
+  const dailyIndex = modulo(monthlyIndex + lunar.day - 1, 12);
+  const hourlyIndex = modulo(dailyIndex + timeIndex, 12);
+  return {
+    target_date: targetDate, target_time: targetTime, lunar_date: lunar,
+    pillars: { yearly, monthly, daily, hourly },
+    monthly: { life_palace: temporalPalace(palaces, monthlyIndex, "\u6d41\u6708\u547d\u5bae"), transformations: describeTransformations(palaces, monthly.heavenly_stem) },
+    daily: { life_palace: temporalPalace(palaces, dailyIndex, "\u6d41\u65e5\u547d\u5bae"), transformations: describeTransformations(palaces, daily.heavenly_stem) },
+    hourly: { life_palace: temporalPalace(palaces, hourlyIndex, "\u6d41\u6642\u547d\u5bae"), transformations: describeTransformations(palaces, hourly.heavenly_stem) }
+  };
+}
+
+function applyBirthYearTransformations(palaces, yearStem) {
+  const rules = BIRTH_YEAR_TRANSFORMATIONS[yearStem];
+  if (!rules) throw new Error("A known year stem is required to apply birth-year transformations.");
+  return rules.map(([kind, starName]) => {
+    const palace = palaces.find((entry) => entry.stars.some((star) => star.name_zh_tw === starName));
+    if (!palace) throw new Error(`Transformation target ${starName} has not been placed.`);
+    const star = palace.stars.find((entry) => entry.name_zh_tw === starName);
+    star.transformations ??= [];
+    star.transformations.push(kind);
+    return {
+      kind,
+      name_zh_tw: `化${kind}`,
+      star_name_zh_tw: starName,
+      branch: palace.branch,
+      palace_name_zh_tw: palace.name_zh_tw
+    };
+  });
+}
+
+function buildPalaces({ lunarMonth, shichenCode, yearStem }) {
+  const shichenIndex = BRANCHES.findIndex((branch) => branch.code === shichenCode);
+  if (shichenIndex < 0) throw new Error("A known shichen is required to place the twelve palaces.");
+  // 寅起正月，順數至生月；自生月起子時逆數至生時為命宮，順數為身宮。
+  const monthBranchIndex = modulo(2 + lunarMonth - 1, 12);
+  const lifeIndex = modulo(monthBranchIndex - shichenIndex, 12);
+  const bodyIndex = modulo(monthBranchIndex + shichenIndex, 12);
+  return {
+    life_palace_branch: BRANCHES[lifeIndex],
+    body_palace_branch: BRANCHES[bodyIndex],
+    palaces: BRANCHES.map((branch, index) => {
+      const distanceFromLife = modulo(lifeIndex - index, 12);
+      return {
+        branch: branch.code,
+        branch_name_zh_tw: branch.name_zh_tw,
+        heavenly_stem: palaceStem(yearStem, index),
+        stem_branch_zh_tw: `${palaceStem(yearStem, index)}${branch.name_zh_tw}`,
+        name_zh_tw: PALACE_NAMES[distanceFromLife],
+        is_life_palace: index === lifeIndex,
+        is_body_palace: index === bodyIndex,
+        stars: []
+      };
+    })
+  };
+}
+
+function calculateStructuralChart(rawInput, { targetYear = new Date().getFullYear(), targetAge, targetDate, targetTime } = {}) {
+  const normalized_input = normalizeRawInput(rawInput);
+  if (rawInput.calendar_type !== "solar") {
+    return {
+      engine_version: CHART_ENGINE_VERSION,
+      status: "needs_lunar_conversion",
+      normalized_input,
+      warnings: ["農曆輸入的反向換算尚未納入此版本，未產生命盤結果。"]
+    };
+  }
+  if (!normalized_input.time.can_calculate_single_chart) {
+    return {
+      engine_version: CHART_ENGINE_VERSION,
+      status: "needs_time_resolution",
+      normalized_input,
+      warnings: normalized_input.time.warnings
+    };
+  }
+
+  const lunar = chineseLunarDate(rawInput.birth_date);
+  const pillars = { year: yearPillar(lunar.year) };
+  const placements = buildPalaces({
+    lunarMonth: lunar.month,
+    shichenCode: normalized_input.time.shichen_code,
+    yearStem: pillars.year.heavenly_stem
+  });
+  const lifeBranchIndex = BRANCHES.findIndex((branch) => branch.code === placements.life_palace_branch.code);
+  const five_element_bureau = determineFiveElementBureau({
+    yearStem: pillars.year.heavenly_stem,
+    lifeBranchIndex
+  });
+  const main_star_anchors = placeMajorStars(placements.palaces, {
+    lunarDay: lunar.day,
+    bureauValue: five_element_bureau.value
+  });
+  placeAuxiliaryStars(placements.palaces, {
+    lunarMonth: lunar.month,
+    shichenCode: normalized_input.time.shichen_code
+  });
+  placeCoreSupportingStars(placements.palaces, {
+    yearStem: pillars.year.heavenly_stem,
+    yearBranch: pillars.year.earthly_branch,
+    shichenCode: normalized_input.time.shichen_code
+  });
+  placeMiscellaneousStars(placements.palaces, {
+    lunarMonth: lunar.month,
+    yearBranch: pillars.year.earthly_branch
+  });
+  placeTwelveSpiritSeries(placements.palaces, {
+    yearBranch: pillars.year.earthly_branch,
+    yearStem: pillars.year.heavenly_stem,
+    gender: normalized_input.person.gender_parameter
+  });
+  addDecadeLimits(placements.palaces, {
+    lifeBranchIndex,
+    bureauValue: five_element_bureau.value,
+    yearStem: pillars.year.heavenly_stem,
+    gender: normalized_input.person.gender_parameter
+  });
+  addTwelveGrowthStages(placements.palaces, {
+    bureauValue: five_element_bureau.value,
+    yearStem: pillars.year.heavenly_stem,
+    gender: normalized_input.person.gender_parameter
+  });
+  const birth_year_transformations = applyBirthYearTransformations(placements.palaces, pillars.year.heavenly_stem);
+  const palace_stem_transformations = calculatePalaceStemTransformations(placements.palaces);
+  const life_palace_stem_transformations = palace_stem_transformations.find((entry) => entry.source_branch === placements.life_palace_branch.code).transformations;
+  const chart_rulers = calculateChartRulers({
+    lifeBranchIndex,
+    yearBranch: pillars.year.earthly_branch
+  });
+  const annual_context = calculateAnnualContext({
+    targetYear,
+    birthLunarYear: lunar.year,
+    gender: normalized_input.person.gender_parameter,
+    palaces: placements.palaces
+  });
+  const decade_context = calculateDecadeContext({ targetAge: targetAge ?? annual_context.age, palaces: placements.palaces });
+  const temporal_context = calculateTemporalContext({ targetDate: targetDate || todayInTimezone(rawInput.birth_timezone), targetTime: targetTime || "12:00", palaces: placements.palaces });
+  return {
+    engine_version: CHART_ENGINE_VERSION,
+    status: "core_chart_ready",
+    star_dignity_standard: STAR_DIGNITY_STANDARD,
+    star_dignity_standards: [STAR_DIGNITY_STANDARD, OPEN_STAR_DIGNITY_STANDARD],
+    normalized_input,
+    lunar_date: lunar,
+    pillars,
+    five_element_bureau,
+    main_star_anchors,
+    chart_rulers,
+    annual_context,
+    decade_context,
+    temporal_context,
+    birth_year_transformations,
+    life_palace_stem_transformations,
+    palace_stem_transformations,
+    life_palace: placements.life_palace_branch,
+    body_palace: placements.body_palace_branch,
+    palaces: placements.palaces,
+    warnings: ["本盤已安十四主星、六吉星、六煞星、祿存、天馬、生年四化、十二長生、常用雜曜與十二宮大限；流年與小限以中央的目標年資訊呈現。"]
+  };
+}
+
+window.AuraOfStarsCore = { calculateStructuralChart };</script>
+  <script>const guestMode = Boolean(globalThis.AURA_GUEST_MODE);
+const offlineMode = Boolean(globalThis.AURA_OFFLINE_MODE);
+const t = {
+  step: "\u7b2c 1 \u6b65 / \u5171 2 \u6b65",
+  eyebrow: "\u5efa\u7acb\u547d\u76e4",
+  title: "\u5148\u8a18\u9304\u6b64\u523b\u7684\u751f\u547d\u5ea7\u6a19",
+  lede: "\u8acb\u63d0\u4f9b\u6392\u76e4\u6240\u9700\u7684\u57fa\u672c\u8cc7\u6599\u3002\u4e0b\u4e00\u6b65\u6703\u8b93\u60a8\u5728\u9001\u51fa\u524d\u518d\u6b21\u78ba\u8a8d\u3002",
+  profileName: "\u547d\u76e4\u540d\u7a31",
+  profileHint: "\u4f8b\u5982\uff1a\u6211\u7684\u547d\u76e4\u3001\u6bcd\u89aa",
+  personAlias: "\u986f\u793a\u540d\u7a31\u6216\u66b1\u7a31",
+  gender: "\u6392\u76e4\u6240\u9700\u6027\u5225\u53c3\u6578",
+  select: "\u8acb\u9078\u64c7",
+  male: "\u7537",
+  female: "\u5973",
+  calendar: "\u66c6\u6cd5",
+  solar: "\u570b\u66c6",
+  lunar: "\u8fb2\u66c6",
+  birthDate: "\u51fa\u751f\u65e5\u671f",
+  birthTime: "\u51fa\u751f\u6642\u9593",
+  location: "\u51fa\u751f\u5730\u9ede",
+  latitude: "出生地緯度",
+  longitude: "出生地經度",
+  coordinateHint: "僅在啟用真太陽時時必填；例如台北：25.033、121.565",
+  coordinateRequired: "啟用真太陽時時，請填寫有效的出生地緯度與經度",
+  timezone: "\u6642\u5340",
+  note: "\u5099\u8a3b\uff08\u9078\u586b\uff09",
+  solarTime: "\u4f7f\u7528\u771f\u592a\u967d\u6642\u6821\u6b63",
+  solarTimeHint: "\u9700\u4f9d\u51fa\u751f\u5730\u9ede\u8a08\u7b97\uff0c\u5f8c\u7e8c\u6392\u76e4\u5c07\u986f\u793a\u5be6\u969b\u63a1\u7528\u7684\u6642\u9593\u3002",
+  consent: "\u6211\u5df2\u7406\u89e3\u51fa\u751f\u8cc7\u6599\u5c6c\u9ad8\u654f\u611f\u500b\u4eba\u8cc7\u6599\uff0c\u4e26\u540c\u610f\u50c5\u5c07\u5176\u7528\u65bc\u5efa\u7acb\u547d\u76e4\u3002",
+  privacy: "<strong>\u96b1\u79c1\u63d0\u793a</strong> \u6b64\u9801\u9762\u76ee\u524d\u50c5\u7528\u65bc\u78ba\u8a8d\u8f38\u5165\u6d41\u7a0b\uff0c\u4e0d\u6703\u5728\u700f\u89bd\u5668\u5132\u5b58\u60a8\u7684\u51fa\u751f\u8cc7\u6599\u3002\u5f85\u5e33\u865f\u8207\u52a0\u5bc6\u5102\u5b58\u5b8c\u6210\u5f8c\uff0c\u624d\u6703\u9023\u63a5\u6b63\u5f0f\u5b58\u6a94\u3002",
+  continue: "\u78ba\u8a8d\u8cc7\u6599",
+  back: "\u8fd4\u56de\u4fee\u6539",
+  reviewEyebrow: "\u7b2c 2 \u6b65 / \u5171 2 \u6b65",
+  reviewTitle: "\u8acb\u78ba\u8a8d\u60a8\u7684\u8cc7\u6599",
+  reviewLede: "\u6392\u76e4\u7d50\u679c\u53d6\u6c7a\u65bc\u6b63\u78ba\u7684\u65e5\u671f\u3001\u6642\u9593\u8207\u5730\u9ede\u3002\u8acb\u5728\u9032\u5165\u6392\u76e4\u524d\u518d\u6b21\u6aa2\u67e5\u3002",
+  reviewWarning: "\u9019\u662f\u7b2c\u4e00\u968e\u6bb5\u7684\u4ecb\u9762\u6d41\u7a0b\u3002\u4e0b\u4e00\u968e\u6bb5\u6703\u4e32\u63a5\u5e33\u865f\u9a57\u8b49\u3001\u5f8c\u7aef\u8cc7\u6599\u6aa2\u67e5\u3001\u52a0\u5bc6\u5132\u5b58\u8207\u6392\u76e4\u6838\u5fc3\u3002",
+  confirm: "\u78ba\u8a8d\u4e26\u5efa\u7acb\u8349\u7a3f",
+  draftEyebrow: "\u7b2c 3 \u6b65 / \u5171 3 \u6b65",
+  draftTitle: "命盤草稿已建立",
+  draftLede: "請檢查下方資料；確認無誤後，再將命盤工作資料加密保存至您的帳戶。",
+  draftWarning: "草稿尚未保存。儲存後，您可在登入時從「我的命盤」重新開啟。",
+  draftInputTitle: "\u8f38\u5165\u8cc7\u6599\u6458\u8981",
+  draftId: "\u8349\u7a3f\u7de8\u865f",
+  draftStatus: "\u76ee\u524d\u72c0\u614b",
+  draftCreatedAt: "\u5efa\u7acb\u6642\u9593",
+  draftPipeline: "\u8cc7\u6599\u8655\u7406",
+  pendingCalculation: "\u5f85\u6392\u76e4\u6838\u5fc3\u8a08\u7b97",
+  validatedInput: "\u5df2\u5b8c\u6210\u8f38\u5165\u9a57\u8b49\uff0c\u5f85\u6a19\u6e96\u5316",
+  newDraft: "\u8fd4\u56de\u8f38\u5165\u8cc7\u6599",
+  footnote: "\u547d\u76e4\u6392\u7b97\u5fc5\u9808\u7531\u53ef\u9a57\u8b49\u7684\u6392\u76e4\u6838\u5fc3\u8655\u7406\uff1bAI \u50c5\u8ca0\u8cac\u5df2\u78ba\u8a8d\u8cc7\u6599\u7684\u89e3\u8b80\u3002",
+  required: "\u8acb\u5b8c\u6574\u586b\u5beb\u6b64\u6b04\u4f4d",
+  formRequired: "\u8acb\u88dc\u9f4a\u6a19\u793a * \u7684\u5fc5\u586b\u8cc7\u6599\uff0c\u4ee5\u7e7c\u7e8c\u9032\u5165\u78ba\u8a8d\u9801\u3002",
+  invalidDate: "\u8acb\u8f38\u5165\u5408\u7406\u7684\u51fa\u751f\u65e5\u671f",
+  locationHint: "\u4f8b\u5982\uff1a\u53f0\u5317\u3001\u53f0\u7063"
+};
+const fields = [
+  ["profileName", "text", true, "full"],
+  ["personAlias", "text", false, ""],
+  ["gender", "select", true, ""],
+  ["calendar", "select", true, ""],
+  ["birthDate", "date", true, ""],
+  ["birthTime", "time", true, ""],
+  ["location", "text", true, ""],
+  ["latitude", "number", false, ""],
+  ["longitude", "number", false, ""],
+  ["timezone", "select", true, ""],
+  ["note", "textarea", false, "full"]
+].filter(([name]) => !offlineMode || !["latitude", "longitude"].includes(name));
+const form = document.querySelector("#profile-form");
+const formFields = document.querySelector("#form-fields");
+const reviewPanel = document.querySelector("#review-panel");
+const errorMap = new Map();
+let chartDraft = null;
+let activeInsightBranch = null;
+let activeFlyLayer = "birth";
+let activePlainAnalysisTopic = "命格個性";
+let plainAnalysisEntries = [];
+let reportData = null;
+const palaceInsight = {
+  "\u547d\u5bae": ["\u81ea\u6211\u98a8\u683c\u3001\u4eba\u751f\u57fa\u8abf\u8207\u8655\u4e8b\u65b9\u5f0f\u3002", "\u7576\u6210\u77e5\u8b58\u81ea\u5df1\u7684\u7dda\u7d22\uff0c\u4e0d\u5b9c\u55ae\u4ee5\u4e00\u5bae\u5b9a\u7fa9\u4eba\u751f\u3002"],
+  "\u5144\u5f1f\u5bae": ["\u624b\u8db3\u3001\u540c\u8f29\u3001\u5408\u4f5c\u9ed8\u5951\u8207\u652f\u63f4\u7db2\u7d61\u3002", "\u53ef\u540c\u770b\u5408\u4f5c\u908a\u754c\u8207\u4e92\u76f8\u652f\u6301\u7684\u65b9\u5f0f\u3002"],
+  "\u592b\u59bb\u5bae": ["\u89aa\u5bc6\u95dc\u4fc2\u3001\u4f34\u4fb6\u4e92\u52d5\u8207\u5c0d\u95dc\u4fc2\u7684\u671f\u5f85\u3002", "\u89c0\u5bdf\u4e92\u52d5\u6a21\u5f0f\uff0c\u4e0d\u4ee5\u5176\u4ed6\u4eba\u7684\u884c\u70ba\u4f5c\u7d55\u5c0d\u9810\u6e2c\u3002"],
+  "\u5b50\u5973\u5bae": ["\u5b50\u5973\u7de3\u5206\u3001\u5275\u4f5c\u8868\u9054\u8207\u9577\u671f\u57f9\u80b2\u7684\u4e8b\u7269\u3002", "\u9069\u5408\u770b\u5f85\u4eba\u63a5\u7269\u7684\u8010\u5fc3\u8207\u5f15\u5c0e\u65b9\u5f0f\u3002"],
+  "\u8ca1\u5e1b\u5bae": ["\u8cc7\u6e90\u3001\u6536\u5165\u6a21\u5f0f\u8207\u91d1\u9322\u4f7f\u7528\u50be\u5411\u3002", "\u89e3\u8b80\u50c5\u4f9b\u81ea\u6211\u6aa2\u8996\uff0c\u4e0d\u69cb\u6210\u6295\u8cc7\u6216\u8ca1\u52d9\u5efa\u8b70\u3002"],
+  "\u75be\u5384\u5bae": ["\u8eab\u5fc3\u80fd\u91cf\u3001\u58d3\u529b\u56de\u61c9\u8207\u4f5c\u606f\u7bc0\u594f\u3002", "\u4e0d\u7528\u65bc\u91ab\u7642\u5224\u65b7\uff1b\u6709\u4e0d\u9069\u8acb\u5c0b\u6c42\u5c08\u696d\u91ab\u7642\u5354\u52a9\u3002"],
+  "\u9077\u79fb\u5bae": ["\u5916\u5728\u821e\u53f0\u3001\u8b8a\u52d5\u3001\u65c5\u884c\u8207\u5c0d\u5916\u4eba\u969b\u4e92\u52d5\u3002", "\u53ef\u89c0\u5bdf\u5728\u65b0\u74b0\u5883\u88e1\u5982\u4f55\u5c55\u73fe\u8207\u56de\u61c9\u3002"],
+  "\u4ea4\u53cb\u5bae": ["\u670b\u53cb\u3001\u5718\u968a\u3001\u540c\u4e8b\u8207\u793e\u7fa4\u9023\u7d50\u3002", "\u91cd\u9ede\u5728\u4e92\u60e0\u8207\u908a\u754c\uff0c\u4e0d\u5b9c\u4ee5\u55ae\u4e00\u661f\u66dc\u8ad6\u65b7\u4eba\u969b\u597d\u58de\u3002"],
+  "\u5b98\u797f\u5bae": ["\u8077\u6daf\u5b9a\u4f4d\u3001\u5c08\u696d\u65b9\u5411\u8207\u6210\u5c31\u611f\u4f86\u6e90\u3002", "\u7528\u4f86\u6574\u7406\u5de5\u4f5c\u7bc0\u594f\u8207\u64c5\u9577\uff0c\u975e\u804c\u696d\u4fdd\u8b49\u3002"],
+  "\u7530\u5b85\u5bae": ["\u5bb6\u5ead\u611f\u3001\u5c45\u4f4f\u7a7a\u9593\u8207\u8cc7\u7522\u5b89\u5b9a\u5ea6\u3002", "\u8207\u5be6\u969b\u7d93\u6fdf\u689d\u4ef6\u4e00\u8d77\u770b\uff0c\u4e0d\u4ee5\u547d\u76e4\u4f5c\u7f6e\u7522\u6c7a\u7b56\u3002"],
+  "\u798f\u5fb7\u5bae": ["\u5167\u5728\u611f\u53d7\u3001\u7cbe\u795e\u4e16\u754c\u8207\u88dc\u5145\u80fd\u91cf\u7684\u65b9\u5f0f\u3002", "\u53ef\u4f5c\u70ba\u5b89\u6392\u4f11\u606f\u3001\u5a1b\u6a02\u8207\u81ea\u6211\u95dc\u61f7\u7684\u63d0\u793a\u3002"],
+  "\u7236\u6bcd\u5bae": ["\u6210\u9577\u80cc\u666f\u3001\u9577\u8f29\u7de3\u5206\u8207\u5f97\u5230\u6307\u5c0e\u7684\u6a21\u5f0f\u3002", "\u7528\u4ee5\u7406\u89e3\u95dc\u4fc2\u4e92\u52d5\uff0c\u4e0d\u53d6\u4ee3\u8207\u5bb6\u4eba\u7684\u771f\u5be6\u6e9d\u901a\u3002"]
+};
+const starProfiles = {
+  "\u7d2b\u5fae":"\u6838\u5fc3\u3001\u7d71\u7c4c\u8207\u627f\u64d4\u3002", "\u5929\u6a5f":"\u7b56\u7565\u3001\u601d\u8003\u8207\u8b8a\u901a\u3002", "\u592a\u967d":"\u884c\u52d5\u3001\u7d66\u4e88\u8207\u516c\u958b\u8868\u9054\u3002", "\u6b66\u66f2":"\u57f7\u884c\u3001\u6578\u5b57\u611f\u8207\u8cc7\u6e90\u7d93\u71df\u3002", "\u5929\u540c":"\u5171\u611f\u3001\u8207\u7de9\u548c\u7684\u529b\u91cf\u3002", "\u5ec9\u8c9e":"\u539f\u5247\u3001\u614b\u5ea6\u8207\u95dc\u4fc2\u5f35\u529b\u3002", "\u5929\u5e9c":"\u7a69\u5b9a\u3001\u5132\u5099\u8207\u7ba1\u7406\u3002", "\u592a\u9670":"\u7d30\u819a\u3001\u611f\u53d7\u8207\u5b89\u5168\u611f\u3002", "\u8caa\u72fc":"\u4eba\u969b\u9b45\u529b\u3001\u6b32\u671b\u8207\u638c\u63e1\u6a5f\u6703\u3002", "\u5de8\u9580":"\u8fa8\u8b49\u3001\u8a9e\u8a00\u8207\u6df1\u5ea6\u89c0\u5bdf\u3002", "\u5929\u76f8":"\u5354\u8abf\u3001\u898f\u7bc4\u8207\u670d\u52d9\u610f\u8b58\u3002", "\u5929\u6881":"\u539f\u5247\u3001\u4fdd\u8b77\u8207\u7d93\u9a57\u50b3\u627f\u3002", "\u4e03\u6bba":"\u6c7a\u65b7\u3001\u7a81\u7834\u8207\u958b\u5275\u3002", "\u7834\u8ecd":"\u9769\u65b0\u3001\u6253\u7834\u8207\u91cd\u65b0\u5efa\u69cb\u3002",
+  "\u5de6\u8f14":"\u652f\u63f4\u8207\u5354\u4f5c\u3002", "\u53f3\u5f3c":"\u914d\u5408\u8207\u88dc\u4f4d\u3002", "\u6587\u660c":"\u5b78\u7fd2\u3001\u6587\u5b57\u8207\u689d\u7406\u3002", "\u6587\u66f2":"\u611f\u53d7\u3001\u85dd\u8853\u8207\u8868\u9054\u3002", "\u5929\u9b41":"\u8cb4\u4eba\u63d0\u651c\u8207\u6a5f\u6703\u3002", "\u5929\u925e":"\u8cc7\u6e90\u9023\u7d50\u8207\u6b23\u8cde\u3002", "\u797f\u5b58":"\u7d2f\u7a4d\u3001\u4fdd\u5b88\u8207\u8cc7\u6e90\u3002", "\u5929\u99ac":"\u79fb\u52d5\u3001\u8b8a\u5316\u8207\u884c\u52d5\u529b\u3002",
+  "\u64ce\u7f8a":"\u7af6\u722d\u3001\u679c\u65b7\u8207\u6469\u64e6\u3002", "\u9640\u7f85":"\u963b\u529b\u3001\u5805\u6301\u8207\u62d6\u5ef6\u3002", "\u706b\u661f":"\u5feb\u901f\u7206\u767c\u8207\u6025\u5207\u3002", "\u9234\u661f":"\u654f\u611f\u3001\u7dca\u7e43\u8207\u7a81\u767c\u58d3\u529b\u3002", "\u5730\u7a7a":"\u62bd\u96e2\u3001\u7a7a\u767d\u8207\u91cd\u65b0\u770b\u5f85\u3002", "\u5730\u52ab":"\u8017\u640d\u98a8\u96aa\u8207\u91cd\u6574\u9700\u6c42\u3002"
+};
+const categoryLabels = { major:"\u4e3b\u661f", supporting:"\u8f14\u661f", auxiliary:"\u8f14\u661f", malefic:"\u714a\u661f", miscellaneous:"\u96dc\u66dc", spirit:"\u5341\u4e8c\u795e" };
+const transformationNotes = { "\u797f":"\u5316\u797f\u5f37\u8abf\u6a5f\u6703\u3001\u8cc7\u6e90\u8207\u66a2\u901a\u5ea6\u3002", "\u6b0a":"\u5316\u6b0a\u5f37\u8abf\u4e3b\u5c0e\u3001\u57f7\u884c\u8207\u5f71\u97ff\u529b\u3002", "\u79d1":"\u5316\u79d1\u5f37\u8abf\u5b78\u7fd2\u3001\u8072\u8b7d\u8207\u88ab\u770b\u898b\u3002", "\u5fcc":"\u5316\u5fcc\u63d0\u793a\u5728\u610f\u3001\u53cd\u8986\u601d\u7d22\u8207\u9700\u8981\u7d30\u7dfb\u8655\u7406\u7684\u8ab2\u984c\u3002" };
+let sessionToken = sessionStorage.getItem("aura-session-token") || "";
+let currentUser = null;
+let savedProfiles = [];
+
+if (guestMode) {
+  sessionToken = "";
+  t.step = "第 1 步 / 共 3 步";
+  t.reviewEyebrow = "第 2 步 / 共 3 步";
+  t.confirm = "確認並開啟命盤";
+  t.privacy = "<strong>隱私提示</strong> 此免登入版本不會建立帳戶、儲存命盤或寫入資料庫；資料只用於目前瀏覽器工作階段的排盤預覽。";
+  document.body.classList.add("guest-mode");
+  document.querySelector("#account-button").hidden = true;
+  document.querySelector("#my-charts-button").hidden = true;
+  document.querySelector("#report-save").hidden = true;
+}
+
+document.querySelector("#step-label").textContent = t.step;
+document.querySelector("#eyebrow").textContent = t.eyebrow;
+document.querySelector("#page-title").textContent = t.title;
+document.querySelector("#lede").textContent = t.lede;
+document.querySelector("#privacy-note").innerHTML = t.privacy;
+document.querySelector("#next-button").textContent = t.continue;
+document.querySelector("#review-eyebrow").textContent = t.reviewEyebrow;
+document.querySelector("#review-title").textContent = t.reviewTitle;
+document.querySelector("#review-lede").textContent = t.reviewLede;
+document.querySelector("#review-warning").textContent = t.reviewWarning;
+document.querySelector("#footnote").textContent = t.footnote;
+document.querySelector("#review-back").textContent = t.back;
+document.querySelector("#review-confirm").textContent = t.confirm;
+document.querySelector("#draft-eyebrow").textContent = t.draftEyebrow;
+document.querySelector("#draft-title").textContent = t.draftTitle;
+document.querySelector("#draft-lede").textContent = t.draftLede;
+document.querySelector("#draft-warning").textContent = t.draftWarning;
+document.querySelector("#draft-input-title").textContent = t.draftInputTitle;
+document.querySelector("#draft-new").textContent = t.newDraft;
+
+function selectOptions(name) {
+  if (name === "gender") return [[ "", t.select ], [ "male", t.male ], [ "female", t.female ]];
+  if (name === "calendar") return [[ "solar", t.solar ], [ "lunar", t.lunar ]];
+  return [[ "Asia/Taipei", "Asia/Taipei (UTC+08:00)" ], [ "Asia/Shanghai", "Asia/Shanghai (UTC+08:00)" ], [ "Asia/Tokyo", "Asia/Tokyo (UTC+09:00)" ], [ "Other", "Other" ]];
+}
+function addField([name, type, required, span]) {
+  const field = document.createElement("div");
+  field.className = `field ${span}`;
+  const label = document.createElement("label");
+  label.htmlFor = name;
+  label.textContent = t[name] + (required ? " *" : "");
+  field.append(label);
+  let control;
+  if (type === "select") {
+    control = document.createElement("select");
+    selectOptions(name).forEach(([value, labelText]) => {
+      const option = new Option(labelText, value);
+      control.add(option);
+    });
+  } else if (type === "textarea") {
+    control = document.createElement("textarea");
+  } else {
+    control = document.createElement("input");
+    control.type = type;
+  }
+  control.id = control.name = name;
+  if (name === "profileName") control.placeholder = t.profileHint;
+  if (name === "location") control.placeholder = t.locationHint;
+  if (name === "latitude") { control.placeholder = "例如：25.033"; control.step = "any"; control.min = "-90"; control.max = "90"; }
+  if (name === "longitude") { control.placeholder = "例如：121.565"; control.step = "any"; control.min = "-180"; control.max = "180"; }
+  if (name === "personAlias") control.placeholder = "\u4f8b\u5982\uff1a\u661f\u8fb0";
+  field.append(control);
+  if (name === "profileName") field.append(hint(t.profileHint));
+  if (name === "latitude") field.append(hint(t.coordinateHint));
+  if (name === "solarTime") field.append(hint(t.solarTimeHint));
+  const error = document.createElement("div");
+  error.className = "error";
+  error.id = name + "-error";
+  field.append(error);
+  errorMap.set(name, error);
+  return field;
+}
+function hint(text) { const el = document.createElement("span"); el.className = "hint"; el.textContent = text; return el; }
+const grid = document.createElement("div");
+grid.className = "form-grid";
+fields.forEach(field => grid.append(addField(field)));
+if (offlineMode) {
+  const solarTime = document.createElement("input");
+  solarTime.type = "checkbox";
+  solarTime.id = "useSolarTime";
+  solarTime.name = "useSolarTime";
+  solarTime.hidden = true;
+  grid.append(solarTime);
+} else {
+  const solarField = document.createElement("div");
+  solarField.className = "field full";
+  solarField.innerHTML = `<span class="field-title">${t.solarTime}</span><label class="toggle-row"><input type="checkbox" id="useSolarTime" name="useSolarTime"><span>${t.solarTimeHint}</span></label><span class="hint" id="coordinate-status"></span>`;
+  grid.append(solarField);
+}
+const consentField = document.createElement("div");
+consentField.className = "field full";
+consentField.innerHTML = `<label class="toggle-row"><input type="checkbox" id="consent" name="consent"><span>${t.consent}</span></label><div class="error" id="consent-error"></div>`;
+errorMap.set("consent", consentField.querySelector(".error"));
+grid.append(consentField);
+formFields.append(grid);
+
+async function fillCoordinatesFromLocation() {
+  const location = form.elements.location.value.trim();
+  const status = document.querySelector("#coordinate-status");
+  if (location.length < 2) return;
+  if (offlineMode) return;
+  if (guestMode) {
+    status.textContent = "離線版本無法自動查詢座標；啟用真太陽時時請手動填寫出生地緯度與經度。";
+    return;
+  }
+  status.textContent = "正在查詢出生地座標…";
+  try {
+    const result = await api(`/api/geocode?query=${encodeURIComponent(location)}`);
+    form.elements.latitude.value = result.latitude;
+    form.elements.longitude.value = result.longitude;
+    status.textContent = `已填入座標：${result.latitude.toFixed(4)}, ${result.longitude.toFixed(4)}。可手動修正。`;
+  } catch (error) { status.textContent = `${error.message}（您仍可手動填寫。）`; }
+}
+form.elements.location.addEventListener("blur", fillCoordinatesFromLocation);
+form.elements.useSolarTime.addEventListener("change", () => {
+  if (form.elements.useSolarTime.checked && (!form.elements.latitude.value || !form.elements.longitude.value)) fillCoordinatesFromLocation();
+});
+
+function clearErrors() { errorMap.forEach(error => error.textContent = ""); }
+function displayValue(name, value) {
+  const map = { gender: { male:t.male, female:t.female }, calendar: { solar:t.solar, lunar:t.lunar } };
+  if (name === "useSolarTime") return value ? "\u662f" : "\u5426";
+  return map[name]?.[value] || value || "\u672a\u586b\u5beb";
+}
+function validate() {
+  clearErrors();
+  const status = document.querySelector("#form-status");
+  status.textContent = "";
+  let valid = true;
+  let firstInvalid = null;
+  fields.filter(([, , required]) => required).forEach(([name]) => {
+    const input = form.elements[name];
+    if (!input.value) { errorMap.get(name).textContent = t.required; firstInvalid ||= input; valid = false; }
+  });
+  const birthDate = form.elements.birthDate.value;
+  if (birthDate && new Date(birthDate + "T00:00:00").getTime() > Date.now()) {
+    errorMap.get("birthDate").textContent = t.invalidDate; firstInvalid ||= form.elements.birthDate; valid = false;
+  }
+  if (form.elements.useSolarTime.checked) {
+    const latitude = Number(form.elements.latitude.value);
+    const longitude = Number(form.elements.longitude.value);
+    const invalidLatitude = !form.elements.latitude.value || !Number.isFinite(latitude) || latitude < -90 || latitude > 90;
+    const invalidLongitude = !form.elements.longitude.value || !Number.isFinite(longitude) || longitude < -180 || longitude > 180;
+    if (invalidLatitude) { errorMap.get("latitude").textContent = t.coordinateRequired; firstInvalid ||= form.elements.latitude; valid = false; }
+    if (invalidLongitude) { errorMap.get("longitude").textContent = t.coordinateRequired; firstInvalid ||= form.elements.longitude; valid = false; }
+  }
+  if (!form.elements.consent.checked) { errorMap.get("consent").textContent = t.required; firstInvalid ||= form.elements.consent; valid = false; }
+  if (!valid) { status.textContent = t.formRequired; firstInvalid.focus(); }
+  return valid;
+}
+function proceedToReview() {
+  document.querySelector("#form-status").textContent = "";
+  if (!validate()) return;
+  const data = new FormData(form);
+  const rows = [
+    ["profileName", t.profileName], ["personAlias", t.personAlias], ["gender", t.gender],
+    ["calendar", t.calendar], ["birthDate", t.birthDate], ["birthTime", t.birthTime],
+    ["location", t.location], ["timezone", t.timezone], ["useSolarTime", t.solarTime], ["note", t.note]
+  ].filter(([name]) => !offlineMode || name !== "useSolarTime");
+  const list = document.querySelector("#review-list");
+  list.replaceChildren();
+  rows.forEach(([name, label]) => {
+    const dt = document.createElement("dt"); dt.textContent = label;
+    const dd = document.createElement("dd");
+    dd.textContent = displayValue(name, name === "useSolarTime" ? form.elements.useSolarTime.checked : data.get(name));
+    list.append(dt, dd);
+  });
+  form.classList.add("hidden");
+  reviewPanel.classList.remove("hidden");
+  document.querySelector("#step-label").textContent = t.reviewEyebrow;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  proceedToReview();
+});
+document.querySelector("#review-back").addEventListener("click", () => {
+  reviewPanel.classList.add("hidden");
+  form.classList.remove("hidden");
+  document.querySelector("#step-label").textContent = t.step;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+function renderDraft() {
+  const draftStatus = document.querySelector("#draft-status");
+  draftStatus.textContent = chartDraft.saved ? "命盤資料已加密保存至您的帳戶。" : "此草稿尚未保存。請確認後按下「加密儲存命盤資料」。";
+  const saveButton = document.querySelector("#draft-save");
+  const openChartButton = document.querySelector("#open-chart-button");
+  saveButton.disabled = Boolean(chartDraft.saved);
+  saveButton.hidden = Boolean(chartDraft.saved);
+  openChartButton.classList.toggle("hidden", !chartDraft.chart?.result);
+  const data = new FormData(form);
+  const meta = [
+    [t.draftId, chartDraft.id],
+    [t.draftStatus, chartDraft.status === "core_chart_ready" ? "完整本命盤已建立" : chartDraft.status === "birth_transformations_ready" ? "已安輔星與生年四化" : chartDraft.status === "main_stars_ready" ? "已安十四主星" : chartDraft.status === "structural_chart_ready" ? "已建立十二宮結構" : t.pendingCalculation],
+    [t.draftCreatedAt, chartDraft.createdAt.toLocaleString("zh-TW")],
+    [t.draftPipeline, t.validatedInput]
+  ];
+  const metaList = document.querySelector("#draft-meta");
+  metaList.replaceChildren();
+  meta.forEach(([label, value]) => {
+    const dt = document.createElement("dt"); dt.textContent = label;
+    const dd = document.createElement("dd"); dd.textContent = value;
+    metaList.append(dt, dd);
+  });
+  const rows = [
+    ["profileName", t.profileName], ["personAlias", t.personAlias], ["gender", t.gender],
+    ["calendar", t.calendar], ["birthDate", t.birthDate], ["birthTime", t.birthTime],
+    ["location", t.location], ["timezone", t.timezone], ["useSolarTime", t.solarTime], ["note", t.note]
+  ].filter(([name]) => !offlineMode || name !== "useSolarTime");
+  const list = document.querySelector("#draft-list");
+  list.replaceChildren();
+  rows.forEach(([name, label]) => {
+    const dt = document.createElement("dt"); dt.textContent = label;
+    const dd = document.createElement("dd");
+    dd.textContent = displayValue(name, name === "useSolarTime" ? form.elements.useSolarTime.checked : data.get(name));
+    list.append(dt, dd);
+  });
+  renderChartResult(chartDraft.chart?.result || chartDraft.result);
+}
+function renderPalaceCardLegacy(palace) {
+  const item = document.createElement("article");
+  item.className = "palace palace--" + palace.branch + (palace.is_life_palace ? " is-life" : "") + (palace.is_body_palace ? " is-body" : "");
+  const stars = (palace.stars || []).map((star) => `<i class="star-${star.category || "other"}">${star.name_zh_tw}${(star.transformations || []).map((kind) => `<b>化${kind}</b>`).join("")}</i>`).join("");
+  const decade = palace.decade_limit ? `<em>${palace.decade_limit.start_age}–${palace.decade_limit.end_age} 歲</em>` : "";
+  const growth = palace.twelve_growth_stage ? `<u>${palace.twelve_growth_stage}</u>` : "";
+  item.innerHTML = `<span>${palace.stem_branch_zh_tw || palace.branch_name_zh_tw}</span><strong>${palace.name_zh_tw}</strong><small>${stars}</small>${growth}${decade}${palace.is_body_palace ? "<em class=\"body-palace-label\">身宮</em>" : ""}`;
+  return item;
+}
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>'"]/g, (character) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;", '"':"&quot;" })[character]);
+}
+function getDignity(star, palace) {
+  return star.dignity || "";
+}
+function getPalaceReading(palace) {
+  const stars = palace.stars || [];
+  const major = stars.filter((star) => star.category === "major");
+  const supportive = stars.filter((star) => ["supporting", "auxiliary"].includes(star.category));
+  const malefic = stars.filter((star) => star.category === "malefic");
+  const transformations = stars.flatMap((star) => (star.transformations || []).map((kind) => ({ star, kind })));
+  const [focus, caution] = palaceInsight[palace.name_zh_tw] || ["\u6b64\u5bae\u4f4d\u7684\u751f\u6d3b\u8ab2\u984c\u8207\u4e92\u52d5\u6a21\u5f0f\u3002", "\u5efa\u8b70\u9023\u540c\u4e09\u65b9\u56db\u6b63\u8207\u5b9f\u969b\u7d93\u9a57\u4e00\u8d77\u89c0\u5bdf\u3002"];
+  const positive = major.length || supportive.length ? `\u4e3b\u661f\u8207\u8f14\u661f\u5e36\u4f86${[...major, ...supportive].slice(0, 3).map((star) => star.name_zh_tw).join("\u3001")}\u7684\u7279\u8cea\uff1b\u9069\u5408\u6709\u610f\u8b58\u5730\u6295\u5165\u5728\u300c${palace.name_zh_tw.replace("\u5bae", "")}\u300d\u76f8\u95dc\u7684\u9078\u64c7\u4e0a\u3002` : "\u6b64\u5bae\u7121\u4e3b\u661f\u6642\uff0c\u5efa\u8b70\u9023\u5c0d\u5bae\u3001\u4e09\u65b9\u6b63\u4e00\u8d77\u89c0\u5bdf\u3002";
+  const negative = malefic.length ? `\u714a\u661f${malefic.map((star) => star.name_zh_tw).join("\u3001")}\u5c07\u9019\u500b\u9818\u57df\u7684\u529b\u9053\u63a8\u5f97\u66f4\u5feb\u3001\u66f4\u5f37\uff1b\u7559\u610f\u6025\u4fc3\u3001\u5c0d\u6297\u6216\u904e\u5ea6\u6d88\u8017\u3002` : "\u76e4\u4e2d\u7121\u5e38\u898b\u714a\u661f\u540c\u5bae\uff0c\u4ecd\u5b9c\u642d\u914d\u5927\u9650\u3001\u6d41\u5e74\u89c0\u5bdf\u8b8a\u5316\u3002";
+  const combination = major.length ? `${major.map((star) => star.name_zh_tw).join("\u3001")}\u5ea7\u5b88${palace.name_zh_tw}\uff0c\u5c07\u300c${major.map((star) => starProfiles[star.name_zh_tw] || "\u661f\u66dc\u7279\u8cea").join("\u3001")}\u300d\u5e36\u5165\u6b64\u5bae\u8ab2\u984c\u3002` : "\u6b64\u5bae\u70ba\u7a7a\u5bae\uff0c\u4ee5\u5c0d\u5bae\u4e3b\u661f\u8207\u4e09\u65b9\u6b63\u88dc\u5145\u89e3\u8b80\uff0c\u4e0d\u8868\u793a\u6b64\u9818\u57df\u7a7a\u767d\u3002";
+  return { focus, caution, positive, negative, combination, transformations };
+}
+function getEmptyPalaceAnalysis(palace, relations) {
+  const major = (palace.stars || []).filter((star) => star.category === "major");
+  if (major.length || !relations) return null;
+  const oppositeMajor = (relations.opposite.stars || []).filter((star) => star.category === "major");
+  const supportive = (palace.stars || []).filter((star) => ["supporting", "auxiliary"].includes(star.category)).map((star) => star.name_zh_tw);
+  const malefic = (palace.stars || []).filter((star) => star.category === "malefic").map((star) => star.name_zh_tw);
+  const trines = relations.trines.map((entry) => `${entry.name_zh_tw}${(entry.stars || []).filter((star) => star.category === "major").map((star) => star.name_zh_tw).join("、") || "空宮"}`);
+  const borrowedNames = oppositeMajor.map((star) => star.name_zh_tw);
+  const analysis = {
+    is_empty_palace: true,
+    borrowed_from: { palace_name_zh_tw: relations.opposite.name_zh_tw, branch: relations.opposite.branch, stars: borrowedNames },
+    own_supporting_stars: supportive,
+    own_malefic_stars: malefic,
+    trine_context: trines,
+    summary: `本宮無十四主星，借對宮「${borrowedNames.join("、") || "星曜結構"}」作為主要參考。`,
+    interpretation: borrowedNames.length ? `對宮${relations.opposite.name_zh_tw}的${borrowedNames.map((name) => starProfiles[name] || name).join("、")}，會以外在條件、互動關係或事件回應的方式，補足本宮的課題。` : "對宮同樣無主星，需更重視三方四正、輔煞星與後天選擇的交互影響。"
+  };
+  palace.empty_palace_analysis = analysis;
+  return analysis;
+}
+function decorateEmptyPalaceCards(result) {
+  (result.palaces || []).forEach((palace) => {
+    const relations = getPalaceRelations(palace); const analysis = getEmptyPalaceAnalysis(palace, relations);
+    if (!analysis) return;
+    document.querySelectorAll(`.palace[data-branch="${palace.branch}"]`).forEach((card) => {
+      if (card.querySelector(".borrowed-stars")) return;
+      const note = document.createElement("small"); note.className = "borrowed-stars";
+      note.textContent = `空宮・借${analysis.borrowed_from.palace_name_zh_tw}${analysis.borrowed_from.stars.join("、") || "結構"}`;
+      card.append(note);
+    });
+  });
+}
+const mainStarPairRules = [
+  { stars:["天機", "天梁"], text:"天機的策略與變通，會和天梁的原則與保護感一起運作。適合把洞察用在解決問題、制度改善或替人承擔責任；挑戰是思慮過多，或在理想與現實間反覆拉扯。" },
+  { stars:["天機", "太陰"], text:"思考細膩、擅長觀察變化，也重視安全感與情緒節奏。適合以規劃、研究和耐心累積成果；重要選擇宜避免在焦慮時過度推演。" },
+  { stars:["天機", "巨門"], text:"策略思考和辨證能力互相放大，適合研究、分析與溝通複雜議題；需要留意想得快、說得直時，是否讓關係承受不必要的張力。" },
+  { stars:["紫微", "天府"], text:"統籌視野與資源管理並行，重視格局、秩序與長期穩定。適合承擔整合角色；避免因追求周全而讓決策速度停滯。" },
+  { stars:["紫微", "七殺"], text:"主導與突破同時很強，遇到轉折時有帶隊決斷的能力。適合開創或改革任務；要用明確授權與風險控管平衡高壓推進。" },
+  { stars:["太陽", "太陰"], text:"外在行動與內在感受並存，既能承擔、也需要獨處整理。適合在公開表達與細緻經營之間找到節奏，避免過度付出後累積委屈。" },
+  { stars:["武曲", "天府"], text:"執行與資源管理互補，重視可衡量的成果和長期累積。適合建立制度、管理預算或推動具體目標；需避免把效率當成唯一價值。" },
+  { stars:["廉貞", "貪狼"], text:"原則、魅力與欲望張力同時存在，對關係與選擇有鮮明態度。適合創意、人際或需要界線感的場域；需要把吸引力轉成可持續的承諾。" }
+];
+const bodyPalaceNotes = { "夫妻宮":"身宮落夫妻宮，人生投入常透過親密關係與合作被帶動；需要在配合之外保有自我界線。", "財帛宮":"身宮落財帛宮，行動感容易與資源、收入和成果感連動；宜用長期規劃取代短期壓力驅動。", "官祿宮":"身宮落官祿宮，會透過工作、專業與責任感建立自我；需為休息與私人生活保留位置。", "遷移宮":"身宮落遷移宮，外在環境、變動與對外互動會推動成長；宜在探索之餘建立穩定的落點。", "福德宮":"身宮落福德宮，內在感受與精神狀態會明顯影響行動品質；規律休息與自我整理是重要基礎。" };
+function majorNames(palace) { return (palace?.stars || []).filter((star) => star.category === "major").map((star) => star.name_zh_tw); }
+function buildCombinationReadings(palace, relations) {
+  const stars = palace.stars || []; const major = stars.filter((star) => star.category === "major"); const supportive = stars.filter((star) => ["supporting", "auxiliary"].includes(star.category)); const malefic = stars.filter((star) => star.category === "malefic");
+  const readings = [];
+  for (let index = 0; index < major.length - 1; index += 1) { const pair = [major[index].name_zh_tw, major[index + 1].name_zh_tw]; const rule = mainStarPairRules.find((entry) => entry.stars.every((name) => pair.includes(name))); readings.push({ title:`雙主星組合・${pair.join("、")}`, text:rule?.text || `${pair.join("與")}同宮，會讓${starProfiles[pair[0]] || "第一顆主星的特質"}與${starProfiles[pair[1]] || "第二顆主星的特質"}在同一個生活課題裡互相拉動，宜觀察兩種傾向如何協作。` }); }
+  if (major.length && supportive.length) readings.push({ title:"主星與吉星", text:`${major.map((star) => star.name_zh_tw).join("、")}與${supportive.map((star) => star.name_zh_tw).join("、")}同宮，讓主題更容易得到協作、學習、資源或被看見的機會；仍需以實際投入把助力落地。` });
+  if (major.length && malefic.length) readings.push({ title:"主星與煞星", text:`${major.map((star) => star.name_zh_tw).join("、")}遇${malefic.map((star) => star.name_zh_tw).join("、")}同宮，會把行動、壓力或摩擦感放大。它不是事件預言，而是提醒此領域要預留緩衝、清楚溝通並做好風險管理。` });
+  const transformed = stars.flatMap((star) => (star.transformations || []).map((kind) => `${star.name_zh_tw}化${kind}`));
+  if (transformed.length) readings.push({ title:"主星與四化", text:`${transformed.join("、")}落在本宮，是本命特別容易投入與反覆面對的著力點。化祿看資源，化權看主導，化科看學習與聲譽，化忌則適合用來辨識需要耐心整理的課題。` });
+  if (!major.length) readings.push({ title:"空宮借星", text:`本宮無主星，不代表此領域空白；應借對宮${relations.opposite.name_zh_tw}的${majorNames(relations.opposite).join("、") || "星曜結構"}，並連同三方四正一起理解。` });
+  else readings.push({ title:"同宮組合", text:`${major.map((star) => star.name_zh_tw).join("、")}在${palace.name_zh_tw}共同作用，重點是它們如何回應「${(palaceInsight[palace.name_zh_tw] || ["此宮位的生活課題"])[0]}」這個情境，而不是各自牌義相加。` });
+  readings.push({ title:"對宮組合", text:`${palace.name_zh_tw}與對宮${relations.opposite.name_zh_tw}互為映照；對宮主星${majorNames(relations.opposite).join("、") || "以空宮借對宮結構理解"}，常呈現外在環境、他人回應或另一面需求。` });
+  readings.push({ title:"三方四正組合", text:`本宮與${relations.trines.map((entry) => entry.name_zh_tw).join("、")}構成三方，並連同對宮一起看；三方主星為${relations.trines.map((entry) => `${entry.name_zh_tw}${majorNames(entry).join("、") || "空宮"}`).join("；")}，課題會在內在傾向、實際行動與外在條件之間互相牽動。` });
+  const dignities = major.filter((star) => star.dignity).map((star) => `${star.name_zh_tw}${star.dignity}`); if (dignities.length) readings.push({ title:"廟旺落陷差異", text:`${dignities.join("、")}為本宮主星亮度參考。廟旺時較容易穩定發揮長處；落陷或較弱時，則更依賴環境、練習與節奏管理。亮度不是好壞判決，仍須搭配組合與三方四正。` });
+  if (palace.is_life_palace && palace.is_body_palace) readings.push({ title:"命身同宮", text:"命宮與身宮同在此處，內在認同與實際行動的連結較直接。優點是方向清楚、投入一致；也要避免把單一角色或一時狀態視為全部的自己。" });
+  else if (palace.is_body_palace) readings.push({ title:"身宮落點", text:bodyPalaceNotes[palace.name_zh_tw] || `身宮落${palace.name_zh_tw}，表示人生的實際投入常會在這個領域累積經驗與回饋；可對照命宮，看「想成為誰」和「實際怎麼做」如何彼此配合。` });
+  palace.combination_readings = readings; return readings;
+}
+function getPalaceRelations(palace) {
+  const result = chartDraft?.chart?.result || chartDraft?.result;
+  const palaces = result?.palaces || [];
+  const index = palaces.findIndex((entry) => entry.branch === palace.branch);
+  if (index < 0) return null;
+  const at = (offset) => palaces[(index + offset + palaces.length) % palaces.length];
+  return { self: palace, opposite: at(6), trines: [at(8), at(4)], adjacent: [at(-1), at(1)] };
+}
+function updatePalaceRelationHighlight(relations) {
+  const classes = ["is-selected", "is-related-self", "is-related-opposite", "is-related-trine", "is-related-adjacent"];
+  document.querySelectorAll(".palace[data-branch]").forEach((item) => {
+    item.classList.remove(...classes);
+    if (item.dataset.branch === relations.self.branch) item.classList.add("is-selected", "is-related-self");
+    else if (item.dataset.branch === relations.opposite.branch) item.classList.add("is-related-opposite");
+    else if (relations.trines.some((entry) => entry.branch === item.dataset.branch)) item.classList.add("is-related-trine");
+    else if (relations.adjacent.some((entry) => entry.branch === item.dataset.branch)) item.classList.add("is-related-adjacent");
+  });
+}
+function drawPalaceRelationLines(relations) {
+  const grid = document.querySelector("#chart-view-grid");
+  const existing = grid.querySelector(".palace-relation-lines");
+  existing?.remove();
+  if (!grid.offsetParent || !grid.querySelector(`.palace[data-branch=\"${relations.self.branch}\"]`)) return;
+  const bounds = grid.getBoundingClientRect();
+  if (!bounds.width || !bounds.height) return;
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.classList.add("palace-relation-lines"); svg.setAttribute("viewBox", `0 0 ${bounds.width} ${bounds.height}`); svg.setAttribute("aria-hidden", "true");
+  const point = (branch) => { const box = grid.querySelector(`.palace[data-branch=\"${branch}\"]`).getBoundingClientRect(); return { x: box.left - bounds.left + box.width / 2, y: box.top - bounds.top + box.height / 2 }; };
+  const addLine = (from, to, className) => { const line = document.createElementNS("http://www.w3.org/2000/svg", "line"); line.setAttribute("x1", from.x); line.setAttribute("y1", from.y); line.setAttribute("x2", to.x); line.setAttribute("y2", to.y); line.setAttribute("class", className); svg.append(line); };
+  [["zi", "wu"], ["chou", "wei"], ["yin", "shen"], ["mao", "you"], ["chen", "xu"], ["si", "hai"]].forEach(([from, to]) => addLine(point(from), point(to), "relation-axis"));
+  const selected = point(relations.self.branch);
+  addLine(selected, point(relations.opposite.branch), "relation-link relation-link--opposite");
+  relations.trines.forEach((entry) => addLine(selected, point(entry.branch), "relation-link relation-link--trine"));
+  grid.append(svg);
+}
+function relationLabel(palace) { return `${palace.stem_branch_zh_tw || palace.branch_name_zh_tw}${palace.name_zh_tw}`; }
+function selectPalace(palace) {
+  activeInsightBranch = palace.branch;
+  const relations = getPalaceRelations(palace);
+  if (!relations) return;
+  updatePalaceRelationHighlight(relations);
+  drawPalaceRelationLines(relations);
+  const panel = document.querySelector("#palace-insight-panel"); const backdrop = document.querySelector("#insight-backdrop"); const content = document.querySelector("#insight-content"); const reading = getPalaceReading(palace);
+  document.querySelector("#insight-title").textContent = `${palace.stem_branch_zh_tw || palace.branch_name_zh_tw}${palace.name_zh_tw}`;
+  document.querySelector("#insight-subtitle").textContent = reading.focus;
+  const tags = (palace.stars || []).map((star) => { const dignity = getDignity(star, palace); return `<span class="insight-tag">${escapeHtml(star.name_zh_tw)}${dignity ? ` <b>${dignity}</b>` : ""}</span>`; }).join("") || "<span class=\"insight-tag\">\u7a7a\u5bae\uff08\u501f\u5c0d\u5bae\u89e3\u8b80\uff09</span>";
+  const emptyAnalysis = getEmptyPalaceAnalysis(palace, relations);
+  const stars = (palace.stars || []).map((star) => { const transforms = (star.transformations || []).map((kind) => `\u5316${kind}`).join("\u3001"); const dignity = getDignity(star, palace); const attribute = star.five_element ? `\u30fb${star.five_element}${star.yin_yang}` : ""; return `<article class="star-explanation"><header><strong>${escapeHtml(star.name_zh_tw)}</strong><span>${categoryLabels[star.category] || "\u661f\u66dc"}${attribute}${dignity ? `\u30fb${dignity}` : ""}${transforms ? `\u30fb${transforms}` : ""}</span></header><p>${escapeHtml(starProfiles[star.name_zh_tw] || "\u70ba\u6b64\u5bae\u589e\u52a0\u66f4\u7d30\u7dfb\u7684\u4e92\u52d5\u5c64\u6b21\u3002")}</p></article>`; }).join("") || "<p>\u6b64\u5bae\u7121\u4e3b\u661f\u5750\u5b88\uff0c\u8acb\u53c3\u8003\u5c0d\u5bae\u8207\u4e09\u65b9\u6b63\u7684\u661f\u66dc\u7d50\u69cb\u3002</p>";
+  const transformation = reading.transformations.length ? reading.transformations.map(({ star, kind }) => `<span class="insight-tag">${escapeHtml(star.name_zh_tw)}\u5316${kind}</span>`).join("") : "<p>\u6b64\u5bae\u672c\u547d\u7121\u751f\u5e74\u56db\u5316\u843d\u5165\u3002</p>";
+  const transformationText = reading.transformations.length ? reading.transformations.map(({ star, kind }) => `${star.name_zh_tw}\u5316${kind}\uff1a${transformationNotes[kind] || "\u5f71\u97ff\u6b64\u5bae\u7684\u8457\u529b\u9ede\u3002"}`).join(" ") : "\u672c\u547d\u56db\u5316\u4e0d\u5728\u6b64\u5bae\uff0c\u4ecd\u53ef\u900f\u904e\u6d41\u5e74\u56db\u5316\u89c0\u5bdf\u7576\u5e74\u8b8a\u5316\u3002";
+  const relationTags = `<span class="insight-tag">\u672c\u5bae ${relationLabel(relations.self)}</span><span class="insight-tag">\u5c0d\u5bae ${relationLabel(relations.opposite)}</span>${relations.trines.map((entry) => `<span class="insight-tag">\u4e09\u5408 ${relationLabel(entry)}</span>`).join("")}${relations.adjacent.map((entry) => `<span class="insight-tag">\u593e\u5bae ${relationLabel(entry)}</span>`).join("")}`;
+  const relationSummary = `\u4ee5${palace.name_zh_tw}\u70ba\u6838\u5fc3\uff0c${relations.trines.map((entry) => entry.name_zh_tw).join("\u3001")}\u70ba\u4e09\u5408\u5bae\uff0c${relations.opposite.name_zh_tw}\u70ba\u5c0d\u5bae\u3002\u7d9c\u5408\u89c0\u5bdf\u9019\u56db\u5bae\u7684\u4e3b\u661f\u3001\u56db\u5316\u8207\u714a\u5409\u661f\uff0c\u624d\u80fd\u770b\u898b\u8ab2\u984c\u5728\u5167\u5728\u3001\u884c\u52d5\u8207\u5916\u5728\u74b0\u5883\u9593\u7684\u4e92\u52d5\u3002`;
+  const combinationCards = buildCombinationReadings(palace, relations).map((entry) => `<article class="combination-card"><strong>${escapeHtml(entry.title)}</strong><p>${escapeHtml(entry.text)}</p></article>`).join("");
+  content.innerHTML = `<section class="insight-section"><h3>\u4e09\u65b9\u56db\u6b63\u8207\u593e\u5bae</h3><div class="insight-tags">${relationTags}</div><p style="margin-top:10px">${relationSummary}</p></section><section class="insight-section"><h3>\u661f\u66dc\u8207\u72c0\u614b</h3><div class="insight-tags">${tags}</div></section><details class="combination-reading"><summary>\u661f\u66dc\u7d44\u5408\u5224\u8b80 <span>\u9ede\u9078\u5c55\u958b</span></summary><div class="combination-card-list">${combinationCards}</div></details><section class="insight-section"><h3>\u661f\u66dc\u500b\u5225\u8aaa\u660e</h3><div class="star-explanations">${stars}</div></section><section class="insight-section"><h3>\u5bae\u4f4d\u8207\u661f\u66dc\u7d44\u5408</h3><p>${reading.combination}</p></section><section class="insight-section"><h3>\u6b63\u9762\u7279\u8cea\u3001\u50be\u5411\u8207\u6ce8\u610f\u4e8b\u9805</h3><div class="insight-columns"><div><strong>\u53ef\u767c\u63ee\u8655</strong><p>${reading.positive}</p></div><div><strong>\u7559\u610f\u8655</strong><p>${reading.negative}</p></div></div></section><section class="insight-section"><h3>\u751f\u5e74\u56db\u5316\u5f71\u97ff</h3><div class="insight-tags">${transformation}</div><p style="margin-top:10px">${transformationText}</p></section><div class="notice">${reading.caution} \u661f\u66dc\u660e\u6697\u4f9b\u4f5c\u89e3\u8b80\u7d22\u5f15，\u61c9\u7d9c\u5408\u4e09\u65b9\u56db\u6b63\u3001\u5927\u9650\u8207\u6d41\u5e74\u5224\u8b80\u3002</div>`;
+  const combinationDetails = content.querySelector(".combination-reading");
+  combinationDetails.addEventListener("toggle", () => {
+    combinationDetails.querySelector("summary span").textContent = combinationDetails.open ? "點選關閉" : "點選展開";
+  });
+  if (emptyAnalysis) {
+    const section = document.createElement("section"); section.className = "empty-palace-reading";
+    section.innerHTML = `<h3>空宮與借星解析</h3><p class="empty-palace-summary">${escapeHtml(emptyAnalysis.summary)}</p><dl><div><dt>借星來源</dt><dd>對宮 ${escapeHtml(emptyAnalysis.borrowed_from.palace_name_zh_tw)}：${escapeHtml(emptyAnalysis.borrowed_from.stars.join("、") || "對宮星曜結構")}</dd></div><div><dt>借星後解釋</dt><dd>${escapeHtml(emptyAnalysis.interpretation)}</dd></div><div><dt>本宮輔煞星</dt><dd>${escapeHtml(emptyAnalysis.own_supporting_stars.length ? `輔吉星：${emptyAnalysis.own_supporting_stars.join("、")}` : "未見常用輔吉星")}；${escapeHtml(emptyAnalysis.own_malefic_stars.length ? `煞星：${emptyAnalysis.own_malefic_stars.join("、")}` : "未見常見煞星")}</dd></div><div><dt>三方四正補充</dt><dd>${escapeHtml(emptyAnalysis.trine_context.join("；"))}</dd></div></dl>`;
+    combinationDetails.before(section);
+  }
+  panel.hidden = false; panel.classList.add("is-open"); panel.setAttribute("aria-hidden", "false"); backdrop.classList.add("is-open");
+}
+function closePalaceInsight() {
+  const panel = document.querySelector("#palace-insight-panel");
+  panel.classList.remove("is-open");
+  panel.setAttribute("aria-hidden", "true");
+  panel.hidden = true;
+  document.querySelector("#insight-backdrop").classList.remove("is-open");
+}
+function renderPalaceCard(palace) {
+  const item = renderPalaceCardLegacy(palace); item.dataset.branch = palace.branch; item.tabIndex = 0; item.setAttribute("role", "button"); item.setAttribute("aria-label", `\u958b\u555f${palace.name_zh_tw}\u8a73\u7d30\u89e3\u6790`);
+  const decade = item.querySelector("em");
+  if (decade && palace.decade_limit) {
+    decade.classList.add("decade-trigger"); decade.tabIndex = 0; decade.setAttribute("role", "button"); decade.setAttribute("aria-label", `\u9078\u64c7 ${palace.decade_limit.start_age}\u2013${palace.decade_limit.end_age} \u6b72\u5927\u9650`);
+    const select = (event) => { event.preventDefault(); event.stopPropagation(); applyDecadeAge(palace.decade_limit.start_age); };
+    decade.addEventListener("click", select); decade.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") select(event); });
+  }
+  item.addEventListener("click", () => selectPalace(palace)); item.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); selectPalace(palace); } }); return item;
+}
+function detectChartPatterns(result) {
+  const palaces = result.palaces || []; const lifeIndex = palaces.findIndex((palace) => palace.is_life_palace);
+  if (lifeIndex < 0) return [];
+  const at = (offset) => palaces[(lifeIndex + offset + palaces.length) % palaces.length];
+  const scope = [at(0), at(4), at(6), at(8)]; const adjacent = [at(-1), at(1)]; const allStars = palaces.flatMap((palace) => palace.stars || []);
+  const starsIn = (set) => set.flatMap((palace) => palace.stars || []);
+  const has = (name, set = scope) => starsIn(set).some((star) => star.name_zh_tw === name);
+  const same = (names) => palaces.some((palace) => names.every((name) => (palace.stars || []).some((star) => star.name_zh_tw === name)));
+  const adjacentHas = (names) => names.every((name) => has(name, adjacent));
+  const bright = (name) => allStars.some((star) => star.name_zh_tw === name && /廟|旺/.test(star.dignity || ""));
+  const weak = (name) => allStars.some((star) => star.name_zh_tw === name && /陷|不/.test(star.dignity || ""));
+  const rules = [
+    ["殺破狼", "命、財、官三方四正同時見七殺、破軍、貪狼三顆主星。", () => ["七殺", "破軍", "貪狼"].every((name) => has(name)), "變動與開創的課題更集中，適合以目標、授權與風險節點承接衝勁。"],
+    ["機月同梁", "命、財、官三方四正同時見天機、太陰、天同、天梁。", () => ["天機", "太陰", "天同", "天梁"].every((name) => has(name)), "規劃、感受、協調與原則會共同作用；適合在制度、研究或服務型場域累積。"],
+    ["紫府同宮", "紫微與天府同在任一宮位。", () => same(["紫微", "天府"]), "統籌視野與資源管理互補，重點在把格局感落成可執行的制度。"],
+    ["府相朝垣", "命、財、官三方四正同時見天府、天相，並有紫微或輔弼同會。", () => has("天府") && has("天相") && (has("紫微") || has("左輔") || has("右弼")), "資源調度、秩序與協調感較突出，適合在有明確角色與責任邊界的環境發揮。"],
+    ["日月並明", "命、財、官三方四正同見太陽、太陰，且兩星皆為廟或旺。", () => has("太陽") && has("太陰") && bright("太陽") && bright("太陰"), "外在行動與內在感受較能互相支持；仍需在承擔與休息間維持平衡。"],
+    ["日月反背", "命、財、官三方四正同見太陽、太陰，且兩星皆為落陷或較弱狀態。", () => has("太陽") && has("太陰") && weak("太陽") && weak("太陰"), "此為需要細緻經營節奏的訊號，不是負面定論；宜用環境選擇、支持系統與規律休息補足。"],
+    ["祿馬交馳", "命、財、官三方四正同時見天馬，並見祿存或化祿。", () => has("天馬") && (has("祿存") || starsIn(scope).some((star) => (star.transformations || []).includes("祿"))), "資源與行動、移動彼此帶動；機會出現時更需要可執行的行程與成本管理。"],
+    ["石中隱玉", "巨門坐子或午宮，且同宮或三方四正有文昌、文曲、祿存或化科相助。", () => palaces.some((palace) => ["zi", "wu"].includes(palace.branch) && (palace.stars || []).some((star) => star.name_zh_tw === "巨門")) && (["文昌", "文曲", "祿存"].some(has) || starsIn(scope).some((star) => (star.transformations || []).includes("科"))), "深度觀察與表達能力可經由學習、作品或專業累積被看見，宜避免把懷疑停在心裡。"],
+    ["巨日同宮", "巨門與太陽同在任一宮位。", () => same(["巨門", "太陽"]), "辨證與公開表達相互放大，適合說明複雜議題；需留意直言是否兼顧對方的接收方式。"],
+    ["明珠出海", "太陰坐亥宮，且命、財、官三方四正有文昌、文曲、左輔或右弼之一同會。", () => palaces.some((palace) => palace.branch === "hai" && (palace.stars || []).some((star) => star.name_zh_tw === "太陰")) && ["文昌", "文曲", "左輔", "右弼"].some(has), "細膩感受與才華較容易透過作品、人際或專業呈現；宜持續累積可被辨識的輸出。"],
+    ["鈴昌陀武", "命、財、官三方四正同時見鈴星、文昌、陀羅、武曲。", () => ["鈴星", "文昌", "陀羅", "武曲"].every((name) => has(name)), "執行、文字與壓力耐受交織，適合把複雜任務拆解；尤其要避免緊繃時的急切判斷。"],
+    ["羊陀夾命", "命宮前後相鄰兩宮分別見擎羊與陀羅。", () => adjacentHas(["擎羊", "陀羅"]), "環境壓力與推進阻力容易形成夾擊感；建立優先順序、緩衝時間與求助機制很重要。"],
+    ["火鈴夾命", "命宮前後相鄰兩宮分別見火星與鈴星。", () => adjacentHas(["火星", "鈴星"]), "反應快、變化感強，宜在衝刺前設定停損與冷卻時間，讓速度轉為可控行動。"],
+    ["空劫夾命", "命宮前後相鄰兩宮分別見地空與地劫。", () => adjacentHas(["地空", "地劫"]), "資源與期待容易有落差感，適合以務實預備、階段檢核與可替代方案增加穩定度。"]
+  ];
+  const scopeStars = starsIn(scope); const positives = scopeStars.filter((star) => ["supporting", "auxiliary"].includes(star.category) || (star.transformations || []).some((kind) => ["祿", "權", "科"].includes(kind)) || /廟|旺/.test(star.dignity || "")).length; const negatives = scopeStars.filter((star) => star.category === "malefic" || (star.transformations || []).includes("忌") || /陷|不/.test(star.dignity || "")).length;
+  const detections = rules.map(([name, conditions, test, effect]) => { const formed = test(); const score = formed ? Math.max(20, Math.min(100, 60 + positives * 5 - negatives * 5)) : 0; const strength = !formed ? "未達門檻" : score >= 75 ? "強" : score >= 55 ? "中" : "基礎"; return { name, formed, conditions, strength, positive_conditions: positives ? `三方四正內有 ${positives} 項吉助、四化或廟旺條件。` : "未見額外吉助、四化或廟旺加分。", negative_conditions: negatives ? `三方四正內有 ${negatives} 項煞星、化忌或落陷提醒。` : "未見煞星、化忌或落陷的額外減分。", impact: formed ? effect : "目前未同時滿足必要條件，因此不以此格局作為解讀依據。" }; });
+  result.pattern_detections = detections; return detections;
+}
+function getChartPatternDetections(result) {
+  if (Array.isArray(result.pattern_detections)) return result.pattern_detections;
+  try {
+    return detectChartPatterns(result);
+  } catch (error) {
+    result.pattern_detection_error = true;
+    result.pattern_detections = [];
+    return result.pattern_detections;
+  }
+}
+function renderPatternDetections(result) {
+  const grid = document.querySelector("#pattern-grid"); const panel = document.querySelector(".pattern-panel"); if (!grid || !panel) return;
+  const detections = getChartPatternDetections(result).filter((entry) => entry.formed); grid.replaceChildren();
+  panel.classList.toggle("hidden", detections.length === 0);
+  detections.forEach((entry) => { const card = document.createElement("article"); card.className = "pattern-card is-formed"; card.innerHTML = `<header><h4>${escapeHtml(entry.name)}</h4><span class="pattern-status">成立・${entry.strength}</span></header><dl><div><dt>成立條件</dt><dd>${escapeHtml(entry.conditions)}</dd></div><div><dt>加分條件</dt><dd>${escapeHtml(entry.positive_conditions)}</dd></div><div><dt>減分條件</dt><dd>${escapeHtml(entry.negative_conditions)}</dd></div><div><dt>實際影響</dt><dd>${escapeHtml(entry.impact)}</dd></div></dl>`; grid.append(card); });
+}
+function renderChartCenter(result, rawInput = {}) {
+  const center = document.createElement("section");
+  center.className = "chart-center";
+  const title = document.createElement("strong");
+  title.textContent = rawInput.profileName || "本命盤概要";
+  const bureau = document.createElement("span");
+  bureau.textContent = result.five_element_bureau?.name_zh_tw || "五行局待定";
+  const birth = document.createElement("small");
+  const gender = rawInput.gender === "male" ? "男" : rawInput.gender === "female" ? "女" : "－";
+  birth.textContent = `國曆 ${rawInput.birthDate || "－"} ${result.normalized_input?.time?.original_time || ""} ・ ${gender} ・ ${result.normalized_input?.time?.shichen_name_zh_tw || "－"}`;
+  const rulers = document.createElement("small");
+  rulers.textContent = `命主 ${result.chart_rulers?.life_ruler || "－"} ・ 身主 ${result.chart_rulers?.body_ruler || "－"}`;
+  const details = document.createElement("small");
+  const starCount = (result.palaces || []).flatMap((palace) => palace.stars || []).length;
+  details.textContent = `農曆 ${result.lunar_date?.display_zh_tw || "－"} ・ 命宮 ${result.life_palace?.name_zh_tw || "－"} ・ 身宮 ${result.body_palace?.name_zh_tw || "－"} ・ ${starCount} 星曜`;
+  const formedPatterns = getChartPatternDetections(result).filter((entry) => entry.formed);
+  const patterns = document.createElement("div"); patterns.className = "chart-patterns";
+  if (formedPatterns.length) formedPatterns.forEach((entry) => { const item = document.createElement("span"); item.textContent = entry.name; patterns.append(item); });
+  else patterns.classList.add("hidden");
+  center.append(title, bureau, birth, rulers, details, patterns);
+  return center;
+}
+const plainAnalysisTopics = [
+  { title: "命格個性", palaces: ["命宮", "福德宮"], focus: "自我風格與內在節奏", action: "把最常被肯定的做事方式寫下來，並在重要選擇前確認它是否仍符合你的價值。" },
+  { title: "優勢與弱點", palaces: ["命宮", "官祿宮", "遷移宮"], focus: "天賦如何在內在、工作與外在舞台之間發揮", action: "挑一項優勢建立可重複的工作方法，也為最容易失衡的環節設定檢查點。" },
+  { title: "事業發展", palaces: ["官祿宮", "命宮", "財帛宮"], focus: "職涯定位、專業輸出與資源交換", action: "以一個可驗證的專業目標為主軸，將合作條件、責任範圍與成果標準先說清楚。" },
+  { title: "財運模式", palaces: ["財帛宮", "田宅宮", "福德宮"], focus: "收入、資源累積與安全感", action: "建立預算、緊急預備金與定期檢視機制；投資或借貸請仍以專業財務資訊為準。" },
+  { title: "感情與婚姻", palaces: ["夫妻宮", "命宮", "福德宮"], focus: "親密關係中的期待、界線與情感需求", action: "用具體需求取代猜測：定期談一次彼此的時間分配、金錢觀與衝突修復方式。" },
+  { title: "家庭關係", palaces: ["父母宮", "田宅宮", "兄弟宮"], focus: "成長背景、家人互動與歸屬感", action: "在照顧責任與個人空間之間訂出可執行的界線，讓關心能落在穩定的互動上。" },
+  { title: "人際與合作", palaces: ["交友宮", "兄弟宮", "官祿宮"], focus: "同儕、團隊與合作網絡", action: "合作開始時先對齊角色、決策權與溝通頻率，避免把默契當成共識。" },
+  { title: "健康傾向", palaces: ["疾厄宮", "福德宮", "命宮"], focus: "壓力回應、能量管理與生活節律", action: "觀察睡眠、壓力與作息的連動，從一個可持續的休息或運動習慣開始；不適請諮詢醫療專業。" },
+  { title: "外出與遷移", palaces: ["遷移宮", "命宮", "交友宮"], focus: "新環境、旅行、轉換與對外互動", action: "面對變動時預先準備資訊、人脈與備案，主動創造能看見你專長的場合。" },
+  { title: "學習與成長", palaces: ["命宮", "福德宮", "父母宮"], focus: "吸收知識、反思與長期養成", action: "把學習拆成小週期：輸入、練習、輸出與回顧各留一段固定時間。" },
+  { title: "大限趨勢", palaces: [], focus: "目前十年階段的主題與著力方向", action: "以目前大限作為中期規劃的背景，先設定一到三年的主題，再用年度目標逐步驗證。", temporal: "decade" },
+  { title: "流年提醒", palaces: [], focus: "今年的行動焦點與需要細緻處理的課題", action: "把今年的提醒轉成具體行事曆：重要決策保留緩衝，定期回顧資源與關係的變化。", temporal: "annual" }
+];
+function analysisPalace(result, name) { return (result.palaces || []).find((palace) => palace.name_zh_tw === name); }
+function analysisSignals(palaces) {
+  const stars = palaces.flatMap((palace) => palace?.stars || []);
+  return {
+    major: [...new Set(stars.filter((star) => star.category === "major").map((star) => star.name_zh_tw))],
+    supportive: [...new Set(stars.filter((star) => ["supporting", "auxiliary"].includes(star.category)).map((star) => star.name_zh_tw))],
+    challenging: [...new Set(stars.filter((star) => star.category === "malefic").map((star) => star.name_zh_tw))],
+    transformations: stars.flatMap((star) => (star.transformations || []).map((kind) => `${star.name_zh_tw}化${kind}`))
+  };
+}
+function renderPlainAnalysisEntry(entry) {
+  const grid = document.querySelector("#plain-analysis-grid");
+  if (!grid) return;
+  grid.replaceChildren();
+  const article = document.createElement("article");
+  article.className = "plain-analysis-card";
+  article.innerHTML = `<h4>${escapeHtml(entry.title)}</h4><dl><div><dt>整體結論</dt><dd>${escapeHtml(entry.conclusion)}</dd></div><div><dt>命盤依據</dt><dd>${escapeHtml(entry.basis)}</dd></div><div><dt>優勢</dt><dd>${escapeHtml(entry.strengths)}</dd></div><div><dt>挑戰</dt><dd>${escapeHtml(entry.challenges)}</dd></div><div class="analysis-action"><dt>行動建議</dt><dd>${escapeHtml(entry.action)}</dd></div></dl>`;
+  grid.append(article);
+  document.querySelectorAll("#plain-analysis-topics button").forEach((button) => {
+    const selected = button.dataset.topic === entry.title;
+    button.classList.toggle("is-active", selected);
+    button.setAttribute("aria-selected", String(selected));
+  });
+}
+function renderPlainLanguageAnalysis(result) {
+  const topics = document.querySelector("#plain-analysis-topics");
+  if (!topics) return;
+  plainAnalysisEntries = plainAnalysisTopics.map((topic) => {
+    let palaces = topic.palaces.map((name) => analysisPalace(result, name)).filter(Boolean);
+    let basis = "";
+    if (topic.temporal === "decade") {
+      const context = result.decade_context;
+      const palace = context && analysisPalace(result, context.decade_life_palace.palace_name_zh_tw);
+      palaces = palace ? [palace] : [];
+      basis = context ? `${context.start_age}–${context.end_age} 歲的大限命宮在${context.decade_life_palace.stem_branch_zh_tw}${context.decade_life_palace.palace_name_zh_tw}；大限四化：${(context.decade_transformations || []).map((entry) => `${entry.star_name_zh_tw}${entry.name_zh_tw}`).join("、") || "尚無"}。` : "尚未取得目前大限資料。";
+    } else if (topic.temporal === "annual") {
+      const context = result.annual_context;
+      const palace = context && analysisPalace(result, context.annual_life_palace.palace_name_zh_tw);
+      palaces = palace ? [palace] : [];
+      basis = context ? `${context.target_year} 年流年命宮在${context.annual_life_palace.branch_name_zh_tw}${context.annual_life_palace.palace_name_zh_tw}；流年四化：${(context.annual_transformations || []).map((entry) => `${entry.star_name_zh_tw}${entry.name_zh_tw}`).join("、") || "尚無"}。` : "尚未取得流年資料。";
+    }
+    const signals = analysisSignals(palaces);
+    const palaceNames = palaces.map((palace) => `${palace.stem_branch_zh_tw || palace.branch_name_zh_tw}${palace.name_zh_tw}`).join("、");
+    const mainTraits = signals.major.map((name) => starProfiles[name] || name).slice(0, 2);
+    const conclusion = mainTraits.length ? `這個主題的基調偏向${mainTraits.join("與")}；適合順著已有的特質累積，而非急著用單一結果定義自己。` : `這個主題需要透過${palaceNames || "相關宮位"}與實際經驗一同觀察，重點是建立穩定而可調整的做法。`;
+    const generatedBasis = basis || `${palaceNames}為主要觀察位置；主星：${signals.major.join("、") || "空宮，宜參考對宮"}${signals.transformations.length ? `；四化：${signals.transformations.join("、")}` : ""}。`;
+    const strengths = signals.supportive.length || signals.major.length ? `可發揮${[...signals.major, ...signals.supportive].slice(0, 3).join("、")}所代表的${[...mainTraits, "協作與資源整合"].slice(0, 2).join("、")}。` : "空宮不代表空白；更適合主動借助對宮、合作關係與後天經驗，找到自己的節奏。";
+    const challenges = signals.challenging.length ? `${signals.challenging.join("、")}讓這個領域的反應更快、更強；留意急促決定、壓力累積或把責任全扛在自己身上。` : "盤面未見常見煞星同宮，仍要留意在順利時忽略界線、節奏與長期成本。";
+    return {
+      title: topic.title, conclusion, basis: generatedBasis, strengths, challenges, action: topic.action,
+      source: { topic, palaces, signals, decade_context: topic.temporal === "decade" ? result.decade_context : null, annual_context: topic.temporal === "annual" ? result.annual_context : null }
+    };
+  });
+  if (!plainAnalysisEntries.some((entry) => entry.title === activePlainAnalysisTopic)) activePlainAnalysisTopic = plainAnalysisEntries[0]?.title || "";
+  topics.replaceChildren();
+  plainAnalysisEntries.forEach((entry) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.topic = entry.title;
+    button.setAttribute("role", "tab");
+    button.setAttribute("aria-controls", "plain-analysis-grid");
+    button.textContent = entry.title;
+    button.addEventListener("click", () => { activePlainAnalysisTopic = entry.title; renderPlainAnalysisEntry(entry); });
+    topics.append(button);
+  });
+  renderPlainAnalysisEntry(plainAnalysisEntries.find((entry) => entry.title === activePlainAnalysisTopic) || plainAnalysisEntries[0]);
+}
+function buildReportData(result) {
+  const life = (result.palaces || []).find((palace) => palace.is_life_palace);
+  const lifeReading = life ? getPalaceReading(life) : null;
+  const relations = life ? getPalaceRelations(life) : null;
+  const time = result.normalized_input?.time;
+  const trueSolarTime = time?.true_solar_datetime
+    ? `已採用真太陽時排盤。標準時間：${time.standard_local_datetime}；真太陽時：${time.true_solar_datetime}；校正：${time.true_solar_correction_minutes >= 0 ? "+" : ""}${time.true_solar_correction_minutes} 分鐘（均時差 ${time.equation_of_time_minutes >= 0 ? "+" : ""}${time.equation_of_time_minutes} 分鐘、經度差 ${time.longitude_correction_minutes >= 0 ? "+" : ""}${time.longitude_correction_minutes} 分鐘）。`
+    : "未啟用真太陽時校正；本命盤以出生地標準時間排盤。";
+  return {
+    generatedAt: new Date().toLocaleString("zh-TW"), profileName: chartDraft?.rawInput?.profileName || "命盤解析",
+    basic: `國曆 ${chartDraft?.rawInput?.birthDate || "－"} ${chartDraft?.rawInput?.birthTime || ""} ・ ${chartDraft?.rawInput?.gender === "male" ? "男" : "女"} ・ ${chartDraft?.rawInput?.location || "－"} ・ 農曆 ${result.lunar_date?.display_zh_tw || "－"} ・ ${result.five_element_bureau?.name_zh_tw || "五行局待定"}`,
+    summary: lifeReading ? `${life.name_zh_tw}的重點是${lifeReading.focus} ${lifeReading.combination} ${lifeReading.caution}` : "命盤資料尚不足以產生摘要。",
+    palaces: (result.palaces || []).map((palace) => { const reading = getPalaceReading(palace); const empty = getEmptyPalaceAnalysis(palace, getPalaceRelations(palace)); return { title: palace.name_zh_tw, stars: (palace.stars || []).map((star) => star.name_zh_tw).join("、") || "空宮", text: empty ? `${empty.summary} ${empty.interpretation}` : `${reading.combination} ${reading.positive}` }; }),
+    relations: relations ? `以命宮為核心，三方為${relations.trines.map((palace) => palace.name_zh_tw).join("、")}，對宮為${relations.opposite.name_zh_tw}。${relations.trines.map((palace) => `${palace.name_zh_tw}主星：${majorNames(palace).join("、") || "空宮"}`).join("；")}；對宮主星：${majorNames(relations.opposite).join("、") || "空宮"}。` : "尚未取得三方四正資料。",
+    patterns: getChartPatternDetections(result).filter((entry) => entry.formed),
+    transformations: result.birth_year_transformations || [], decade: result.decade_context || null, annual: result.annual_context || null,
+    trueSolarTime,
+    actions: plainAnalysisEntries.map((entry) => ({ title: entry.title, action: entry.action })).filter((entry) => entry.action),
+    notices: [...(result.warnings || []), "本報告為命盤結構的自我觀察工具，不作絕對事件預測；健康、財務與法律決策請諮詢專業人士。"]
+  };
+}
+function reportSection(title, content, className = "") { return `<section class="report-section ${className}"><h3>${escapeHtml(title)}</h3>${content}</section>`; }
+function reportItems(items) { return `<div class="report-list">${items.map((item) => `<article class="report-item"><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.text)}</p></article>`).join("")}</div>`; }
+function renderReport() {
+  const result = chartDraft?.chart?.result || chartDraft?.result; if (!result) return;
+  reportData = buildReportData(result);
+  document.querySelector("#report-title").textContent = `${reportData.profileName}・完整命盤解析`;
+  document.querySelector("#report-summary").textContent = `產生時間：${reportData.generatedAt}`;
+  const documentNode = document.querySelector("#report-document");
+  const transformations = reportData.transformations.map((entry) => `${entry.star_name_zh_tw}${entry.name_zh_tw}・${entry.palace_name_zh_tw}`).join("；") || "尚無生年四化資料。";
+  const decade = reportData.decade ? `${reportData.decade.start_age}–${reportData.decade.end_age} 歲，大限命宮在${reportData.decade.decade_life_palace.palace_name_zh_tw}。${(reportData.decade.decade_transformations || []).map((entry) => `${entry.star_name_zh_tw}${entry.name_zh_tw}`).join("、") || "本階段無四化資料。"}` : "尚未取得大限資料。";
+  const annual = reportData.annual ? `${reportData.annual.target_year} 年，流年命宮在${reportData.annual.annual_life_palace.palace_name_zh_tw}。${(reportData.annual.annual_transformations || []).map((entry) => `${entry.star_name_zh_tw}${entry.name_zh_tw}`).join("、") || "本年度無四化資料。"}` : "尚未取得流年資料。";
+  documentNode.innerHTML = [
+    reportSection("命盤基本資料", `<p>${escapeHtml(reportData.basic)}</p>`),
+    reportSection("真太陽時校正", `<p>${escapeHtml(reportData.trueSolarTime)}</p>`),
+    reportSection("命格摘要", `<p>${escapeHtml(reportData.summary)}</p>`),
+    reportSection("十二宮解析", reportItems(reportData.palaces.map((entry) => ({ title: `${entry.title}・${entry.stars}`, text: entry.text })))),
+    reportSection("三方四正", `<p>${escapeHtml(reportData.relations)}</p>`),
+    reportSection("格局判定", reportData.patterns.length ? reportItems(reportData.patterns.map((entry) => ({ title: `${entry.name}・強度${entry.strength}`, text: `${entry.impact} 加分：${entry.positive_conditions} 減分：${entry.negative_conditions}` }))) : `<p>目前沒有符合多條件門檻的格局。</p>`),
+    reportSection("四化分析", `<p>${escapeHtml(transformations)}</p>`),
+    reportSection("大限分析", `<p>${escapeHtml(decade)}</p>`),
+    reportSection("流年分析", `<p>${escapeHtml(annual)}</p>`),
+    reportSection("行動建議", reportItems(reportData.actions.map((entry) => ({ title: entry.title, text: entry.action })))),
+    reportSection("注意事項", `<p>${escapeHtml(reportData.notices.join(" "))}</p>`)
+  ].join("");
+}
+function reportAsText() {
+  if (!reportData) return "";
+  return Array.from(document.querySelectorAll("#report-document h3, #report-document h4, #report-document p")).map((node) => node.textContent.trim()).filter(Boolean).join("\n\n");
+}
+function reportAsAiPrompt() {
+  const report = reportAsText();
+  if (!report) return "";
+  return `你是一位謹慎、具同理心的紫微斗數解析助手。請依據以下命盤完整解析報告，使用繁體中文提供深入且容易理解的補充解析。\n\n請遵守：\n1. 只使用報告中的資料；若資料不足，請明確說明，不要自行編造星曜、宮位或事件。\n2. 將命盤視為自我探索與趨勢觀察工具，不做絕對預言，也不要保證健康、財務、法律或感情結果。\n3. 先整理整體命格主軸，再分別說明性格、工作／財務、關係與目前大限／流年的可能課題。\n4. 對每項解讀指出所依據的報告內容，並提出可執行、保有選擇空間的建議。\n5. 語氣溫和、具體，避免宿命論；最後列出 3 個可供當事人自我反思的問題。\n\n以下是命盤完整解析報告：\n---\n${report}\n---`;
+}
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); }
+  catch { const area = document.createElement("textarea"); area.value = text; document.body.append(area); area.select(); document.execCommand("copy"); area.remove(); }
+}
+function downloadChartImage() {
+  const result = chartDraft?.chart?.result || chartDraft?.result; if (!result) return;
+  const canvas = document.createElement("canvas"); const context = canvas.getContext("2d"); const size = 1600; const margin = 50; const cell = 375; const top = 50;
+  canvas.width = size; canvas.height = size; context.fillStyle = "#0b0618"; context.fillRect(0, 0, size, size);
+  const positions = { zi:[0,0], chou:[1,0], yin:[2,0], mao:[3,0], hai:[0,1], chen:[3,1], xu:[0,2], si:[3,2], you:[0,3], shen:[1,3], wei:[2,3], wu:[3,3] };
+  const drawText = (text, x, y, maxWidth, lineHeight, color, font) => { context.fillStyle = color; context.font = font; let line = ""; let cursor = y; for (const character of text) { if (context.measureText(line + character).width > maxWidth) { context.fillText(line, x, cursor); cursor += lineHeight; line = character; } else line += character; } if (line) context.fillText(line, x, cursor); return cursor; };
+  (result.palaces || []).forEach((palace) => {
+    const [column, row] = positions[palace.branch] || [0, 0]; const x = margin + column * cell; const y = top + row * cell;
+    context.fillStyle = palace.is_life_palace ? "#3d2169" : "#19102f"; context.fillRect(x + 2, y + 2, cell - 4, cell - 4);
+    context.strokeStyle = palace.is_life_palace ? "#d1b4ff" : "#655884"; context.lineWidth = palace.is_life_palace ? 3 : 1; context.strokeRect(x + 2, y + 2, cell - 4, cell - 4);
+    context.fillStyle = "#b9b3cb"; context.font = "600 18px system-ui"; context.fillText(palace.stem_branch_zh_tw || palace.branch_name_zh_tw || "", x + 18, y + 31);
+    context.fillStyle = "#f5f2ff"; context.font = "800 27px system-ui"; context.fillText(palace.name_zh_tw, x + 18, y + 67);
+    if (palace.decade_limit) { context.fillStyle = "#ccaeff"; context.font = "600 16px system-ui"; context.fillText(`${palace.decade_limit.start_age}–${palace.decade_limit.end_age} 歲`, x + 18, y + 94); }
+    const starText = (palace.stars || []).map((star) => `${star.name_zh_tw}${(star.transformations || []).map((kind) => `化${kind}`).join("")}`).join("、") || "空宮・借對宮";
+    drawText(starText, x + 18, y + 129, cell - 36, 27, "#e9dfff", "20px system-ui");
+    if (palace.is_body_palace) { context.fillStyle = "#89ddc3"; context.font = "700 16px system-ui"; context.fillText("身宮", x + cell - 62, y + 31); }
+  });
+  const centerX = margin + cell; const centerY = top + cell; const centerSize = cell * 2;
+  context.fillStyle = "#241540"; context.fillRect(centerX + 2, centerY + 2, centerSize - 4, centerSize - 4); context.strokeStyle = "#9b76cf"; context.lineWidth = 2; context.strokeRect(centerX + 2, centerY + 2, centerSize - 4, centerSize - 4);
+  context.textAlign = "center"; context.fillStyle = "#f5f2ff"; context.font = "800 38px system-ui"; context.fillText(chartDraft?.rawInput?.profileName || "命盤", centerX + centerSize / 2, centerY + 245);
+  context.fillStyle = "#ccaeff"; context.font = "700 27px system-ui"; context.fillText(result.five_element_bureau?.name_zh_tw || "五行局", centerX + centerSize / 2, centerY + 292);
+  context.fillStyle = "#b9b3cb"; context.font = "21px system-ui"; context.fillText(`農曆 ${result.lunar_date?.display_zh_tw || "－"}`, centerX + centerSize / 2, centerY + 340);
+  context.fillText(`命宮 ${result.life_palace?.name_zh_tw || "－"} ・ 身宮 ${result.body_palace?.name_zh_tw || "－"}`, centerX + centerSize / 2, centerY + 378);
+  const patterns = getChartPatternDetections(result).filter((entry) => entry.formed).map((entry) => entry.name).join(" ・ "); if (patterns) { context.fillStyle = "#89ddc3"; context.font = "700 19px system-ui"; drawText(patterns, centerX + 80, centerY + 430, centerSize - 160, 30, "#89ddc3", "700 19px system-ui"); }
+  context.textAlign = "left"; canvas.toBlob((blob) => { if (!blob) return; const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `${chartDraft?.rawInput?.profileName || "命盤"}-十二宮命盤圖.png`; link.click(); URL.revokeObjectURL(link.href); }, "image/png");
+}
+async function downloadChartSnapshot() {
+  const grid = document.querySelector("#chart-view-grid"); const result = chartDraft?.chart?.result || chartDraft?.result;
+  if (!grid || !result) return;
+  const status = document.querySelector("#report-status"); status.textContent = "正在依目前命盤版面產生圖片…";
+  const chartView = document.querySelector("#chart-view-panel"); const wasHidden = chartView.classList.contains("hidden"); const previousStyle = chartView.getAttribute("style");
+  try {
+    if (typeof window.html2canvas !== "function") throw new Error("截圖元件未載入。");
+    if (wasHidden) { const card = document.querySelector(".card"); const style = getComputedStyle(card); const width = card.clientWidth - Number.parseFloat(style.paddingLeft) - Number.parseFloat(style.paddingRight); chartView.classList.remove("hidden"); chartView.style.cssText = `position:fixed;left:-10000px;top:0;width:${width}px;display:block;`; await new Promise((resolve) => requestAnimationFrame(resolve)); }
+    const canvas = await window.html2canvas(grid, { backgroundColor:"#070510", scale:2, useCORS:true, logging:false, removeContainer:true });
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png")); if (!blob) throw new Error("圖片轉換失敗。");
+    const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `${chartDraft?.rawInput?.profileName || "命盤"}-十二宮命盤圖.png`; link.click(); URL.revokeObjectURL(link.href); status.textContent = "已依目前命盤版面匯出十二宮圖。";
+  } catch (error) {
+    status.textContent = `無法匯出命盤圖：${error.message}`;
+  } finally {
+    if (wasHidden) { chartView.classList.add("hidden"); if (previousStyle === null) chartView.removeAttribute("style"); else chartView.setAttribute("style", previousStyle); }
+  }
+}
+function renderAnnualContext(result) {
+  const context = result.annual_context;
+  const summary = document.querySelector("#annual-summary");
+  const transformations = document.querySelector("#annual-transformations-list");
+  transformations.replaceChildren();
+  if (!context) {
+    summary.textContent = "尚未取得流年資料。";
+    return;
+  }
+  document.querySelector("#annual-year-input").value = context.target_year;
+  summary.textContent = `${context.target_year}（${context.pillar.display_zh_tw}）・虛歲 ${context.age} ・流年命宮 ${context.annual_life_palace.branch_name_zh_tw}${context.annual_life_palace.palace_name_zh_tw} ・小限 ${context.minor_limit.branch_name_zh_tw}${context.minor_limit.palace_name_zh_tw}`;
+  (context.annual_transformations || []).forEach((transformation) => {
+    const item = document.createElement("span");
+    item.textContent = `流年 ${transformation.star_name_zh_tw}${transformation.name_zh_tw}・${transformation.palace_name_zh_tw}`;
+    transformations.append(item);
+  });
+}
+function renderDecadeContext(result) {
+  const context = result.decade_context;
+  const summary = document.querySelector("#decade-summary");
+  const grid = document.querySelector("#decade-palace-grid");
+  const transformations = document.querySelector("#decade-transformations-list");
+  const theme = document.querySelector("#decade-theme");
+  grid.replaceChildren(); transformations.replaceChildren();
+  document.querySelectorAll(".palace.is-decade-active").forEach((item) => item.classList.remove("is-decade-active"));
+  if (!context) { summary.textContent = "\u9019\u500b\u865b\u6b72\u672a\u5728\u53ef\u89e3\u8b80\u7684\u5927\u9650\u7bc4\u570d\u3002"; theme.textContent = ""; return; }
+  document.querySelector("#decade-age-input").value = context.target_age;
+  summary.textContent = `${context.start_age}\u2013${context.end_age}\u6b72\u30fb\u5927\u9650\u547d\u5bae ${context.decade_life_palace.stem_branch_zh_tw}${context.decade_life_palace.palace_name_zh_tw}`;
+  (context.decade_palaces || []).forEach((palace) => {
+    const item = document.createElement("span");
+    item.className = "decade-palace" + (palace.branch === context.decade_life_palace.branch ? " is-decade-life" : "");
+    item.textContent = `${palace.decade_palace_name_zh_tw} \u00b7 \u672c\u547d${palace.natal_palace_name_zh_tw}`;
+    grid.append(item);
+  });
+  document.querySelectorAll(`.palace[data-branch=\"${context.decade_life_palace.branch}\"]`).forEach((item) => item.classList.add("is-decade-active"));
+  (context.decade_transformations || []).forEach((transformation) => {
+    const item = document.createElement("span");
+    item.textContent = `\u5927\u9650 ${transformation.star_name_zh_tw}${transformation.name_zh_tw}\u30fb${transformation.palace_name_zh_tw}`;
+    transformations.append(item);
+  });
+  const decadePalace = (result.palaces || []).find((palace) => palace.branch === context.decade_life_palace.branch);
+  const natalLife = (result.palaces || []).find((palace) => palace.is_life_palace);
+  const decadeStars = (decadePalace?.stars || []).filter((star) => star.category === "major").map((star) => star.name_zh_tw).join("\u3001") || "\u7a7a\u5bae\u501f\u5c0d\u5bae";
+  theme.textContent = `\u672c\u547d${natalLife?.name_zh_tw || ""}\u7590\u5b9a\u57fa\u8abf\uff1b${context.start_age}\u2013${context.end_age}\u6b72\u4ee5${context.decade_life_palace.palace_name_zh_tw}\u70ba\u5927\u9650\u547d\u5bae\uff0c\u91cd\u9ede\u6703\u900f\u904e${decadeStars}\u5c55\u958b\u3002\u8acb\u540c\u6642\u5c0d\u7167\u7576\u5e74\u6d41\u5e74\u547d\u5bae\u8207\u6d41\u5e74\u56db\u5316\uff0c\u89c0\u5bdf\u9019\u500b\u968e\u6bb5\u7684\u5be6\u969b\u8457\u529b\u9ede\u3002`;
+}
+async function applyDecadeAge(targetAge) {
+  if (!Number.isInteger(targetAge) || targetAge < 1 || targetAge > 130 || !chartDraft?.rawInput) return;
+  try {
+    const preview = await api("/api/charts/preview", { method: "POST", body: JSON.stringify({ ...chartDraft.rawInput, targetAge }) });
+    chartDraft.rawInput = { ...chartDraft.rawInput, targetAge };
+    chartDraft.status = preview.chart.status; chartDraft.chart = preview.chart;
+    openChartView();
+  } catch (error) { document.querySelector("#chart-view-warning").textContent = error.message; }
+}
+function renderTemporalContext(result) {
+  const context = result.temporal_context;
+  if (!context) return;
+  document.querySelector("#temporal-date-input").value = context.target_date;
+  document.querySelector("#temporal-time-input").value = context.target_time;
+  document.querySelector("#temporal-summary").textContent = `\u8fb2\u66c6 ${context.lunar_date.display_zh_tw}\u30fb${context.pillars.monthly.heavenly_stem}${context.pillars.monthly.earthly_branch}\u6708\u30fb${context.pillars.daily.heavenly_stem}${context.pillars.daily.earthly_branch}\u65e5`;
+  [["monthly", "\u6d41\u6708"], ["daily", "\u6d41\u65e5"], ["hourly", "\u6d41\u6642"]].forEach(([key, label]) => {
+    const layer = context[key]; const life = layer.life_palace;
+    const natal = (result.palaces || []).find((palace) => palace.branch === life.branch);
+    const stars = (natal?.stars || []).filter((star) => star.category === "major").map((star) => star.name_zh_tw).join("\u3001") || "\u7a7a\u5bae\u501f\u5c0d\u5bae";
+    document.querySelector(`#${key}-theme`).textContent = `${label}\u547d\u5bae\u843d\u5728${life.branch_name_zh_tw}${life.palace_name_zh_tw}\uff0c\u91cd\u9ede\u7d93\u9a57${stars}\u6240\u5e36\u4f86\u7684\u8ab2\u984c\u3002\u56db\u5316\u662f\u7576\u671f\u8457\u529b\u9ede\u63d0\u793a\uff0c\u4e0d\u4f5c\u5177\u9ad4\u4e8b\u4ef6\u65b7\u8a00\u3002`;
+    const list = document.querySelector(`#${key}-transformations`); list.replaceChildren();
+    (layer.transformations || []).forEach((transformation) => { const item = document.createElement("span"); item.textContent = `${label} ${transformation.star_name_zh_tw}${transformation.name_zh_tw}\u30fb${transformation.palace_name_zh_tw}`; list.append(item); });
+  });
+}
+async function applyTemporalDate() {
+  const targetDate = document.querySelector("#temporal-date-input").value;
+  const targetTime = document.querySelector("#temporal-time-input").value || "12:00";
+  if (!targetDate || !chartDraft?.rawInput) return;
+  try {
+    const preview = await api("/api/charts/preview", { method: "POST", body: JSON.stringify({ ...chartDraft.rawInput, targetDate, targetTime }) });
+    chartDraft.rawInput = { ...chartDraft.rawInput, targetDate, targetTime }; chartDraft.status = preview.chart.status; chartDraft.chart = preview.chart; openChartView();
+  } catch (error) { document.querySelector("#chart-view-warning").textContent = error.message; }
+}
+function flyingRoutesForLayer(result, layer) {
+  const decorate = (transformations, source) => (transformations || []).map((entry) => ({ ...entry, source_branch: source?.branch || null, source_palace_name_zh_tw: source?.palace_name_zh_tw || "\u751f\u5e74", source_branch_name_zh_tw: source?.branch_name_zh_tw || "" }));
+  if (layer === "life") return result.life_palace_stem_transformations || [];
+  if (layer === "palace") return (result.palace_stem_transformations || []).flatMap((entry) => entry.transformations || []);
+  if (layer === "decade") return decorate(result.decade_context?.decade_transformations, result.decade_context?.decade_life_palace);
+  if (layer === "year") return decorate(result.annual_context?.annual_transformations, result.annual_context?.annual_life_palace);
+  return decorate(result.birth_year_transformations, null);
+}
+function drawFlyingRoute(route) {
+  const grid = document.querySelector("#chart-view-grid"); grid.querySelector(".flying-route-lines")?.remove();
+  document.querySelectorAll(".palace.is-fly-source, .palace.is-fly-target").forEach((item) => item.classList.remove("is-fly-source", "is-fly-target"));
+  const target = grid.querySelector(`.palace[data-branch=\"${route.branch}\"]`);
+  if (!target) return;
+  target.classList.add("is-fly-target");
+  if (!route.source_branch || !grid.offsetParent) return;
+  const source = grid.querySelector(`.palace[data-branch=\"${route.source_branch}\"]`);
+  if (!source) return;
+  const bounds = grid.getBoundingClientRect(); const center = (element) => { const box = element.getBoundingClientRect(); return { x: box.left - bounds.left + box.width / 2, y: box.top - bounds.top + box.height / 2 }; };
+  const from = center(source); const to = center(target); const colors = { "\u797f":"#ffd48b", "\u6b0a":"#8dc7ff", "\u79d1":"#9ee4d0", "\u5fcc":"#ff9eaa" };
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.classList.add("flying-route-lines"); svg.setAttribute("viewBox", `0 0 ${bounds.width} ${bounds.height}`); svg.setAttribute("aria-hidden", "true");
+  const line = document.createElementNS("http://www.w3.org/2000/svg", "line"); line.setAttribute("x1", from.x); line.setAttribute("y1", from.y); line.setAttribute("x2", to.x); line.setAttribute("y2", to.y); line.setAttribute("stroke", colors[route.kind] || "#ccaeff"); line.setAttribute("stroke-width", route.is_self_transformation ? "0" : "3"); line.setAttribute("stroke-dasharray", "7 4"); svg.append(line); grid.append(svg);
+  source.classList.add("is-fly-source");
+}
+function renderFlyingTransformations(result) {
+  const routes = flyingRoutesForLayer(result, activeFlyLayer); const summary = document.querySelector("#fly-summary"); const list = document.querySelector("#fly-route-list"); list.replaceChildren();
+  const labels = { birth:"\u751f\u5e74\u56db\u5316", life:"\u547d\u5bae\u5bae\u5e72\u56db\u5316", palace:"\u5341\u4e8c\u5bae\u5bae\u5e72\u98db\u5316", decade:"\u5927\u9650\u56db\u5316", year:"\u6d41\u5e74\u56db\u5316" };
+  summary.textContent = `${labels[activeFlyLayer]}\uff1a\u9078\u64c7\u56db\u5316\u5f8c\u6703\u540c\u6b65\u9ad8\u4eae\u843d\u5bae\uff0c\u6709\u4f86\u6e90\u5bae\u6642\u986f\u793a\u98db\u5316\u8def\u7dda\u3002`;
+  routes.forEach((route) => { const item = document.createElement("button"); item.type = "button"; item.className = "fly-route" + (route.is_self_transformation ? " is-self" : ""); item.textContent = `${route.source_palace_name_zh_tw}${route.source_branch_name_zh_tw ? `(${route.source_branch_name_zh_tw})` : ""} \u2192 ${route.palace_name_zh_tw} ${route.star_name_zh_tw}${route.name_zh_tw}${route.is_self_transformation ? "\u3000\u81ea\u5316" : ""}`; item.addEventListener("click", () => { list.querySelectorAll(".fly-route.is-active").forEach((entry) => entry.classList.remove("is-active")); item.classList.add("is-active"); summary.textContent = `${labels[activeFlyLayer]}\uff1a${item.textContent}`; drawFlyingRoute(route); }); list.append(item); });
+  list.querySelector(".fly-route")?.click();
+}
+function renderChartResult(result) {
+  const panel = document.querySelector("#chart-result");
+  if (!result) { panel.classList.add("hidden"); return; }
+  panel.classList.remove("hidden");
+  const warning = document.querySelector("#chart-warning");
+  const summary = document.querySelector("#chart-summary");
+  const grid = document.querySelector("#palace-grid");
+  grid.replaceChildren();
+  if (!["structural_chart_ready", "main_stars_ready", "birth_transformations_ready", "core_chart_ready"].includes(result.status)) {
+    summary.textContent = "命盤尚待補齊必要的時間或曆法資料。";
+    warning.textContent = (result.warnings || []).join(" ");
+    return;
+  }
+  const bureau = result.five_element_bureau ? ` ・ ${result.five_element_bureau.name_zh_tw}` : "";
+  summary.textContent = `農曆 ${result.lunar_date.display_zh_tw} ・ 年柱 ${result.pillars.year.display_zh_tw}${bureau} ・ 命宮 ${result.life_palace.name_zh_tw} ・ 身宮 ${result.body_palace.name_zh_tw}`;
+  (result.palaces || []).forEach((palace) => {
+    grid.append(renderPalaceCard(palace));
+  });
+  warning.textContent = (result.warnings || []).join(" ");
+}
+function openChartView() {
+  const result = chartDraft?.chart?.result || chartDraft?.result;
+  if (!result || !["structural_chart_ready", "main_stars_ready", "birth_transformations_ready", "core_chart_ready"].includes(result.status)) return;
+  const grid = document.querySelector("#chart-view-grid");
+  grid.replaceChildren();
+  document.querySelector("#chart-view-title").textContent = chartDraft.rawInput?.profileName || "命盤";
+  const bureau = result.five_element_bureau ? ` ・ ${result.five_element_bureau.name_zh_tw}` : "";
+  document.querySelector("#chart-view-summary").textContent = `農曆 ${result.lunar_date.display_zh_tw} ・ 年柱 ${result.pillars.year.display_zh_tw}${bureau}`;
+  grid.append(renderChartCenter(result, chartDraft?.rawInput));
+  (result.palaces || []).forEach((palace) => grid.append(renderPalaceCard(palace)));
+  decorateEmptyPalaceCards(result);
+  renderAnnualContext(result);
+  renderDecadeContext(result);
+  renderTemporalContext(result);
+  renderPatternDetections(result);
+  renderPlainLanguageAnalysis(result);
+  const transformations = document.querySelector("#transformations-list");
+  transformations.replaceChildren();
+  (result.birth_year_transformations || []).forEach((transformation) => {
+    const item = document.createElement("span");
+    item.textContent = `${transformation.star_name_zh_tw}${transformation.name_zh_tw}・${transformation.palace_name_zh_tw}`;
+    transformations.append(item);
+  });
+  renderFlyingTransformations(result);
+  document.querySelector("#chart-view-warning").textContent = (result.warnings || []).join(" ");
+  document.querySelector("#draft-panel").classList.add("hidden");
+  document.querySelector(".intro").classList.add("hidden");
+  document.querySelector("#report-view-panel").classList.add("hidden");
+  document.querySelector("#chart-view-panel").classList.remove("hidden");
+  document.querySelector("#step-label").textContent = "命盤";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function openChartViewFallback(result, error) {
+  const grid = document.querySelector("#chart-view-grid");
+  grid.replaceChildren();
+  document.querySelector("#chart-view-title").textContent = chartDraft?.rawInput?.profileName || "命盤";
+  document.querySelector("#chart-view-summary").textContent = `農曆 ${result.lunar_date?.display_zh_tw || "－"} ・ 年柱 ${result.pillars?.year?.display_zh_tw || "－"}`;
+  try {
+    grid.append(renderChartCenter(result, chartDraft?.rawInput));
+  } catch {
+    const center = document.createElement("section");
+    center.className = "chart-center";
+    const title = document.createElement("strong");
+    title.textContent = chartDraft?.rawInput?.profileName || "本命盤概要";
+    const bureau = document.createElement("span");
+    bureau.textContent = result.five_element_bureau?.name_zh_tw || "五行局待定";
+    const details = document.createElement("small");
+    details.textContent = `農曆 ${result.lunar_date?.display_zh_tw || "－"} ・ 命主 ${result.chart_rulers?.life_ruler || "－"} ・ 身主 ${result.chart_rulers?.body_ruler || "－"} ・ 命宮 ${result.life_palace?.name_zh_tw || "－"} ・ 身宮 ${result.body_palace?.name_zh_tw || "－"}`;
+    center.append(title, bureau, details);
+    grid.append(center);
+  }
+  (result.palaces || []).forEach((palace) => {
+    try { grid.append(renderPalaceCard(palace)); }
+    catch { grid.append(renderPalaceCardLegacy(palace)); }
+  });
+  document.querySelector("#chart-view-warning").textContent = `部分進階資訊暫時未顯示，但核心命盤已開啟。${error?.message || ""}`;
+  document.querySelector("#draft-panel").classList.add("hidden");
+  document.querySelector(".intro").classList.add("hidden");
+  document.querySelector("#chart-view-panel").classList.remove("hidden");
+  document.querySelector("#step-label").textContent = "命盤";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+document.querySelector("#open-chart-button").addEventListener("click", openChartView);
+document.querySelector("#open-report-button").addEventListener("click", () => {
+  renderReport();
+  document.querySelector("#chart-view-panel").classList.add("hidden");
+  document.querySelector("#report-view-panel").classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+document.querySelector("#report-back").addEventListener("click", () => {
+  document.querySelector("#report-view-panel").classList.add("hidden");
+  document.querySelector("#chart-view-panel").classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+document.querySelector("#report-save").addEventListener("click", async () => {
+  const status = document.querySelector("#report-status");
+  if (!reportData) return;
+  if (!currentUser || !chartDraft?.saved) { status.textContent = "請先登入並加密儲存命盤資料，才能儲存解析結果。"; return; }
+  status.textContent = "正在加密儲存解析結果…";
+  try { const saved = await api(`/api/profiles/${chartDraft.id}/report`, { method:"PATCH", body:JSON.stringify({ report: reportData }) }); status.textContent = `已加密儲存解析結果（${new Date(saved.savedAt).toLocaleString("zh-TW")}）。`; }
+  catch (error) { status.textContent = error.message; }
+});
+document.querySelector("#report-image").addEventListener("click", downloadChartSnapshot);
+document.querySelector("#report-pdf").addEventListener("click", () => window.print());
+document.querySelector("#report-ai-prompt").addEventListener("click", async () => {
+  const status = document.querySelector("#report-status"); const prompt = reportAsAiPrompt(); if (!prompt) return;
+  try { await copyText(prompt); status.textContent = "AI 解析 Prompt 已產生並複製，可直接貼到其他 LLM 使用。"; }
+  catch { status.textContent = "無法自動複製 Prompt，請確認瀏覽器的剪貼簿權限。"; }
+});
+document.querySelector("#report-copy").addEventListener("click", async () => {
+  const status = document.querySelector("#report-status"); const text = reportAsText(); if (!text) return;
+  try { await copyText(text); status.textContent = "報告文字已複製。"; }
+  catch { status.textContent = "無法自動複製報告，請確認瀏覽器的剪貼簿權限。"; }
+});
+document.querySelector("#insight-close").addEventListener("click", closePalaceInsight);
+document.querySelector("#insight-backdrop").addEventListener("click", closePalaceInsight);
+document.addEventListener("keydown", (event) => { if (event.key === "Escape") closePalaceInsight(); });
+window.addEventListener("resize", () => {
+  if (!activeInsightBranch || document.querySelector("#chart-view-panel").classList.contains("hidden")) return;
+  const result = chartDraft?.chart?.result || chartDraft?.result;
+  const palace = result?.palaces?.find((entry) => entry.branch === activeInsightBranch);
+  const relations = palace && getPalaceRelations(palace);
+  if (relations) drawPalaceRelationLines(relations);
+});
+document.querySelector("#annual-year-apply").addEventListener("click", async () => {
+  const targetYear = Number(document.querySelector("#annual-year-input").value);
+  if (!Number.isInteger(targetYear) || targetYear < 1900 || targetYear > 2200 || !chartDraft?.rawInput) return;
+  try {
+    const preview = await api("/api/charts/preview", {
+      method: "POST",
+      body: JSON.stringify({ ...chartDraft.rawInput, targetYear })
+    });
+    chartDraft.rawInput = { ...chartDraft.rawInput, targetYear };
+    chartDraft.status = preview.chart.status;
+    chartDraft.chart = preview.chart;
+    openChartView();
+  } catch (error) {
+    document.querySelector("#chart-view-warning").textContent = error.message;
+  }
+});
+document.querySelector("#decade-age-apply").addEventListener("click", () => applyDecadeAge(Number(document.querySelector("#decade-age-input").value)));
+document.querySelector("#temporal-apply").addEventListener("click", applyTemporalDate);
+document.querySelectorAll("[data-temporal-layer]").forEach((button) => button.addEventListener("click", () => {
+  const layer = button.dataset.temporalLayer;
+  document.querySelectorAll("[data-temporal-layer]").forEach((item) => item.classList.toggle("is-active", item === button));
+  document.querySelectorAll(".temporal-layer").forEach((item) => item.classList.toggle("hidden", item.dataset.layer !== layer));
+}));
+document.querySelectorAll("[data-fly-layer]").forEach((button) => button.addEventListener("click", () => {
+  activeFlyLayer = button.dataset.flyLayer;
+  document.querySelectorAll("[data-fly-layer]").forEach((item) => item.classList.toggle("is-active", item === button));
+  const result = chartDraft?.chart?.result || chartDraft?.result;
+  if (result) renderFlyingTransformations(result);
+  document.querySelector("#chart-view-grid .flying-route-lines")?.remove();
+  document.querySelectorAll(".palace.is-fly-source, .palace.is-fly-target").forEach((item) => item.classList.remove("is-fly-source", "is-fly-target"));
+}));
+document.querySelector("#review-confirm").addEventListener("click", async () => {
+  const data = new FormData(form);
+  const rawInput = Object.fromEntries(data.entries());
+  rawInput.useSolarTime = form.elements.useSolarTime.checked;
+  const suffix = globalThis.crypto?.randomUUID?.().slice(0, 8) || Math.random().toString(36).slice(2, 10);
+  chartDraft = { id: `draft_${suffix}`, status: "pending_calculation", createdAt: new Date(), rawInput, saved: false };
+  try {
+    const preview = await api("/api/charts/preview", { method: "POST", body: JSON.stringify(rawInput) });
+    chartDraft.status = preview.chart.status;
+    chartDraft.chart = preview.chart;
+  } catch (error) {
+    document.querySelector("#review-status").textContent = error.message;
+    return;
+  }
+  if (guestMode) {
+    document.querySelector("#review-status").textContent = "";
+    reviewPanel.classList.add("hidden");
+    openChartView();
+    return;
+  }
+  document.querySelector("#draft-title").textContent = t.draftTitle;
+  document.querySelector("#draft-lede").textContent = t.draftLede;
+  document.querySelector("#draft-warning").textContent = t.draftWarning;
+  renderDraft();
+  document.querySelector("#review-status").textContent = "";
+  reviewPanel.classList.add("hidden");
+  document.querySelector("#draft-panel").classList.remove("hidden");
+  document.querySelector("#step-label").textContent = t.draftEyebrow;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+document.querySelector("#draft-save").addEventListener("click", async () => {
+  const status = document.querySelector("#draft-status");
+  if (!currentUser) {
+    status.textContent = "請先登入或建立帳號，才能加密保存命盤資料。";
+    authDialog.showModal();
+    return;
+  }
+  if (!chartDraft || chartDraft.saved) return;
+  status.textContent = "正在加密並安全保存資料…";
+  document.querySelector("#draft-save").disabled = true;
+  try {
+    const saved = await api("/api/profiles", { method: "POST", body: JSON.stringify(chartDraft.rawInput) });
+    chartDraft.id = saved.id;
+    chartDraft.chartId = saved.chart?.id || null;
+    chartDraft.status = saved.chart?.status || "pending_calculation";
+    chartDraft.chart = saved.chart;
+    chartDraft.createdAt = new Date(saved.createdAt);
+    chartDraft.saved = true;
+    renderDraft();
+  } catch (error) {
+    document.querySelector("#draft-save").disabled = false;
+    status.textContent = error.message;
+  }
+});
+document.querySelector("#draft-new").addEventListener("click", () => {
+  chartDraft = null;
+  form.reset();
+  document.querySelector("#draft-panel").classList.add("hidden");
+  document.querySelector("#chart-view-panel").classList.add("hidden");
+  document.querySelector("#report-view-panel").classList.add("hidden");
+  document.querySelector(".intro").classList.remove("hidden");
+  form.classList.remove("hidden");
+  clearErrors();
+  document.querySelector("#form-status").textContent = "";
+  document.querySelector("#step-label").textContent = t.step;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+const accountButton = document.querySelector("#account-button");
+const myChartsButton = document.querySelector("#my-charts-button");
+const authDialog = document.querySelector("#auth-dialog");
+const authForm = document.querySelector("#auth-form");
+const savedPanel = document.querySelector("#saved-panel");
+let registering = false;
+function setAccountButton() {
+  accountButton.textContent = currentUser ? `${currentUser.displayName || currentUser.email}（登出）` : "登入／建立帳號";
+  myChartsButton.classList.toggle("hidden", !currentUser);
+}
+async function api(path, options = {}) {
+  if (guestMode) {
+    if (path !== "/api/charts/preview") throw new Error("離線版本不提供帳戶或儲存功能。");
+    const profile = JSON.parse(options.body || "{}");
+    if (!profile.profileName || !profile.birthDate || !profile.birthTime || !profile.location) throw new Error("命盤資料不完整。");
+    const coordinate = (value) => value === "" || value === null || value === undefined ? null : Number(value);
+    const rawInput = {
+      profile_name: String(profile.profileName).trim(), person_alias: String(profile.personAlias || "").trim(), gender: profile.gender,
+      calendar_type: profile.calendar, birth_date: profile.birthDate, birth_time: profile.birthTime || null,
+      time_precision: profile.birthTime ? "exact" : "unknown", birth_timezone: profile.timezone,
+      birth_country: "", birth_region: "", birth_city: String(profile.location).trim(),
+      latitude: coordinate(profile.latitude), longitude: coordinate(profile.longitude), is_leap_month: false,
+      use_true_solar_time: Boolean(profile.useSolarTime), notes: String(profile.note || "")
+    };
+    const chartOptions = Number.isInteger(profile.targetYear) || Number.isInteger(profile.targetAge) || profile.targetDate || profile.targetTime
+      ? { ...(Number.isInteger(profile.targetYear) ? { targetYear: profile.targetYear } : {}), ...(Number.isInteger(profile.targetAge) ? { targetAge: profile.targetAge } : {}), ...(profile.targetDate ? { targetDate: profile.targetDate } : {}), ...(profile.targetTime ? { targetTime: profile.targetTime } : {}) }
+      : undefined;
+    const result = globalThis.AuraOfStarsCore.calculateStructuralChart(rawInput, chartOptions);
+    return { chart: { status: result.status, engineVersion: result.engine_version, result } };
+  }
+  const response = await fetch(path, { ...options, headers: { "content-type": "application/json", ...(sessionToken ? { authorization: `Bearer ${sessionToken}` } : {}), ...options.headers } });
+  const body = response.status === 204 ? {} : await response.json();
+  if (!response.ok) throw new Error(body.error || "請稍後再試。");
+  return body;
+}
+async function restoreSession() {
+  if (!sessionToken) return;
+  try { currentUser = (await api("/api/auth/me")).user; setAccountButton(); await loadSavedProfiles(); }
+  catch { sessionToken = ""; sessionStorage.removeItem("aura-session-token"); }
+}
+if (!guestMode) restoreSession();
+accountButton.addEventListener("click", async () => {
+  if (currentUser) { await api("/api/auth/logout", { method: "POST" }); sessionToken = ""; currentUser = null; savedProfiles = []; savedPanel.classList.add("hidden"); form.classList.remove("hidden"); sessionStorage.removeItem("aura-session-token"); setAccountButton(); return; }
+  authDialog.showModal();
+});
+myChartsButton.addEventListener("click", async () => {
+  if (!currentUser) return;
+  try { await loadSavedProfiles(true); }
+  catch (error) { window.alert(error.message); }
+});
+document.querySelector("#auth-close").addEventListener("click", () => authDialog.close());
+document.querySelector("#auth-mode").addEventListener("click", () => {
+  registering = !registering;
+  document.querySelector("#auth-title").textContent = registering ? "建立安全帳號" : "登入以儲存命盤";
+  document.querySelector("#auth-submit").textContent = registering ? "建立帳號" : "登入";
+  document.querySelector("#auth-mode").textContent = registering ? "改為登入" : "建立帳號";
+  document.querySelector("#display-name-field").classList.toggle("hidden", !registering);
+  document.querySelector("#password-confirm-field").classList.toggle("hidden", !registering);
+  document.querySelector("#auth-password-confirm").required = registering;
+  document.querySelector("#auth-password").autocomplete = registering ? "new-password" : "current-password";
+  document.querySelector("#auth-status").textContent = "";
+});
+authForm.addEventListener("submit", async (event) => {
+  event.preventDefault(); const status = document.querySelector("#auth-status"); status.textContent = "";
+  const password = document.querySelector("#auth-password").value;
+  if (registering && password !== document.querySelector("#auth-password-confirm").value) {
+    status.textContent = "兩次輸入的密碼不一致。";
+    return;
+  }
+  try {
+    const payload = { email: document.querySelector("#auth-email").value, password, displayName: document.querySelector("#auth-display-name").value };
+    const result = await api(registering ? "/api/auth/register" : "/api/auth/login", { method: "POST", body: JSON.stringify(payload) });
+    sessionToken = result.token; currentUser = result.user; sessionStorage.setItem("aura-session-token", sessionToken); setAccountButton(); authDialog.close(); authForm.reset(); await loadSavedProfiles();
+  } catch (error) {
+    status.textContent = error instanceof TypeError && /fetch/i.test(error.message)
+      ? "無法連線到安全儲存服務。請用 node server.js 啟動服務，並從 http://localhost:3000 開啟本頁。"
+      : error.message;
+  }
+});
+
+function showSavedPanel() {
+  form.classList.add("hidden");
+  reviewPanel.classList.add("hidden");
+  document.querySelector("#draft-panel").classList.add("hidden");
+  document.querySelector("#chart-view-panel").classList.add("hidden");
+  document.querySelector("#report-view-panel").classList.add("hidden");
+  document.querySelector(".intro").classList.remove("hidden");
+  savedPanel.classList.remove("hidden");
+  document.querySelector("#step-label").textContent = "";
+}
+function renderSavedProfiles() {
+  const list = document.querySelector("#profile-list");
+  list.replaceChildren();
+  if (!savedProfiles.length) {
+    const empty = document.createElement("p");
+    empty.className = "lede";
+    empty.textContent = "尚未保存任何命盤資料。";
+    list.append(empty);
+    return;
+  }
+  savedProfiles.forEach((profile) => {
+    const item = document.createElement("article"); item.className = "profile-item";
+    const details = document.createElement("div");
+    const title = document.createElement("h3"); title.textContent = profile.profileName;
+    const meta = document.createElement("p");
+    const label = [profile.personAlias, profile.birthDate, profile.birthTime, profile.location].filter(Boolean).join(" · ");
+    const chartStatus = profile.chart?.status === "pending_calculation" ? "待排盤核心計算" : "已保存";
+    meta.textContent = `${label || "已安全保存"} · 命盤：${chartStatus}`;
+    details.append(title, meta);
+    const actions = document.createElement("div"); actions.className = "profile-actions";
+    const open = document.createElement("button"); open.type = "button"; open.className = "button button-secondary"; open.textContent = "進入命盤";
+    open.addEventListener("click", () => openSavedProfile(profile));
+    const remove = document.createElement("button"); remove.type = "button"; remove.className = "button button-secondary profile-delete"; remove.textContent = "刪除";
+    remove.addEventListener("click", () => deleteSavedProfile(profile));
+    actions.append(open, remove); item.append(details, actions); list.append(item);
+  });
+}
+async function loadSavedProfiles(showWhenEmpty = false) {
+  const result = await api("/api/profiles");
+  savedProfiles = result.profiles || [];
+  if (savedProfiles.length || showWhenEmpty) { renderSavedProfiles(); showSavedPanel(); }
+}
+async function openSavedProfile(profile) {
+  fields.forEach(([name]) => { if (profile[name] !== undefined && form.elements[name]) form.elements[name].value = profile[name]; });
+  form.elements.useSolarTime.checked = Boolean(profile.useSolarTime);
+  form.elements.consent.checked = true;
+  chartDraft = { id: profile.id, chartId: profile.chart?.id || null, status: profile.chart?.status || "pending_calculation", chart: profile.chart, createdAt: new Date(profile.createdAt), rawInput: profile, saved: true };
+  try {
+    const preview = await api("/api/charts/preview", { method: "POST", body: JSON.stringify(profile) });
+    chartDraft.status = preview.chart.status;
+    chartDraft.chart = preview.chart;
+    savedPanel.classList.add("hidden");
+    try { openChartView(); }
+    catch (renderError) { openChartViewFallback(preview.chart.result, renderError); }
+    return;
+  } catch (error) {
+    if (profile.useSolarTime) {
+      try {
+        const provisionalProfile = { ...profile, useSolarTime: false };
+        const preview = await api("/api/charts/preview", { method: "POST", body: JSON.stringify(provisionalProfile) });
+        const warning = "此為標準時暫定命盤：原資料啟用了真太陽時，但舊資料未保存經緯度，請補齊出生地座標後再進行正式校正。";
+        preview.chart.result.warnings = [warning, ...(preview.chart.result.warnings || [])];
+        chartDraft.status = preview.chart.status;
+        chartDraft.chart = preview.chart;
+        savedPanel.classList.add("hidden");
+        try { openChartView(); }
+        catch (renderError) { openChartViewFallback(preview.chart.result, renderError); }
+        return;
+      } catch (fallbackError) {
+        document.querySelector("#draft-warning").textContent = `無法建立暫定命盤：${fallbackError.message}`;
+      }
+    } else {
+      document.querySelector("#draft-warning").textContent = `無法直接建立命盤預覽：${error.message}`;
+    }
+  }
+  document.querySelector("#draft-title").textContent = "已保存的命盤";
+  document.querySelector("#draft-lede").textContent = "此命盤資料已加密保存，以下為其建立時使用的輸入資料。";
+  document.querySelector("#draft-warning").textContent = "目前命盤狀態為待排盤核心計算。";
+  renderDraft();
+  savedPanel.classList.add("hidden"); document.querySelector("#draft-panel").classList.remove("hidden");
+  document.querySelector("#step-label").textContent = "";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+async function deleteSavedProfile(profile) {
+  if (!window.confirm(`確定要刪除「${profile.profileName}」嗎？此操作無法復原。`)) return;
+  try {
+    await api(`/api/profiles/${profile.id}`, { method: "DELETE" });
+    savedProfiles = savedProfiles.filter((item) => item.id !== profile.id);
+    if (savedProfiles.length) renderSavedProfiles();
+    else { savedPanel.classList.add("hidden"); form.classList.remove("hidden"); document.querySelector("#step-label").textContent = t.step; }
+  } catch (error) { window.alert(error.message); }
+}
+document.querySelector("#saved-new").addEventListener("click", () => {
+  form.reset(); clearErrors(); savedPanel.classList.add("hidden"); form.classList.remove("hidden"); document.querySelector(".intro").classList.remove("hidden"); document.querySelector("#step-label").textContent = t.step;
+});
+</script>
+</body>
+</html>
