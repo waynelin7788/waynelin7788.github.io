@@ -386,7 +386,7 @@ dt { color:var(--subtle); } dd { color:var(--ink); text-align:right; overflow-wr
   .palace:nth-last-child(-n+4) { border-bottom: 1px solid var(--line); }
   .palace:nth-child(3n) { border-right: 0; }
   .palace:nth-last-child(-n+3) { border-bottom: 0; }
-  .palace-insight-panel { top:auto; right:0; bottom:0; left:0; width:100%; max-height:min(78vh, 680px); padding:12px 21px 28px; border-radius:22px 22px 0 0; transform:translateY(calc(100% + 24px)); }
+  .palace-insight-panel { top:max(8px, env(safe-area-inset-top)); right:8px; bottom:auto; left:8px; width:auto; max-height:min(78vh, 680px); padding:12px 21px 28px; border-radius:22px; transform:translateY(calc(-100% - 24px)); }
   .palace-insight-panel.is-open { transform:translateY(0); }
   .insight-handle { display:block; width:42px; height:4px; margin:0 auto 14px; border-radius:99px; background:rgba(255,255,255,.32); }
   .insight-header h2 { font-size:25px; }
