@@ -33,9 +33,9 @@ body {
   padding: 48px 20px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 13% 14%, rgba(134, 74, 255, .26), transparent 27rem),
-    radial-gradient(circle at 93% 76%, rgba(45, 119, 255, .18), transparent 28rem),
-    linear-gradient(135deg, #100826 0%, #070510 60%);
+    linear-gradient(rgba(7, 5, 16, .24), rgba(7, 5, 16, .46)),
+    url("assets/starry-astrology-background.png") center / cover fixed no-repeat,
+    #070510;
 }
 .stars, .stars::before, .stars::after {
   position: absolute;
@@ -76,10 +76,12 @@ body {
 .profile-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .profile-delete { border-color: rgba(255, 158, 170, .5); color: var(--danger); }
 .header { display:flex; justify-content:space-between; align-items:center; gap:16px; }
-.brand { color:var(--ink); font-size:12px; font-weight:750; letter-spacing:.16em; text-decoration:none; }
+.brand { display:flex; align-items:center; gap:8px; color:var(--ink); font-size:12px; font-weight:750; letter-spacing:.16em; text-decoration:none; }
 .brand-mark { color:var(--accent); font-size:19px; margin-right:8px; }
+.brand-title-image { display:block; width:clamp(106px, 14vw, 148px); height:auto; margin-left:4px; filter:drop-shadow(0 1px 5px rgba(255, 197, 71, .25)); }
 .step-label, .eyebrow { color:var(--accent); font-size:12px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; }
 .intro { margin: 54px 0 32px; }
+.intro::before { content:""; display:block; width:58px; height:58px; margin-bottom:13px; background:url("assets/ornament-1.png") center / contain no-repeat; filter:drop-shadow(0 4px 10px rgba(222,184,255,.24)); }
 .eyebrow { margin:0 0 14px; }
 h1, h2 { max-width: 620px; margin:0; font-family: Georgia, "Times New Roman", serif; font-size:clamp(32px, 5vw, 50px); font-weight:500; letter-spacing:-.045em; line-height:1.1; }
 h2 { font-size:clamp(29px, 4vw, 42px); }
@@ -158,11 +160,23 @@ dt { color:var(--subtle); } dd { color:var(--ink); text-align:right; overflow-wr
 .palace em.decade-trigger:hover, .palace em.decade-trigger:focus-visible { outline:0; color:#251139; background:#f0d8a5; }
 .palace.is-life { background: rgba(180, 115, 255, .18); }
 .palace.is-body { box-shadow: inset 0 0 0 1px rgba(204,174,255,.5); }
-.chart-view { margin-top: 18px; }
+.chart-view, .report-view {
+  margin-top: 18px;
+  padding: clamp(18px, 3vw, 32px);
+  border: 1px solid rgba(204, 174, 255, .24);
+  border-radius: 20px;
+  background-image:
+    linear-gradient(rgba(10, 6, 28, .38), rgba(10, 6, 28, .56)),
+    url("assets/chart-report-background.png");
+  background-position: center;
+  background-size: auto, 100% auto;
+  background-repeat: no-repeat, repeat-y;
+}
 .chart-view-header { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; }
 .chart-header-actions { display:flex; align-items:center; gap:10px; }
 .report-open { min-height:38px; padding:0 14px; font-size:13px; }
 .chart-view-header .review-orbit { flex:0 0 auto; margin:0; }
+.chart-view-header .review-orbit { font-size:0; background:url("assets/ornament-2.png") center / 31px no-repeat; border-color:rgba(204,174,255,.52); box-shadow:0 3px 10px rgba(5,3,18,.2); }
 .chart-view-grid { position:relative; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-template-areas:"zi chou yin mao" "hai center center chen" "xu center center si" "you shen wei wu"; gap:1px; margin-top:30px; border:1px solid var(--line); border-radius:18px; overflow:hidden; background:var(--line); }
 .chart-view-grid .palace { min-height:154px; padding:17px; border:0; }
 .chart-view-grid .palace strong { font-size:17px; }
@@ -183,6 +197,7 @@ dt { color:var(--subtle); } dd { color:var(--ink); text-align:right; overflow-wr
 .chart-view-grid .palace--xu { grid-area:xu; }
 .chart-view-grid .palace--hai { grid-area:hai; }
 .chart-center { grid-area:center; display:grid; place-content:center; gap:9px; padding:22px; text-align:center; background:linear-gradient(145deg,rgba(81,42,123,.38),rgba(25,19,53,.96)); }
+.chart-center::before { content:""; display:block; width:52px; height:52px; margin:0 auto 2px; background:url("assets/ornament-6.png") center / contain no-repeat; filter:drop-shadow(0 3px 9px rgba(222,184,255,.28)); }
 .chart-center strong { font-size:21px; font-weight:850; }
 .chart-center span { color:var(--accent); font-size:17px; font-weight:800; }
 .chart-center small { max-width:260px; color:var(--subtle); font-size:14px; line-height:1.75; }
@@ -196,6 +211,8 @@ dt { color:var(--subtle); } dd { color:var(--ink); text-align:right; overflow-wr
 .pattern-panel-header { display:flex; justify-content:space-between; align-items:flex-start; gap:24px; margin-bottom:17px; }
 .pattern-panel-header .eyebrow { margin:0 0 7px; }
 .pattern-panel-header h3 { margin:0; font-size:18px; }
+.pattern-panel-header h3::before, .temporal-panel h3::before { content:""; display:inline-block; width:28px; height:28px; margin:0 8px 0 0; vertical-align:middle; background:center / contain no-repeat; }
+.pattern-panel-header h3::before { background-image:url("assets/ornament-4.png"); }
 .pattern-panel-header p:last-child { max-width:390px; margin:0; color:var(--muted); font-size:13px; line-height:1.65; }
 .pattern-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; }
 .pattern-card { padding:15px; border:1px solid var(--line); border-radius:13px; background:rgba(12,8,29,.28); }
@@ -248,6 +265,7 @@ dt { color:var(--subtle); } dd { color:var(--ink); text-align:right; overflow-wr
 .decade-theme { margin:14px 0 0; color:var(--muted); font-size:13px; line-height:1.7; }
 .temporal-panel { margin-top:18px; padding:18px; border:1px solid rgba(137,221,195,.28); border-radius:16px; background:rgba(137,221,195,.025); }
 .temporal-panel h3 { margin:0 auto 0 0; }
+.temporal-panel h3::before { background-image:url("assets/ornament-5.png"); }
 .temporal-panel .annual-panel-header { align-items:center; }
 .temporal-time { display:flex; align-items:center; gap:7px; color:var(--subtle); font-size:13px; }
 .temporal-time summary { cursor:pointer; }
@@ -273,10 +291,11 @@ dt { color:var(--subtle); } dd { color:var(--ink); text-align:right; overflow-wr
 .transformations-panel h3 { margin:0 0 13px; }
 .transformations-list { display:flex; flex-wrap:wrap; gap:8px; }
 .transformations-list span { padding:8px 10px; border:1px solid rgba(204,174,255,.3); border-radius:999px; color:var(--accent); background:rgba(204,174,255,.06); font-size:12px; }
-.palace-insight-panel { position:fixed; z-index:20; top:20px; right:20px; bottom:20px; width:min(430px, calc(100vw - 40px)); padding:25px; overflow:auto; border:1px solid rgba(204,174,255,.35); border-radius:22px; background:linear-gradient(160deg,rgba(38,29,72,.98),rgba(15,11,34,.98)); box-shadow:0 26px 90px rgba(0,0,0,.55); transform:translateX(calc(100% + 44px)); transition:transform .28s ease; }
+.palace-insight-panel { position:fixed; z-index:20; top:20px; right:20px; bottom:20px; width:min(430px, calc(100vw - 40px)); padding:25px; overflow:auto; border:1px solid rgba(204,174,255,.35); border-radius:22px; background-image:linear-gradient(rgba(10,6,28,.42),rgba(10,6,28,.62)),url("assets/chart-report-background.png"); background-position:center; background-size:auto,100% auto; background-repeat:no-repeat,repeat-y; box-shadow:0 26px 90px rgba(0,0,0,.55); transform:translateX(calc(100% + 44px)); transition:transform .28s ease; }
 .palace-insight-panel.is-open { transform:translateX(0); }
 .insight-handle { display:none; }
 .insight-header { display:flex; gap:16px; justify-content:space-between; align-items:flex-start; padding-bottom:18px; border-bottom:1px solid var(--line); }
+.insight-header::before { content:""; flex:0 0 42px; width:42px; height:42px; background:url("assets/ornament-3.png") center / contain no-repeat; filter:drop-shadow(0 3px 8px rgba(255,213,154,.22)); }
 .insight-header .eyebrow { margin-bottom:8px; }
 .insight-header h2 { font-size:28px; }
 .insight-subtitle { margin:8px 0 0; color:var(--muted); font-size:13px; line-height:1.55; }
@@ -324,6 +343,7 @@ dt { color:var(--subtle); } dd { color:var(--ink); text-align:right; overflow-wr
 .guest-mode .header-actions, .guest-mode #saved-panel, .guest-mode #draft-save, .guest-mode #report-save, .guest-mode #report-image, .guest-mode #auth-dialog { display:none !important; }
 .report-view { margin-top:18px; }
 .report-header { display:flex; justify-content:space-between; align-items:flex-start; gap:22px; padding-bottom:20px; border-bottom:1px solid var(--line); }
+.report-header::before { content:""; flex:0 0 46px; width:46px; height:46px; background:url("assets/ornament-2.png") center / contain no-repeat; filter:drop-shadow(0 3px 8px rgba(255,213,154,.24)); }
 .report-header .eyebrow { margin-bottom:8px; }
 .report-header h2 { font-size:clamp(28px, 4vw, 42px); }
 .report-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; max-width:430px; }
@@ -337,12 +357,43 @@ dt { color:var(--subtle); } dd { color:var(--ink); text-align:right; overflow-wr
 .report-item { padding:12px; border:1px solid var(--line); border-radius:10px; background:rgba(12,8,29,.22); }
 .report-item h4 { margin:0 0 5px; color:var(--ink); font-size:14px; }
 .report-item p { font-size:12px; line-height:1.6; }
+
+/* Unified interactive controls */
+.button, .account-button, .plain-analysis-topics button, .temporal-tabs button, .transformation-tabs button, .fly-route {
+  border:1px solid rgba(204,174,255,.48);
+  border-radius:12px;
+  color:var(--ink);
+  background:linear-gradient(135deg, rgba(81,53,132,.46), rgba(27,19,61,.68));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 4px 14px rgba(5,3,18,.16);
+  transition:transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.button, .account-button { font-weight:700; }
+.button-primary, .button-secondary, .profile-delete { color:var(--ink); border-color:rgba(204,174,255,.48); background:linear-gradient(135deg, rgba(81,53,132,.46), rgba(27,19,61,.68)); }
+.button:hover, .account-button:hover, .plain-analysis-topics button:hover, .temporal-tabs button:hover, .transformation-tabs button:hover, .fly-route:hover {
+  color:var(--ink);
+  border-color:#d9c2ff;
+  background:linear-gradient(135deg, rgba(117,76,183,.60), rgba(49,32,96,.78));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 7px 18px rgba(5,3,18,.26);
+  transform:translateY(-1px);
+}
+.button:focus-visible, .account-button:focus-visible, .plain-analysis-topics button:focus-visible, .temporal-tabs button:focus-visible, .transformation-tabs button:focus-visible, .fly-route:focus-visible {
+  outline:2px solid #e5d6ff;
+  outline-offset:2px;
+}
+.plain-analysis-topics button.is-active, .temporal-tabs button.is-active, .transformation-tabs button.is-active, .fly-route.is-active, .fly-route.is-self {
+  color:#1e1039;
+  border-color:#d9c2ff;
+  background:linear-gradient(135deg, #eadfff, #b984ff);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42), 0 5px 14px rgba(154,99,255,.25);
+  font-weight:800;
+}
+.button:disabled, .account-button:disabled, .plain-analysis-topics button:disabled, .temporal-tabs button:disabled, .transformation-tabs button:disabled, .fly-route:disabled { opacity:.48; cursor:not-allowed; transform:none; }
 @media print {
   body { color:#1a1630; background:#fff; }
   .shell { display:block; min-height:0; padding:0; background:#fff; }
   .stars, .card > :not(#report-view-panel) { display:none !important; }
   .card { width:100%; max-width:none; padding:0; border:0; border-radius:0; box-shadow:none; background:#fff; }
-  .report-view { display:block !important; margin:0; }
+  .report-view { display:block !important; margin:0; padding:0; border:0; border-radius:0; background:#fff; }
   .report-actions, .report-status { display:none !important; }
   .report-header { padding:0 0 15px; }
   .report-section, .report-item { break-inside:avoid; background:#fff; border-color:#d5cfdf; }
@@ -371,6 +422,7 @@ dt { color:var(--subtle); } dd { color:var(--ink); text-align:right; overflow-wr
   .annual-panel-header { align-items:flex-start; }
   .chart-header-actions { align-items:flex-end; flex-direction:column-reverse; }
   .report-header { display:block; }
+  .report-header::before { display:block; margin-bottom:10px; }
   .report-actions { justify-content:flex-start; max-width:none; margin-top:15px; }
   .report-list { grid-template-columns:1fr; }
   .pattern-panel-header { display:block; }
@@ -402,6 +454,7 @@ dt { color:var(--subtle); } dd { color:var(--ink); text-align:right; overflow-wr
         <a class="brand" href="#" aria-label="Aura of Stars home">
           <span class="brand-mark">&#10022;</span>
           <span>AURA OF STARS</span>
+          <img class="brand-title-image" src="assets/aura-of-stars-chinese-title.png" alt="星命光環" />
         </a>
         <div class="header-actions">
           <button class="account-button hidden" type="button" id="my-charts-button">我的命盤</button>

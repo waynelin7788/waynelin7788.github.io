@@ -17,6 +17,6 @@ const browserContracts = stripModuleSyntax(contracts).replace(/\bTIME_PATTERN\b/
 const core = `window.AURA_GUEST_MODE = true;\nwindow.AURA_OFFLINE_MODE = true;\nfunction createHmac() { throw new Error("Fingerprinting is unavailable in the offline preview."); }\n${stripModuleSyntax(time)}\n${browserContracts}\n${stripModuleSyntax(chart)}\nwindow.AuraOfStarsCore = { calculateStructuralChart };`;
 const offlineHtml = html
   .replace('<link rel="stylesheet" href="styles.css" />', `<style>${css}</style>`)
-  .replace('  <script src="/vendor/html2canvas.min.js"></script>\n  <script src="app.js"></script>', `  <script>${core}</script>\n  <script>${app}</script>`);
+  .replace(/  <script src="\/vendor\/html2canvas\.min\.js"><\/script>\r?\n(?:  <script>[\s\S]*?<\/script>\r?\n)?  <script src="app\.js"><\/script>/, `  <script>${core}</script>\n  <script>${app}</script>`);
 
 await writeFile(resolve(directory, "Aura-of-Stars-offline.html"), offlineHtml, "utf8");
