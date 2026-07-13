@@ -1158,7 +1158,11 @@ function chineseLunarDate(solarDate) {
     .filter((part) => ["relatedYear", "month", "day"].includes(part.type))
     .map((part) => [part.type, part.value]));
   const monthText = values.month || "";
-  const number = ({ 正: 1, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10, 冬: 11, 臘: 12 })[monthText.replace("閏", "").charAt(0)];
+  const normalizedMonth = monthText.replace(/[閏月]/g, "");
+  const numericMonth = Number(normalizedMonth);
+  const number = Number.isInteger(numericMonth) && numericMonth >= 1 && numericMonth <= 12
+    ? numericMonth
+    : ({ 正: 1, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10, 冬: 11, 臘: 12 })[normalizedMonth.charAt(0)];
   if (!Number.isInteger(Number(values.relatedYear)) || !number || !Number.isInteger(Number(values.day))) {
     throw new Error("The runtime could not convert this solar date to a Chinese lunar date.");
   }
@@ -1166,7 +1170,7 @@ function chineseLunarDate(solarDate) {
     year: Number(values.relatedYear),
     month: number,
     day: Number(values.day),
-    is_leap_month: monthText.startsWith("閏"),
+    is_leap_month: monthText.includes("閏"),
     display_zh_tw: `${values.relatedYear}年${monthText}${values.day}日`
   };
 }
