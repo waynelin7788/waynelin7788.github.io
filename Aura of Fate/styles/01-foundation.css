@@ -731,6 +731,31 @@ textarea:disabled {
   line-height: 1.7;
 }
 
+.local-reading {
+  margin: 0 0 16px;
+  border: 1px solid rgba(230, 218, 184, 0.16);
+  border-radius: 8px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.local-reading-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.local-reading-heading h3 { margin: 0; }
+.local-reading-note, .local-analysis-item p { line-height: 1.7; }
+.local-analysis-list { display: grid; gap: 12px; }
+.local-analysis-item { display: block; margin-top: 0; padding: 12px; border-left: 3px solid var(--gold); background: rgba(255, 255, 255, 0.03); }
+.local-analysis-item h4 { margin: 0; color: var(--text); }
+.local-analysis-item p { margin: 4px 0 0; color: var(--muted); }
+.local-analysis-keywords { color: var(--gold) !important; font-size: 0.9rem; }
+.local-prompt { width: 100%; min-height: 150px; margin-top: 16px; resize: vertical; }
+
 .ai-reading {
   margin-bottom: 16px;
   border: 1px solid rgba(216, 183, 104, 0.28);
