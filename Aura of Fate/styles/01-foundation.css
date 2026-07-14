@@ -756,6 +756,11 @@ textarea:disabled {
 .local-analysis-keywords { color: var(--gold) !important; font-size: 0.9rem; }
 .local-prompt { width: 100%; min-height: 150px; margin-top: 16px; resize: vertical; }
 
+.reading-card-type { margin: 0 0 14px; color: var(--muted); font-size: 0.9rem; }
+.reading-card-section { margin-top: 14px; }
+.reading-card-section > strong { color: var(--gold); font-size: 0.9rem; }
+.reading-card-section p { margin: 5px 0 0; }
+
 .ai-reading {
   margin-bottom: 16px;
   border: 1px solid rgba(216, 183, 104, 0.28);
