@@ -3,181 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aura of Fate</title>
+    <title>Aura of Fate｜純本機版</title>
     <link rel="stylesheet" href="./styles/01-foundation.css" />
     <link rel="stylesheet" href="./styles/02-immersive-theme.css" />
     <link rel="stylesheet" href="./styles/03-desktop-layout.css" />
     <link rel="stylesheet" href="./styles/04-icons-mobile.css" />
   </head>
   <body>
-    <section class="intro-video" id="introVideo" aria-hidden="true" hidden>
-      <video
-        class="overlay-video-player intro-video-player"
-        id="introVideoPlayer"
-        src="./assets/videos/magical-fantasy-2.mp4"
-        preload="auto"
-        muted
-        playsinline
-      ></video>
-    </section>
-
-    <section class="ai-wait-video" id="aiWaitVideo" aria-hidden="true" hidden>
-      <video
-        class="overlay-video-player ai-wait-video-player"
-        id="aiWaitVideoPlayer"
-        src="./assets/videos/scroll-2.mp4"
-        preload="auto"
-        muted
-        playsinline
-      ></video>
-    </section>
-
-    <section class="speech-wait-video" id="speechWaitVideo" aria-hidden="true" hidden>
-      <video
-        class="overlay-video-player speech-wait-video-player"
-        id="speechWaitVideoPlayer"
-        src="./assets/videos/speech-wait.mp4"
-        preload="auto"
-        muted
-        playsinline
-      ></video>
-    </section>
-
     <main class="app-shell">
-      <section class="tabletop" aria-label="Aura of Fate tarot reading">
+      <section class="tabletop" aria-label="Aura of Fate 塔羅占卜">
         <header class="topbar">
-          <div class="brand-lockup">
-            <p class="kicker">Aura of Fate</p>
-            <img class="brand-logo" src="./assets/images/logo.png" alt="命運光環" />
-          </div>
-          <button
-            class="deck-pool-button"
-            id="deckStatus"
-            type="button"
-            aria-describedby="deckStatusHint"
-            data-tooltip="開啟本地 78 張塔羅牌庫"
-            disabled
-          >
-            <span class="deck-pool-main">載入牌庫中</span>
-            <span class="deck-pool-sub" id="deckStatusHint">點擊查看完整卡池</span>
-          </button>
+          <div class="brand-lockup"><p class="kicker">Aura of Fate</p><img class="brand-logo" src="./assets/images/logo.png" alt="命運光環" /></div>
+          <button class="deck-pool-button" id="deckStatus" type="button"><span class="deck-pool-main">查看牌庫</span><span class="deck-pool-sub" id="deckStatusHint">78 張本機牌卡</span></button>
         </header>
-
-        <section class="reading-stage" aria-label="占卜主畫面">
-          <section class="control-band" aria-label="reading setup">
+        <section class="reading-stage">
+          <section class="control-band">
             <div class="choice-fields">
-              <div class="field-group">
-                <p class="control-label">占卜情境</p>
-                <div class="choice-row" id="situationButtons" role="group" aria-label="占卜情境"></div>
-              </div>
-              <div class="field-group">
-                <p class="control-label">牌陣</p>
-                <div class="choice-row" id="spreadButtons" role="group" aria-label="牌陣"></div>
-              </div>
+              <div class="field-group"><p class="control-label">占卜主題</p><div class="choice-row" id="situationButtons"></div></div>
+              <div class="field-group"><p class="control-label">牌陣</p><div class="choice-row" id="spreadButtons"></div></div>
             </div>
-
             <div class="right-controls">
-              <div class="field-group question-field">
-                <label class="control-label" for="questionInput">想詢問的問題</label>
-                <textarea id="questionInput" rows="2" placeholder="我的靈性道路未來會如何展開？"></textarea>
-                <div class="question-helper-row">
-                  <div class="context-status" id="questionContext" aria-live="polite">可直接抽牌，或先輸入問題。</div>
-                  <div class="suggested-questions" id="questionSuggestions">
-                    <button
-                      class="suggestion-toggle"
-                      id="suggestionToggle"
-                      type="button"
-                      aria-expanded="false"
-                      aria-controls="suggestionList"
-                    >
-                      問題範例
-                    </button>
-                    <div class="suggestion-list" id="suggestionList" role="menu" aria-label="問題範例" hidden></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="action-row">
-                <button class="primary-action" id="drawButton" type="button">再抽一次</button>
-                <button class="voice-divination-button" id="voiceDivinationButton" type="button" hidden>開始語音占卜</button>
-                <button class="ghost-action" id="cancelVoiceFallbackButton" type="button" hidden>取消並重新開始</button>
-                <button class="ghost-action" id="resetButton" type="button">重新開始</button>
-              </div>
-              <p class="voice-flow-status" id="voiceFlowStatus" aria-live="polite" hidden></p>
+              <div class="field-group question-field"><label class="control-label" for="questionInput">你的問題</label><textarea id="questionInput" rows="2" placeholder="輸入想詢問的事（可留白）"></textarea><div class="question-helper-row"><div class="context-status" id="questionContext">本版本僅使用本機牌義，不連線、不使用 AI。</div></div></div>
+              <div class="action-row"><button class="primary-action" id="drawButton" type="button">開始抽牌</button><button class="ghost-action" id="resetButton" type="button">重新開始</button></div>
             </div>
           </section>
-
-          <section class="play-area" aria-label="抽出的牌卡">
-            <div class="deck-stack" id="deckStack" aria-hidden="true">
-              <img src="./assets/images/cards/back-3.png" alt="" />
-            </div>
-            <div class="spread-zone" id="spreadZone" aria-live="polite"></div>
-            <div class="stage-oracle" aria-hidden="true">
-              <p>信任旅程本身，宇宙正在為你鋪路。</p>
-            </div>
-          </section>
+          <section class="play-area"><div class="deck-stack" id="deckStack" aria-hidden="true"><img src="./assets/images/cards/back-3.png" alt="" /></div><div class="spread-zone" id="spreadZone" aria-live="polite"></div></section>
         </section>
-
-        <section class="reading-panel" id="readingPanel" hidden>
-          <div class="reading-heading">
-            <div>
-              <p class="kicker">Reading Result</p>
-              <h2 id="readingTitle">占卜結果</h2>
-            </div>
-          </div>
-          <div class="summary-box" id="summaryBox"></div>
-          <section class="ai-reading" id="aiReading" hidden>
-            <div class="ai-reading-toolbar">
-              <p class="kicker">AI 深度解讀</p>
-              <div class="ai-reading-actions">
-                <button class="ai-speech-button" id="aiSpeechButton" type="button" hidden>朗讀內容</button>
-                <button class="ai-copy-button" id="aiCopyButton" type="button" hidden>複製內容</button>
-              </div>
-            </div>
-            <div class="ai-reading-content" id="aiReadingContent"></div>
-          </section>
-          <div class="card-readings" id="cardReadings"></div>
-        </section>
+        <section class="reading-panel" id="readingPanel" hidden><div class="reading-heading"><div><p class="kicker">Reading Result</p><h2 id="readingTitle">占卜結果</h2></div></div><div class="summary-box" id="summaryBox"></div><section class="local-reading"><div class="local-reading-heading"><div><p class="kicker">Local Reading</p><h3>本地解析</h3></div><button class="ghost-action" id="copyPromptButton" type="button">複製 Prompt</button></div><div id="localAnalysis"></div><textarea class="local-prompt" id="promptOutput" readonly aria-label="可複製的占卜 Prompt"></textarea></section><div class="card-readings" id="cardReadings"></div></section>
       </section>
     </main>
-
-    <template id="cardTemplate">
-      <article class="drawn-card">
-        <button class="card-button" type="button">
-          <span class="card-inner">
-            <span class="card-face card-back">
-              <img src="./assets/images/cards/back-3.png" alt="" />
-            </span>
-            <span class="card-face card-front">
-              <img alt="" />
-            </span>
-          </span>
-        </button>
-        <div class="card-meta">
-          <span class="position"></span>
-          <strong class="name"></strong>
-          <span class="orientation"></span>
-        </div>
-      </article>
-    </template>
-
-    <section class="pool-modal" id="poolModal" aria-labelledby="poolTitle" aria-modal="true" role="dialog" hidden>
-      <div class="pool-backdrop" id="poolBackdrop"></div>
-      <div class="pool-dialog">
-        <header class="pool-header">
-          <div>
-            <p class="kicker">Card Pool</p>
-            <h2 id="poolTitle">本地牌庫</h2>
-          </div>
-          <button class="icon-button" id="poolCloseButton" type="button" aria-label="關閉牌庫">×</button>
-        </header>
-        <div class="pool-summary" id="poolSummary"></div>
-        <div class="pool-grid" id="poolGrid"></div>
-        <section class="pool-card-detail" id="poolCardDetail" aria-live="polite" hidden></section>
-      </div>
-    </section>
-
+    <template id="cardTemplate"><article class="drawn-card"><button class="card-button" type="button"><span class="card-inner"><span class="card-face card-back"><img src="./assets/images/cards/back-3.png" alt="" /></span><span class="card-face card-front"><img alt="" /></span></span></button><div class="card-meta"><span class="position"></span><strong class="name"></strong><span class="orientation"></span></div></article></template>
+    <section class="pool-modal" id="poolModal" aria-modal="true" role="dialog" hidden><div class="pool-backdrop" id="poolBackdrop"></div><div class="pool-dialog"><header class="pool-header"><div><p class="kicker">Card Pool</p><h2>本機牌庫</h2></div><button class="icon-button" id="poolCloseButton" type="button" aria-label="關閉牌庫">×</button></header><div class="pool-summary" id="poolSummary"></div><div class="pool-grid" id="poolGrid"></div><section class="pool-card-detail" id="poolCardDetail" hidden></section></div></section>
     <script src="./assets/data/database.js"></script>
-    <script src="./app.js"></script>
+    <script src="./app.js?v=20260714-local-meaning-fix"></script>
   </body>
 </html>
