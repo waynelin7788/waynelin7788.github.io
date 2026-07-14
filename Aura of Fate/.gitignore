@@ -1,8 +1,0 @@
-.env
-server.log
-node_modules/
-phone-tablet-urls.txt
-aura-server.pid
-snapshots/*.zip
-certs/
-.codex-remote-attachments/
