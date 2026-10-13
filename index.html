@@ -28,7 +28,7 @@
             在世界被吞沒前穩住元素秩序。
           </p>
           <div class="story-actions">
-            <button class="primary-button" id="beginButton">開始抽牌</button>
+            <button class="primary-button" id="beginButton">前往對戰設定</button>
             <button class="ghost-button" id="rulesButton" type="button">遊戲說明</button>
             <button class="ghost-button" data-view="libraryPanel">查看卡池</button>
           </div>
@@ -48,21 +48,34 @@
           <div class="rules-content">
             <section>
               <h3>勝利目標</h3>
-              <p>玩家與潰堤使徒輪流出牌，將對方生命壓到 0。角色有兩個階段：第一階段被擊破後會轉入神獸型態並恢復 15 點生命；第二階段再次被擊破才會真正落敗。</p>
+              <p>玩家與潰堤使徒輪流出牌。雙方使者以 50 點生命開始，並各有兩階段生命：第一階段被擊破後轉入神獸融合型態並恢復 15 點生命；第二階段再次被擊破才會落敗。</p>
             </section>
 
             <section>
               <h3>開局與抽牌</h3>
-              <p>開局先選一位元素使者，再抽 5 張起手牌。起手牌只會出現普通戰鬥卡，不會抽到神獸卡或元素使卡。第一輪 5 張手牌打完後，補牌會改為每次 2 張。</p>
+              <p>正式規則以 40 張牌組為基準；此原型每局從卡池隨機組成 30 張起始牌庫。開局選一位元素使者並抽 5 張起手牌。每打出一張牌，從自己的牌庫補抽 1 張，手牌最多維持 5 張；牌庫抽空後停止補牌。神獸與使者卡不會出現在起手牌。</p>
             </section>
 
             <section>
               <h3>牌池階段</h3>
               <ul>
                 <li>起手階段：只會抽到普通戰鬥卡。</li>
-                <li>第一輪手牌打完後：神獸型態卡會混入雙方牌堆。</li>
+                <li>雙方各打出 5 張牌後：神獸型態卡會混入雙方牌堆。</li>
                 <li>召喚元素使後：元素使卡會混入雙方牌堆。</li>
+                <li>古龍遺跡與星霄聖海冒險者自開局即可抽取。</li>
               </ul>
+            </section>
+
+            <section>
+              <h3>冒險者小隊</h3>
+              <p>開局選擇自己的小隊，電腦會使用另一隊。每名本隊冒險者每局最多一張，並可從對方小隊招募一名外援（外援也只放入一張）；通用卡仍可共用。選隊與外援後按「從卡池抽 5 張牌」開始本局。</p>
+              <h4>古龍遺跡｜原初守護同盟</h4>
+              <p>穿梭太古龍骨遺跡的荒野獵人，運用龍骨、熔岩與古龍詛咒，協助土與水元素使者守住防線。成員：英格瓦・龍心（護衛）、格里姆・破裂之鱗（近戰）、阿斯特麗德・龍怒（遠程）、法芙娜・暗瞳（詛咒）、弗蕾亞・龍脈（治療護佑）。</p>
+              <p><strong>龍痕狩獵：</strong>每打出第二張本隊冒險者，該牌力量 +3，並獲得 2 點護盾。</p>
+              <h4>星霄聖海｜獨立中立勢力</h4>
+              <p>以星辰與深海力量調和元素、穩定世界大壩的觀星調律者。成員：奧萊恩・瓦爾哈特（護衛）、卡爾斯・虛空之痕（近戰）、賽琳娜・斯特拉利斯（遠程）、伊莉絲・艾克莉絲（詛咒）、柯蕾特・萊拉（治療護佑）。</p>
+              <p><strong>星軌調律：</strong>連續打出不同元素的本隊冒險者時，後打出的牌額外獲得 2 點護盾；相同元素會中斷連攜。</p>
+              <p>外援不觸發本隊連攜；玩家可自行挑選外援，電腦會從玩家小隊隨機招募一人。卡池中的冒險者卡可點擊播放專屬展示影片。</p>
             </section>
 
             <section>
@@ -72,22 +85,22 @@
 
             <section>
               <h3>元素共鳴</h3>
-              <p>打出與目前元素使者同屬性的牌會累積 1 點共鳴；星幽與崩壞卡也會提供通用共鳴。共鳴達到 2 / 2 後，可以使用「召喚元素使」。</p>
+              <p>打出與目前元素使者同屬性的牌會累積 1 點共鳴；星幽與崩壞卡也會提供通用共鳴。正式規則共鳴上限為 10；原型門檻為 5。滿載後可無視消耗召喚神獸並觸發元素羈絆。</p>
             </section>
 
             <section>
               <h3>召喚元素使</h3>
-              <p>召喚元素使會把元素使卡混入雙方牌堆，之後補牌才有機會抽到元素使卡。召喚時也會觸發該元素使的輔助效果，例如回復、護盾或反噬。</p>
+              <p>原型的「召喚元素使」按鈕代表共鳴召喚：展示所選使者與其神獸羈絆，並將使者卡加入牌堆；召喚時也會觸發該使者的回復、護盾或反噬效果。</p>
             </section>
 
             <section>
               <h3>神獸型態卡</h3>
-              <p>神獸卡不是起手牌。必須等第一輪手牌打完後，神獸型態卡才會進入牌堆。抽到神獸卡後可以像一般卡牌一樣打出，通常擁有較高力量或更強的附加效果。</p>
+              <p>神獸卡不是起手牌，雙方各打出 5 張牌後才會加入牌堆。正式規則中，共鳴滿載可無視消耗召喚神獸；原型把神獸卡作為第二階段牌池內容，抽到後可直接打出。</p>
             </section>
 
             <section>
               <h3>結束回合、虛無與狂暴</h3>
-              <p>沒有想出的牌時可以結束回合。牌堆與手牌都耗盡時會進入虛無吞噬，每輪受到逐步增加的不可防禦傷害。第 8 回合起進入元素狂暴，雙方每回合都會受到 4 點不可防禦傷害。</p>
+              <p>沒有想出的牌時可以結束回合。牌堆與手牌都耗盡時進入虛無吞噬，每回合承受逐層遞增且不可防禦的傷害。正式規則第 15 回合起進入全域狂暴；此原型仍以每回合 4 點傷害快速呈現終局壓力。</p>
             </section>
           </div>
         </div>
@@ -98,6 +111,11 @@
           <div>
             <p class="kicker">星幽裂隙戰</p>
             <h2>輪流出卡，壓制潰堤</h2>
+          </div>
+          <div class="deck-strip" aria-label="牌堆狀態">
+            <span>玩家牌堆 <strong id="playerDeckCount">0</strong></span>
+            <span>電腦牌堆 <strong id="enemyDeckCount">0</strong></span>
+            <span>卡池卡種 <strong id="poolCount">0</strong></span>
           </div>
           <div class="header-actions">
             <button class="ghost-button" id="restartButton">重新開始</button>
@@ -116,11 +134,16 @@
               <div class="envoy-buttons" id="envoyButtons"></div>
             </section>
 
-            <div class="deck-strip" aria-label="牌堆狀態">
-              <span>玩家牌堆 <strong id="playerDeckCount">0</strong></span>
-              <span>電腦牌堆 <strong id="enemyDeckCount">0</strong></span>
-              <span>卡池種類 <strong id="poolCount">0</strong></span>
-            </div>
+            <section class="squad-setup" aria-label="小隊與外援選擇">
+              <div class="squad-setup__heading">
+                <strong>冒險者小隊</strong>
+                <span id="squadMatchup">電腦將派出另一支小隊</span>
+              </div>
+              <div class="squad-choices" id="squadButtons"></div>
+              <label class="guest-select" for="guestSelect">招募外援
+                <select id="guestSelect"></select>
+              </label>
+            </section>
 
             <div class="battle-meters" aria-label="戰局狀態">
               <article>
@@ -197,6 +220,14 @@
         <div class="library-grid" id="cardLibrary"></div>
       </section>
     </main>
+
+    <section class="card-cinematic" id="cardCinematic" aria-hidden="true" aria-label="卡牌登場影片">
+      <div class="card-cinematic__backdrop"></div>
+      <div class="card-cinematic__frame" role="dialog" aria-modal="true" aria-label="卡牌登場影片">
+        <video class="card-cinematic__video" id="cardCinematicVideo" playsinline muted></video>
+        <button class="card-cinematic__close" id="cardCinematicClose" type="button" aria-label="略過影片">略過</button>
+      </div>
+    </section>
 
     <script src="data/cardPool.js"></script>
     <script src="script.js"></script>

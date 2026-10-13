@@ -1,13 +1,14 @@
 const cardPool = window.CARD_POOL || [];
 
 const CONFIG = {
-  maxHp: 30,
+  maxHp: 50,
   secondPhaseHp: 15,
   startingHandSize: 5,
-  refillCount: 2,
-  resonanceMax: 2,
+  maxHandSize: 5,
+  startingDeckSize: 30,
+  resonanceMax: 5,
   resonanceGain: 1,
-  enrageStartsAtTurn: 8,
+  enrageStartsAtTurn: 15,
   enrageDamage: 4,
   voidBaseDamage: 1,
   voidDamageIncrease: 1
@@ -100,6 +101,21 @@ const ENVOYS = [
   }
 ];
 
+const SQUADS = [
+  {
+    id: "ancient_dragon_ruins",
+    name: "古龍遺跡",
+    passiveName: "龍痕狩獵",
+    passiveText: "每打出第二張本隊冒險者，該牌力量 +3 並獲得 2 點護盾。"
+  },
+  {
+    id: "astral_tide",
+    name: "星霄聖海",
+    passiveName: "星軌調律",
+    passiveText: "連續打出不同元素的本隊冒險者，後打出的牌獲得 2 點護盾。"
+  }
+];
+
 const state = {
   playerHp: CONFIG.maxHp,
   enemyHp: CONFIG.maxHp,
@@ -112,6 +128,16 @@ const state = {
   enemyVoidStacks: 0,
   resonance: 0,
   selectedEnvoyId: "fire",
+  selectedSquadId: "ancient_dragon_ruins",
+  selectedGuestId: "orion-valhart",
+  enemySquadId: "astral_tide",
+  enemyGuestId: "",
+  playerSquadPlays: 0,
+  enemySquadPlays: 0,
+  playerCardsPlayed: 0,
+  enemyCardsPlayed: 0,
+  playerLastSquadElement: "",
+  enemyLastSquadElement: "",
   hasSummonedEnvoy: false,
   beastCardsUnlocked: false,
   envoyCardsUnlocked: false,
@@ -157,6 +183,12 @@ const turnCounter = document.querySelector("#turnCounter");
 const summonButton = document.querySelector("#summonButton");
 const passButton = document.querySelector("#passButton");
 const hazardStatus = document.querySelector("#hazardStatus");
+const cardCinematic = document.querySelector("#cardCinematic");
+const cardCinematicVideo = document.querySelector("#cardCinematicVideo");
+const cardCinematicClose = document.querySelector("#cardCinematicClose");
+const squadButtons = document.querySelector("#squadButtons");
+const guestSelect = document.querySelector("#guestSelect");
+const squadMatchup = document.querySelector("#squadMatchup");
 
 beginButton.addEventListener("click", () => showView("battlePanel"));
 rulesButton.addEventListener("click", showRules);
@@ -168,8 +200,16 @@ rulesPanel.addEventListener("click", (event) => {
 });
 restartButton.addEventListener("click", resetGame);
 drawButton.addEventListener("click", drawOpeningHands);
+guestSelect.addEventListener("change", () => {
+  if (state.hasDrawn) return;
+  state.selectedGuestId = guestSelect.value;
+  render();
+});
 summonButton.addEventListener("click", summonEnvoy);
 passButton.addEventListener("click", passPlayerTurn);
+cardCinematicClose.addEventListener("click", closeCardCinematic);
+cardCinematic.querySelector(".card-cinematic__backdrop").addEventListener("click", closeCardCinematic);
+cardCinematicVideo.addEventListener("ended", closeCardCinematic);
 
 navButtons.forEach((button) => {
   button.addEventListener("click", () => showView(button.dataset.view));
@@ -189,6 +229,56 @@ function selectEnvoy(envoyId) {
   if (state.hasDrawn) return;
   state.selectedEnvoyId = envoyId;
   render();
+}
+
+function squadById(squadId) {
+  return SQUADS.find((squad) => squad.id === squadId) || SQUADS[0];
+}
+
+function opposingSquadId(squadId) {
+  return SQUADS.find((squad) => squad.id !== squadId)?.id || SQUADS[0].id;
+}
+
+function squadAdventurers(squadId) {
+  return cardPool.filter((card) => card.type === "adventurer" && card.squad === squadId);
+}
+
+function selectSquad(squadId) {
+  if (state.hasDrawn || !SQUADS.some((squad) => squad.id === squadId)) return;
+  state.selectedSquadId = squadId;
+  state.selectedGuestId = squadAdventurers(opposingSquadId(squadId))[0]?.id || "";
+  render();
+}
+
+function renderSquadSetup() {
+  squadButtons.innerHTML = "";
+  SQUADS.forEach((squad) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `squad-choice${state.selectedSquadId === squad.id ? " is-active" : ""}`;
+    button.disabled = state.hasDrawn;
+    button.innerHTML = `<strong>${squad.name}</strong><small>${squad.passiveName}</small>`;
+    button.title = squad.passiveText;
+    button.addEventListener("click", () => selectSquad(squad.id));
+    squadButtons.append(button);
+  });
+
+  const eligibleGuests = squadAdventurers(opposingSquadId(state.selectedSquadId));
+  if (!eligibleGuests.some((card) => card.id === state.selectedGuestId)) {
+    state.selectedGuestId = eligibleGuests[0]?.id || "";
+  }
+  guestSelect.innerHTML = eligibleGuests.map((card) =>
+    `<option value="${card.id}">${card.name}｜${card.role}</option>`
+  ).join("");
+  guestSelect.value = state.selectedGuestId;
+  guestSelect.disabled = state.hasDrawn;
+  drawButton.disabled = state.hasDrawn || !state.selectedGuestId;
+
+  const playerSquad = squadById(state.selectedSquadId);
+  const enemySquad = squadById(opposingSquadId(state.selectedSquadId));
+  squadMatchup.textContent = state.hasDrawn
+    ? `對戰：${playerSquad.name}／${enemySquad.name}`
+    : `電腦：${enemySquad.name}`;
 }
 
 function showView(viewId) {
@@ -225,16 +315,57 @@ function buildDeckFromCards(cards) {
   return shuffle(deck);
 }
 
+function buildStartingDeckFromCards(cards) {
+  return buildDeckFromCards(cards).slice(0, CONFIG.startingDeckSize);
+}
+
 function isBeastCard(card) {
-  return card.image.includes("/beasts/");
+  return card.type === "beast" || card.image?.includes("/beasts/");
 }
 
 function isEnvoyCard(card) {
-  return card.rarity === "主將" || card.image.includes("/envoys/");
+  return card.type === "envoy" || card.rarity === "主將" || card.image?.includes("/envoys/");
+}
+
+function cardTypeName(card) {
+  if (card.type === "adventurer") return `冒險者・${card.role || "眷屬"}`;
+  if (isBeastCard(card)) return "神獸";
+  if (isEnvoyCard(card)) return "元素使者";
+  if (card.type === "resource") return "資源";
+  if (card.type === "field") return "領域";
+  if (card.type === "phase_event") return "討伐事件";
+  return "法術 / 戰技";
 }
 
 function isOpeningCard(card) {
   return !isBeastCard(card) && !isEnvoyCard(card);
+}
+
+function cardVideoPath(card) {
+  if (card?.video) return card.video;
+  if (!card?.image || (!isBeastCard(card) && !isEnvoyCard(card))) return "";
+  const fileName = card.image.split("/").pop().replace(/\.png$/i, ".mp4");
+  return `source-materials/videos/${fileName}`;
+}
+
+function showCardCinematic(card) {
+  const videoPath = cardVideoPath(card);
+  if (!videoPath) return;
+
+  cardCinematicVideo.pause();
+  cardCinematicVideo.src = videoPath;
+  cardCinematicVideo.load();
+  cardCinematic.classList.add("is-visible");
+  cardCinematic.setAttribute("aria-hidden", "false");
+  cardCinematicVideo.play().catch(() => {});
+}
+
+function closeCardCinematic() {
+  cardCinematicVideo.pause();
+  cardCinematicVideo.removeAttribute("src");
+  cardCinematicVideo.load();
+  cardCinematic.classList.remove("is-visible");
+  cardCinematic.setAttribute("aria-hidden", "true");
 }
 
 function insertUnlockedCards(deck, filterFn) {
@@ -249,7 +380,7 @@ function unlockBeastCards() {
   state.beastCardsUnlocked = true;
   state.playerDeck = insertUnlockedCards(state.playerDeck, isBeastCard);
   state.enemyDeck = insertUnlockedCards(state.enemyDeck, isBeastCard);
-  return "第一輪手牌耗盡，神獸型態卡已混入雙方牌堆。";
+  return "雙方各打出 5 張牌，神獸型態卡已混入雙方牌堆。";
 }
 
 function shuffle(cards) {
@@ -263,16 +394,31 @@ function shuffle(cards) {
 
 function drawOpeningHands() {
   if (state.hasDrawn || !cardPool.length) return;
-  const openingPool = cardPool.filter(isOpeningCard);
-  state.playerDeck = buildDeckFromCards(openingPool);
-  state.enemyDeck = buildDeckFromCards(openingPool);
+  const playerGuest = cardPool.find((card) => card.id === state.selectedGuestId);
+  if (!playerGuest || playerGuest.squad !== opposingSquadId(state.selectedSquadId)) return;
+  state.enemySquadId = opposingSquadId(state.selectedSquadId);
+  const enemyGuests = squadAdventurers(state.selectedSquadId);
+  const enemyGuest = enemyGuests[Math.floor(Math.random() * enemyGuests.length)];
+  state.enemyGuestId = enemyGuest?.id || "";
+  state.playerDeck = buildStartingDeckFromCards(cardsForSquad(state.selectedSquadId, state.selectedGuestId));
+  state.enemyDeck = buildStartingDeckFromCards(cardsForSquad(state.enemySquadId, state.enemyGuestId));
   state.playerHand = drawCardsFromDeck(state.playerDeck, CONFIG.startingHandSize);
   state.enemyHand = drawCardsFromDeck(state.enemyDeck, CONFIG.startingHandSize);
   state.hasDrawn = true;
   drawButton.disabled = true;
   turnStatus.textContent = "玩家回合：選一張牌出牌";
-  roundLog.textContent = `已由「${currentEnvoy().title}」領戰並抽出起始手牌。起手不會抽到神獸或元素使，打完第一輪後神獸型態才會進入牌堆。`;
+  roundLog.textContent = `「${squadById(state.selectedSquadId).name}」對上「${squadById(state.enemySquadId).name}」。玩家外援：${playerGuest.name}；電腦外援：${enemyGuest?.name || "無"}。已由「${currentEnvoy().title}」領戰並抽出起始手牌。`;
   render();
+}
+
+function cardsForSquad(squadId, guestId) {
+  return cardPool.filter((card) => {
+    if (!isOpeningCard(card)) return false;
+    if (card.type !== "adventurer") return true;
+    return card.squad === squadId || card.id === guestId;
+  }).map((card) => card.type === "adventurer"
+    ? { ...card, copies: 1 }
+    : card);
 }
 
 function drawCardsFromDeck(deck, count) {
@@ -283,33 +429,31 @@ function drawCardsFromDeck(deck, count) {
   return drawn;
 }
 
-function refillHandIfNeeded() {
-  const unlockMessage = !state.playerHand.length && !state.enemyHand.length
-    ? unlockBeastCards()
-    : "";
-
-  if (state.playerHand.length === 0) {
-    state.playerHand.push(...drawCardsFromDeck(state.playerDeck, CONFIG.refillCount));
+function drawReplacementCard(side) {
+  const isPlayer = side === "player";
+  const hand = isPlayer ? state.playerHand : state.enemyHand;
+  const deck = isPlayer ? state.playerDeck : state.enemyDeck;
+  const sideName = isPlayer ? "玩家" : "電腦";
+  if (hand.length >= CONFIG.maxHandSize || !deck.length) {
+    return deck.length ? `${sideName}手牌已達上限，沒有補牌。` : `${sideName}牌庫已空，無法補牌。`;
   }
 
-  if (state.enemyHand.length === 0) {
-    state.enemyHand.push(...drawCardsFromDeck(state.enemyDeck, CONFIG.refillCount));
-  }
-
-  if (unlockMessage) {
-    roundLog.innerHTML += `<br>${logLine("system", unlockMessage)}`;
-  }
+  hand.push(...drawCardsFromDeck(deck, 1));
+  return `${sideName}補抽 1 張牌。`;
 }
 
 function playPlayerCard(index) {
   if (!state.hasDrawn || state.gameOver || state.waitingForEnemy) return;
   const playerCard = state.playerHand.splice(index, 1)[0];
+  state.playerCardsPlayed += 1;
   const playerResult = resolveCard(playerCard, "player", true);
   const resonanceText = gainResonance(playerCard);
+  showCardCinematic(playerCard);
 
   playerPlayed.innerHTML = cardSummary(playerCard, playerResult.totalPower);
   roundLog.innerHTML = [
     logLine("player", `玩家打出「${playerCard.name}」，造成 ${playerResult.damageDone} 點崩壞壓制。`),
+    playerResult.squadMessage ? logLine("system", playerResult.squadMessage) : "",
     resonanceText ? logLine("system", resonanceText) : "",
     playerResult.phaseMessage ? logLine("system", playerResult.phaseMessage) : "",
     logLine("system", "潰堤使徒正在凝聚下一張牌...")
@@ -321,6 +465,8 @@ function playPlayerCard(index) {
     render();
     return;
   }
+
+  roundLog.innerHTML += `<br>${logLine("system", drawReplacementCard("player"))}`;
 
   state.waitingForEnemy = true;
   turnStatus.textContent = "電腦回合：3 秒後出牌";
@@ -340,18 +486,22 @@ function playEnemyCard() {
   }
   const enemyIndex = Math.floor(Math.random() * state.enemyHand.length);
   const enemyCard = state.enemyHand.splice(enemyIndex, 1)[0];
+  state.enemyCardsPlayed += 1;
   const enemyResult = resolveCard(enemyCard, "enemy", false);
+  showCardCinematic(enemyCard);
 
   state.waitingForEnemy = false;
   state.enemyPlayTimer = null;
   enemyPlayed.innerHTML = cardSummary(enemyCard, enemyResult.totalPower);
   roundLog.innerHTML += `<br>${logLine("enemy", `電腦打出「${enemyCard.name}」，造成 ${enemyResult.damageDone} 點穩定衝擊。`)}`;
+  if (enemyResult.squadMessage) {
+    roundLog.innerHTML += `<br>${logLine("system", enemyResult.squadMessage)}`;
+  }
   if (enemyResult.phaseMessage) {
     roundLog.innerHTML += `<br>${logLine("system", enemyResult.phaseMessage)}`;
   }
+  roundLog.innerHTML += `<br>${logLine("system", drawReplacementCard("enemy"))}`;
   roundLog.innerHTML += `<br>${logLine("system", statusLine())}`;
-
-  refillHandIfNeeded();
 
   applyEndOfRoundRules();
 
@@ -382,7 +532,8 @@ function resolveCard(card, side, isFirst) {
   const attacker = side === "player" ? "player" : "enemy";
   const defender = side === "player" ? "enemy" : "player";
   const bonus = card.bonus && isFirst ? card.bonus : 0;
-  const totalPower = card.power + bonus;
+  const squadEffect = resolveSquadPassive(card, side);
+  const totalPower = card.power + bonus + squadEffect.powerBonus;
   const damageResult = dealDamage(defender, totalPower);
 
   if (card.heal) {
@@ -394,6 +545,10 @@ function resolveCard(card, side, isFirst) {
     state[`${attacker}Shield`] += card.shield;
   }
 
+  if (squadEffect.shieldBonus) {
+    state[`${attacker}Shield`] += squadEffect.shieldBonus;
+  }
+
   if (card.selfDamage) {
     dealDamage(attacker, card.selfDamage, { ignoreShield: true });
   }
@@ -401,7 +556,53 @@ function resolveCard(card, side, isFirst) {
   return {
     totalPower,
     damageDone: damageResult.damageDone,
-    phaseMessage: damageResult.phaseMessage
+    phaseMessage: damageResult.phaseMessage,
+    squadMessage: squadEffect.message
+  };
+}
+
+function resolveSquadPassive(card, side) {
+  const ownSquadId = side === "player" ? state.selectedSquadId : state.enemySquadId;
+  const ownLabel = side === "player" ? "player" : "enemy";
+  if (card.type !== "adventurer" || card.squad !== ownSquadId) {
+    return { powerBonus: 0, shieldBonus: 0, message: "" };
+  }
+
+  const squad = squadById(ownSquadId);
+  if (ownSquadId === "ancient_dragon_ruins") {
+    const counterKey = `${ownLabel}SquadPlays`;
+    state[counterKey] += 1;
+    if (state[counterKey] % 2 === 0) {
+      state[counterKey] = 0;
+      return {
+        powerBonus: 3,
+        shieldBonus: 2,
+        message: `${squad.name}「${squad.passiveName}」觸發：本次力量 +3，獲得 2 點護盾。`
+      };
+    }
+    return {
+      powerBonus: 0,
+      shieldBonus: 0,
+      message: `「${card.name}」留下龍痕（${state[counterKey]} / 2）。`
+    };
+  }
+
+  const lastElementKey = `${ownLabel}LastSquadElement`;
+  const previousElement = state[lastElementKey];
+  state[lastElementKey] = card.element;
+  if (previousElement && previousElement !== card.element) {
+    return {
+      powerBonus: 0,
+      shieldBonus: 2,
+      message: `${squad.name}「${squad.passiveName}」連攜成功：不同元素交替，獲得 2 點護盾。`
+    };
+  }
+  return {
+    powerBonus: 0,
+    shieldBonus: 0,
+    message: previousElement === card.element
+      ? `「${card.element}」與前一張本隊卡同元素，星軌連攜中斷。`
+      : `「${card.element}」建立星軌；下次打出不同元素的本隊卡可觸發連攜。`
   };
 }
 
@@ -458,6 +659,7 @@ function summonEnvoy() {
 
   const envoy = currentEnvoy();
   const effect = envoy.summon;
+  showCardCinematic(envoy);
   const messages = [
     logLine("player", `共鳴滿載，召喚「${envoy.title}」，元素使卡已混入雙方牌堆。`)
   ];
@@ -512,6 +714,14 @@ function passPlayerTurn() {
 function applyEndOfRoundRules() {
   state.turn += 1;
   const messages = [];
+
+  if (
+    !state.beastCardsUnlocked &&
+    state.playerCardsPlayed >= CONFIG.startingHandSize &&
+    state.enemyCardsPlayed >= CONFIG.startingHandSize
+  ) {
+    messages.push(unlockBeastCards());
+  }
 
   if (!state.playerDeck.length && !state.playerHand.length) {
     state.playerVoidStacks += CONFIG.voidDamageIncrease;
@@ -584,6 +794,7 @@ function render() {
   playerHand.innerHTML = "";
   enemyHand.innerHTML = "";
   renderEnvoyButtons();
+  renderSquadSetup();
 
   state.playerHand.forEach((card, index) => {
     const button = document.createElement("button");
@@ -659,12 +870,26 @@ function renderLibrary() {
     article.innerHTML = `
       ${cardMarkup(card)}
       <dl class="card-stats">
+        <div><dt>類型</dt><dd>${cardTypeName(card)}</dd></div>
         <div><dt>稀有度</dt><dd>${card.rarity}</dd></div>
         <div><dt>卡池數量</dt><dd>${card.copies || 1}</dd></div>
         <div><dt>編號</dt><dd>${card.id}</dd></div>
       </dl>
       <small>${card.flavor}</small>
     `;
+    if (card.video || isBeastCard(card) || isEnvoyCard(card)) {
+      article.classList.add("is-cinematic-card");
+      article.tabIndex = 0;
+      article.setAttribute("role", "button");
+      article.setAttribute("aria-label", `播放${card.name}登場影片`);
+      article.addEventListener("click", () => showCardCinematic(card));
+      article.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          showCardCinematic(card);
+        }
+      });
+    }
     cardLibrary.append(article);
   });
 }
@@ -677,25 +902,31 @@ function cardMarkup(card) {
   if (card.selfDamage) traits.push(`反噬 ${card.selfDamage}`);
   const traitText = traits.length ? traits.join("｜") : "無附加效果";
 
+  const artMarkup = card.image
+    ? `<img class="card-art" src="${card.image}" alt="${card.name}">`
+    : `<div class="card-art card-art--placeholder ${card.className}"><span>${card.squad === "ancient_dragon_ruins" ? "古龍遺跡" : "星霄聖海"}</span><strong>${card.name}</strong><small>${card.weapon}</small></div>`;
   return `
     <div class="card-frame">
-      <img class="card-art" src="${card.image}" alt="${card.name}">
+      ${artMarkup}
       <div class="card-caption">
         <div class="card-title-row">
           <strong>${card.name}</strong>
           <span>${card.element}</span>
         </div>
         <p>${card.text}</p>
-        <em>力量 ${card.power}｜${traitText}</em>
+        <em>${cardTypeName(card)}｜力量 ${card.power}｜${traitText}</em>
       </div>
     </div>
   `;
 }
 
 function cardSummary(card, power) {
+  const artMarkup = card.image
+    ? `<img class="card-art" src="${card.image}" alt="${card.name}">`
+    : `<div class="card-art card-art--placeholder ${card.className}"><span>${card.squad === "ancient_dragon_ruins" ? "古龍遺跡" : "星霄聖海"}</span><strong>${card.name}</strong><small>${card.weapon}</small></div>`;
   return `
     <div class="card-frame summary-card">
-      <img class="card-art" src="${card.image}" alt="${card.name}">
+      ${artMarkup}
       <div class="card-caption">
         <div class="card-title-row">
           <strong>${card.name}</strong>
@@ -755,6 +986,14 @@ function resetGame() {
   state.playerVoidStacks = 0;
   state.enemyVoidStacks = 0;
   state.resonance = 0;
+  state.enemySquadId = opposingSquadId(state.selectedSquadId);
+  state.enemyGuestId = "";
+  state.playerSquadPlays = 0;
+  state.enemySquadPlays = 0;
+  state.playerCardsPlayed = 0;
+  state.enemyCardsPlayed = 0;
+  state.playerLastSquadElement = "";
+  state.enemyLastSquadElement = "";
   state.hasSummonedEnvoy = false;
   state.beastCardsUnlocked = false;
   state.envoyCardsUnlocked = false;
