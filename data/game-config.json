@@ -3,9 +3,11 @@
   "englishTitle": "Aetherial Revelation: The Great Breach",
   "genre": "mobile_strategy_ccg",
   "recommendedDeckSize": 40,
-  "prototypeDeckSize": 20,
+  "prototypeDeckSize": 30,
   "startingHandSize": 5,
   "maxHandSize": 10,
+  "prototypeStartingHealth": 50,
+  "prototypeSecondPhaseHealth": 15,
   "enrageStartsAtTurn": 15,
   "domainControlRequiredTurns": 5,
   "voidCollapse": {
@@ -22,6 +24,7 @@
     "enabled": true,
     "gainWhenPlayingMatchingElementCard": 1,
     "defaultMax": 10,
+    "prototypeMax": 5,
     "fullResonanceCanSummonBeast": true
   }
 }

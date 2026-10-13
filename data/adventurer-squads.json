@@ -1,0 +1,28 @@
+[
+  {
+    "id": "ancient_dragon_ruins",
+    "name": "古龍遺跡",
+    "englishName": "Ancient Dragon Ruins",
+    "alignment": "原初守護同盟傭兵",
+    "concept": "太古遺跡的荒野獵人",
+    "lore": "穿梭於受混沌重創的太古龍骨遺跡，運用龍骨、熔岩與詛咒龍語，協助土與水元素使者築起防線。",
+    "passive": {
+      "name": "龍痕狩獵",
+      "rulesText": "每打出第二張本隊冒險者，該牌力量 +3 並獲得 2 點護盾。外援不計入次數。"
+    },
+    "members": ["ingvar-wyrmheart", "grimm-rift-scale", "astrid-wyvern-horn", "fafnira-void-eye", "freya-ancestral-hearth"]
+  },
+  {
+    "id": "astral_tide",
+    "name": "星霄聖海",
+    "englishName": "Astral Tide",
+    "alignment": "獨立中立勢力",
+    "concept": "星穹與海洋的觀星調律者",
+    "lore": "掌控蒼穹之壁遺留的星辰能量與深海波濤，尋求調和元素並穩定世界大壩。",
+    "passive": {
+      "name": "星軌調律",
+      "rulesText": "連續打出不同元素的本隊冒險者時，後打出的牌獲得 2 點護盾；相同元素會中斷連攜。外援不觸發連攜。"
+    },
+    "members": ["orion-valhart", "kaelen-voidscar", "serena-starlight", "elysia-eclipse", "lyra-cordelia"]
+  }
+]

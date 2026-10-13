@@ -309,5 +309,45 @@ window.CARD_POOL = [
     "text": "深夜執行者。以自身承受反噬為代價，換取沉重的闇影傷害。",
     "flavor": "他不是黑暗的囚徒，而是替世界守住深淵邊界的人。",
     "image": "source-materials/images/envoys/dark_envoy_full.png"
+  },
+  {
+    "id": "ingvar-wyrmheart", "name": "英格瓦・龍心", "element": "岩", "className": "earth", "rarity": "稀有", "type": "adventurer", "squad": "ancient_dragon_ruins", "role": "前排護衛", "copies": 1, "power": 3, "shield": 6,
+    "text": "以巨龍之肋守護戰線，並獲得護盾。", "flavor": "赤紅龍心與大地堡壘共鳴。", "weapon": "巨龍之肋", "image": "source-materials/images/adventurers/ingvar-wyrmheart.png", "video": "source-materials/videos/ingvar-wyrmheart.mp4"
+  },
+  {
+    "id": "grimm-rift-scale", "name": "格里姆・破裂之鱗", "element": "火", "className": "fire", "rarity": "稀有", "type": "adventurer", "squad": "ancient_dragon_ruins", "role": "近戰輸出", "copies": 1, "power": 7, "bonus": 2,
+    "text": "揮舞熔岩逆鱗；若先手出牌，追加傷害。", "flavor": "他把每一場戰鬥都當作下一次進化。", "weapon": "逆鱗狂刃", "image": "source-materials/images/adventurers/grimm-rift-scale.png", "video": "source-materials/videos/grimm-rift-scale.mp4"
+  },
+  {
+    "id": "astrid-wyvern-horn", "name": "阿斯特麗德・龍怒", "element": "風", "className": "wind", "rarity": "普通", "type": "adventurer", "squad": "ancient_dragon_ruins", "role": "遠程輸出", "copies": 1, "power": 5, "bonus": 3,
+    "text": "預判氣流射擊；先手時追加傷害。", "flavor": "自由的風替每一箭指出道路。", "weapon": "龍怒逆角", "image": "source-materials/images/adventurers/astrid-wyvern-horn.png", "video": "source-materials/videos/astrid-wyvern-horn.mp4"
+  },
+  {
+    "id": "fafnira-void-eye", "name": "法芙娜・暗瞳", "element": "闇", "className": "dark", "rarity": "稀有", "type": "adventurer", "squad": "ancient_dragon_ruins", "role": "遠程詛咒", "copies": 1, "power": 6, "selfDamage": 1,
+    "text": "以古龍語詛咒敵方，並承受少量反噬。", "flavor": "她在虛空龍息裡看見深淵的邊界。", "weapon": "詛咒之龍瞳", "image": "source-materials/images/adventurers/fafnira-void-eye.png", "video": "source-materials/videos/fafnira-void-eye.mp4"
+  },
+  {
+    "id": "freya-ancestral-hearth", "name": "弗蕾亞・龍脈", "element": "水", "className": "water", "rarity": "普通", "type": "adventurer", "squad": "ancient_dragon_ruins", "role": "治療護佑", "copies": 1, "power": 3, "heal": 4,
+    "text": "滋養隊友，造成傷害並回復穩定值。", "flavor": "古老龍脈仍記得如何滋養大地。", "weapon": "生命之龍脈", "image": "source-materials/images/adventurers/freya-ancestral-hearth.png", "video": "source-materials/videos/freya-ancestral-hearth.mp4"
+  },
+  {
+    "id": "orion-valhart", "name": "奧萊恩・瓦爾哈特", "element": "星幽", "className": "star", "rarity": "稀有", "type": "adventurer", "squad": "astral_tide", "role": "前排護衛", "copies": 1, "power": 3, "shield": 7,
+    "text": "以星核巨盾穩住防線。", "flavor": "星瀚之壁曾正面承受聖裁輝光。", "weapon": "星瀚之壁", "image": "source-materials/images/adventurers/orion-valhart.png", "video": "source-materials/videos/orion-valhart.mp4"
+  },
+  {
+    "id": "kaelen-voidscar", "name": "卡爾斯・虛空之痕", "element": "雷", "className": "lightning", "rarity": "普通", "type": "adventurer", "squad": "astral_tide", "role": "近戰輸出", "copies": 1, "power": 6, "bonus": 2,
+    "text": "以雙刀切裂磁場；先手時追加傷害。", "flavor": "他總能在雷霆抵達前穿越星雲。", "weapon": "切霄星刃", "image": "source-materials/images/adventurers/kaelen-voidscar.png", "video": "source-materials/videos/kaelen-voidscar.mp4"
+  },
+  {
+    "id": "serena-starlight", "name": "賽琳娜・斯特拉利斯", "element": "星幽", "className": "star", "rarity": "普通", "type": "adventurer", "squad": "astral_tide", "role": "遠程輸出", "copies": 1, "power": 5, "bonus": 2,
+    "text": "以星束弩箭精準貫穿敵陣。", "flavor": "她讀懂了蒼穹之壁留下的星軌。", "weapon": "星流連弩", "image": "source-materials/images/adventurers/serena-starlight.png", "video": "source-materials/videos/serena-starlight.mp4"
+  },
+  {
+    "id": "elysia-eclipse", "name": "伊莉絲・艾克莉絲", "element": "闇", "className": "dark", "rarity": "稀有", "type": "adventurer", "squad": "astral_tide", "role": "遠程詛咒", "copies": 1, "power": 7, "selfDamage": 2,
+    "text": "以蝕月引力重創敵方，並承受反噬。", "flavor": "她曾在深淵底部與夢魘交談。", "weapon": "蝕月儀軌", "image": "source-materials/images/adventurers/elysia-eclipse.png", "video": "source-materials/videos/elysia-eclipse.mp4"
+  },
+  {
+    "id": "lyra-cordelia", "name": "柯蕾特・萊拉", "element": "光", "className": "light", "rarity": "普通", "type": "adventurer", "squad": "astral_tide", "role": "治療護佑", "copies": 1, "power": 3, "heal": 3, "shield": 2,
+    "text": "星海梵音安撫神獸，回復並提供護盾。", "flavor": "琴聲落下時，狂暴的星獸也會安靜。", "weapon": "星海梵音", "image": "source-materials/images/adventurers/lyra-cordelia.png", "video": "source-materials/videos/lyra-cordelia.mp4"
   }
 ];

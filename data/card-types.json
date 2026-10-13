@@ -1,10 +1,24 @@
 [
   {
+    "id": "envoy",
+    "name": "元素使者（主將卡）",
+    "englishName": "Envoy / Leader",
+    "purpose": "作為牌組核心，擁有兩階段生命與專屬被動。",
+    "subtypes": ["第一階段", "神獸融合階段"]
+  },
+  {
     "id": "resource",
     "name": "資源 / 充能卡",
     "englishName": "Resource / Energy",
     "purpose": "提供施放卡牌與發動技能所需費用。",
     "subtypes": ["純粹晶體", "萬能稜鏡"]
+  },
+  {
+    "id": "adventurer",
+    "name": "冒險者與眷屬卡",
+    "englishName": "Adventurer / Follower",
+    "purpose": "建立戰線並提供攻擊、防守、治療、護佑或詛咒支援。",
+    "subtypes": ["前排護衛", "近戰輸出", "遠程輸出", "詛咒支援", "治療護佑"]
   },
   {
     "id": "spell",
@@ -14,13 +28,6 @@
     "subtypes": ["攻擊型", "防禦型", "控場型", "檢索型", "濾牌型"]
   },
   {
-    "id": "follower",
-    "name": "眷屬 / 召喚物卡",
-    "englishName": "Follower / Minion",
-    "purpose": "建立場面、攻擊、防守與連鎖效果。",
-    "subtypes": ["前排護衛", "後排輸出", "消耗品"]
-  },
-  {
     "id": "field",
     "name": "場地 / 環境卡",
     "englishName": "Field / Environment",
@@ -28,11 +35,11 @@
     "subtypes": ["元素領域", "覆蓋場地"]
   },
   {
-    "id": "phase_event",
-    "name": "階段 / 討伐事件卡",
-    "englishName": "Phase / Subjugation Event",
-    "purpose": "觸發大型戰局變化，帶來討伐戰式階段演出。",
-    "subtypes": ["戰局切換", "狂暴機制"]
+    "id": "beast_event",
+    "name": "神獸與討伐事件卡",
+    "englishName": "Beast / Subjugation Event",
+    "purpose": "共鳴滿載或條件達成時，召喚神獸、觸發羈絆或推進討伐戰局。",
+    "subtypes": ["元素神獸", "元素羈絆", "階段轉換", "狂暴機制"]
   }
 ]
 
