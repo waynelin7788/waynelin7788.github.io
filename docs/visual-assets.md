@@ -6,6 +6,8 @@
 
 - `source-materials/images/envoys`：七位元素使者全身基礎造型
 - `source-materials/images/beasts`：七大神獸基礎造型
+- `source-materials/images/adventurers`：古龍遺跡與星霄聖海的十張冒險者卡牌插圖
+- `source-materials/videos`：七位使者、七大神獸與十名冒險者的登場展示影片
 
 ## 命名規則
 
