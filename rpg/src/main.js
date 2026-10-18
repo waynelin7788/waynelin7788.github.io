@@ -17,10 +17,19 @@ const initialState = () => ({
   chapterTwoResolution: null,
   chapterTwoChoice: null,
   chapterThreeChoice: null,
+  chapterThreePhase: null,
+  chapterThreeEntryOutcome: null,
+  chapterThreePreviousOutcome: null,
+  chapterThreeRidgeChoice: null,
+  chapterThreeDoorChoice: null,
+  chapterThreeFinaleChoice: null,
   slots: 3,
   actions: [],
   stats: { insight: 0, resonance: 0, grit: 0 },
-  trust: { ingvar: 0, freya: 0, fafnira: 0 },
+  trust: { ingvar: 0, freya: 0, fafnira: 0, astrid: 0, grimm: 0, sern: 0 },
+  chapterThreeAstridJoined: false,
+  chapterThreeGrimmJoined: false,
+  chapterThreeJoined: false,
   evac: 0,
   clue: false,
   trained: false,
@@ -36,17 +45,24 @@ let memorySave = null;
 const companionData = [
   { id: "ingvar", name: "英格瓦・龍心", role: "前排護衛｜古龍遺跡", image: "ingvar-cutout.webp" },
   { id: "freya", name: "弗蕾亞・龍脈", role: "治療護佑｜古龍遺跡", image: "freya-cutout.webp" },
-  { id: "fafnira", name: "法芙娜・暗瞳", role: "遠程詛咒｜古龍遺跡", image: "fafnira-cutout.webp" }
+  { id: "fafnira", name: "法芙娜・暗瞳", role: "遠程詛咒｜古龍遺跡", image: "fafnira-cutout.webp" },
+  { id: "astrid", name: "阿斯特麗德・龍怒", role: "風系斥候｜龍怒逆角", image: "astrid-cutout.webp", unlock: "chapterThreeAstridJoined" },
+  { id: "grimm", name: "格里姆・破裂之鱗", role: "近戰突破｜熔岩逆鱗", image: "grimm-cutout.webp", unlock: "chapterThreeGrimmJoined" },
+  { id: "sern", name: "瑟恩・遺名", role: "守碑記錄者｜盲星谷", image: "sern-cutout.webp", unlock: "chapterThreeJoined" }
 ];
 
 const actionData = Object.entries(CONTENT.actions).map(([id, action]) => ({ id, ...action }));
 const portraitRoot = "assets/characters/";
 const openingScene = "assets/scenes/boundary-village-dusk.webp";
+const manualSlotsKey = `${CONTENT.storageKey}:manual-slots-v1`;
 
 function characterForSpeaker(speaker = "") {
   if (speaker.includes("英格瓦")) return companionData[0];
   if (speaker.includes("弗蕾亞")) return companionData[1];
   if (speaker.includes("法芙娜")) return companionData[2];
+  if (speaker.includes("阿斯特麗德")) return companionData[3];
+  if (speaker.includes("格里姆")) return companionData[4];
+  if (speaker.includes("瑟恩")) return companionData[5];
   return null;
 }
 
@@ -184,8 +200,8 @@ function setStory(title, paragraphs, lead = false, context = {}) {
   const visual = storyVisual(visibleParagraphs);
   const actors = visual.characters.map((person, index) => `<img class="scene-actor actor-${index + 1}" src="${portraitRoot}${person.image}" alt="${person.name}" fetchpriority="high">`).join("");
   $("#story").className = `story-card scene-card scene-${visual.mood}${visual.fullBleed ? " scene-full-bleed" : ""}`;
-  const chapterLabel = ["chapter3-entry", "chapter3-ready"].includes(state.stage) ? "第三章・旅程入口" : ["chapter2", "chapter2-ended"].includes(state.stage) ? "第二章・星盤逆轉" : "潰堤前夜";
-  const footer = ["chapter3-entry", "chapter3-ready"].includes(state.stage) ? "第二章的決定已改變下一段旅程的方向" : ["chapter2", "chapter2-ended"].includes(state.stage) ? "第一章的選擇仍在改變隊伍能承擔的代價" : "選擇將影響同行者、撤離狀況與界碑命運";
+  const chapterLabel = ["chapter3-entry", "chapter3-ready"].includes(state.stage) ? "第三章・盲星谷" : ["chapter2", "chapter2-ended"].includes(state.stage) ? "第二章・星盤逆轉" : "潰堤前夜";
+  const footer = ["chapter3-entry", "chapter3-ready"].includes(state.stage) ? "先前的決定仍在改變這段旅程的代價" : ["chapter2", "chapter2-ended"].includes(state.stage) ? "第一章的選擇仍在改變隊伍能承擔的代價" : "選擇將影響同行者、撤離狀況與界碑命運";
   $("#story").innerHTML = `<div class="scene-stage"><img class="scene-background" src="${visual.background}" alt="${visual.name}" aria-hidden="true"><div class="scene-vignette"></div><div class="scene-cast cast-${visual.characters.length}" aria-label="${visual.characters.map((person) => person.name).join("、")}">${actors}</div></div><div class="story-copy"><div class="scene-kicker"><span></span>${chapterLabel}・劇情場景</div><h2>${fill(title, context)}</h2><div class="story-lines">${blocks}</div><div class="scene-footer"><span class="scene-footer-dot"></span><span>${footer}</span></div></div>`;
 }
 
@@ -205,8 +221,9 @@ function renderStats() {
     ["堅忍", state.stats.grit]
   ];
   $("#stats").innerHTML = stats.map(([name, value]) => `<div class="stat-row"><span>${name}</span><span class="pip-row">${[1, 2, 3].map((n) => `<i class="pip ${n <= value ? "on" : ""}"></i>`).join("")}</span></div>`).join("");
-  $("#companions").innerHTML = companionData.map((person) => `<div class="companion"><span class="companion-portrait-frame"><img class="companion-portrait" src="${portraitRoot}${person.image}" alt=""></span><div class="companion-info"><div class="companion-top"><span>${person.name}</span><span class="muted">信任</span></div><div class="companion-role">${person.role}</div><div class="trust">${[1, 2, 3].map((n) => `<i class="${n <= state.trust[person.id] ? "on" : ""}"></i>`).join("")}</div></div></div>`).join("");
-  $("#partyNote").textContent = state.stage === "opening" ? "尚未會合" : "古龍遺跡小隊";
+  $("#companions").innerHTML = companionData.filter((person) => !person.unlock || state[person.unlock]).map((person) => `<div class="companion"><span class="companion-portrait-frame"><img class="companion-portrait" src="${portraitRoot}${person.image}" alt=""></span><div class="companion-info"><div class="companion-top"><span>${person.name}</span><span class="muted">信任</span></div><div class="companion-role">${person.role}</div><div class="trust">${[1, 2, 3].map((n) => `<i class="${n <= (state.trust[person.id] ?? 0) ? "on" : ""}"></i>`).join("")}</div></div></div>`).join("");
+  const chapterThreeRecruits = [state.chapterThreeAstridJoined, state.chapterThreeGrimmJoined, state.chapterThreeJoined].filter(Boolean).length;
+  $("#partyNote").textContent = state.stage === "opening" ? "尚未會合" : chapterThreeRecruits ? `古龍遺跡小隊・${chapterThreeRecruits}位新成員會合` : "古龍遺跡小隊";
   let stability = null;
   if (state.stage === "actions") stability = Math.max(12, 100 - state.actions.length * 12);
   if (["battle", "decision", "ended", "chapter2", "chapter2-ended", "chapter3-entry", "chapter3-ready"].includes(state.stage)) stability = Math.max(12, Math.min(100, 36 + state.battle.stable * 14 - Math.max(0, state.battle.threat - state.battle.guarded) * 7));
@@ -222,7 +239,7 @@ function chronicleEntries() {
 }
 
 function plainSceneTitle(title = "") {
-  return String(title).replace(/^(?:第一章|第二章|第三章入口)\s*[｜|]\s*/, "").replace(/[。！？!?]+$/, "");
+  return String(title).replace(/^(?:第一章|第二章|第三章入口|第三章)\s*[｜|]\s*/, "").replace(/[。！？!?]+$/, "");
 }
 
 function chronicleSectionTitle(entry, chapter, firstScene) {
@@ -243,7 +260,10 @@ function chronicleSectionTitle(entry, chapter, firstScene) {
       ...Object.values(CONTENT.chapterTwo.finales).map((item) => item.title)].includes(entry.title)) return title;
     return "";
   }
-  if (chapter === "第三章" && firstScene) return title;
+  if (chapter === "第三章") {
+    if (firstScene) return title;
+    if (Object.values(CONTENT.chapterTwo.chapterThreeStages).some((item) => item.title === entry.title)) return title;
+  }
   return "";
 }
 
@@ -377,7 +397,7 @@ function renderBattle() {
       { speaker: state.lastBattleBeat.speaker, text: state.lastBattleBeat.line },
       CONTENT.battle.roundEndLines[Math.min(round - 1, 2)]
     ]);
-  }
+  } else setStory(CONTENT.battle.introTitle, CONTENT.battle.intro);
   const choices = Object.entries(CONTENT.battle.actions).map(([id, item]) => `<button class="battle-button" data-kind="${id}"><strong>${fill(item.title)}</strong><span>${fill(item.body)}</span></button>`).join("");
   $("#battleArea").innerHTML = `<p class="battle-round">戰鬥回合 ${round} / 3｜當前威脅 ${Math.max(0, strain)}</p><div class="battle-grid">${choices}</div>`;
   $("#battleArea").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => battleAction(button.dataset.kind)));
@@ -416,6 +436,10 @@ function finishBattle() {
   state.battle.pressure = Math.max(0, state.battle.threat - state.battle.guarded);
   applyEffects(CONTENT.battle.finishEffects);
   log(state.battle.pressure > 0 ? CONTENT.battle.finishJournal.pressured : CONTENT.battle.finishJournal.held);
+  renderDecision();
+}
+
+function renderDecision() {
   setStageLabel("第一章・決斷", "界碑抉擇");
   const rescued = Math.min(5, state.evac + state.battle.rescue);
   const context = {
@@ -458,16 +482,23 @@ function conclude(choiceId) {
   result.scene = fill(result.scene, context);
   result.summary = fill(result.summary, context);
   result.hook = fill(result.hook, context);
-  state.ending = { title: result.title, summary: result.summary };
+  state.ending = { title: result.title, summary: result.summary, hook: result.hook, scene: result.scene, reaction: result.reaction, rescued, stability };
+  renderEnding();
+}
+
+function renderEnding() {
+  const result = state.ending;
+  if (!result) return;
   setStageLabel("第一章・尾聲", "危機暫歇");
-  setStory("危機暫歇，遠方的天幕仍有裂光。", [
-    result.scene,
-    result.reaction,
+  const endingParagraphs = [
+    result.scene || state.log.slice().reverse().find((entry) => entry.type === "scene")?.text || "裂隙暫時合攏，隊伍得以喘息片刻。",
+    ...(result.reaction ? [result.reaction] : []),
     "沒有人立刻說話。你們都知道，這只是一段爭取來的時間；而你所做的決定，將跟著隊伍走向下一座界碑。"
-  ]);
+  ];
+  setStory("危機暫歇，遠方的天幕仍有裂光。", endingParagraphs);
   $("#choices").innerHTML = "";
   $("#continueArea").innerHTML = "";
-  $("#endingArea").innerHTML = `<div class="ending-card"><h2>${result.title}</h2><p>${result.summary}</p><p class="next-hook">${result.hook}</p><p class="muted">本章記錄：撤離 ${rescued} 組居民｜界碑穩定 ${stability}｜調律者：洞察 ${state.stats.insight}・共鳴 ${state.stats.resonance}・堅忍 ${state.stats.grit}</p><div class="ending-actions"><button class="ending-button" id="goChapterTwo">前往第二章</button><button class="quiet-button" id="newRun">開始新週目</button></div></div>`;
+  $("#endingArea").innerHTML = `<div class="ending-card"><h2>${escapeHTML(result.title)}</h2><p>${escapeHTML(result.summary)}</p><p class="next-hook">${escapeHTML(result.hook || "前往第二章，追查下一座失去方向的界碑。")}</p><p class="muted">本章記錄：撤離 ${result.rescued ?? Math.min(5, state.evac + state.battle.rescue)} 組居民｜界碑穩定 ${result.stability ?? state.battle.stable}｜調律者：洞察 ${state.stats.insight}・共鳴 ${state.stats.resonance}・堅忍 ${state.stats.grit}</p><div class="ending-actions"><button class="ending-button" id="goChapterTwo">前往第二章</button><button class="quiet-button" id="newRun">開始新週目</button></div></div>`;
   $("#goChapterTwo").addEventListener("click", () => openChapterTwo(readSave()));
   $("#newRun").addEventListener("click", reset);
   persistSave();
@@ -475,28 +506,12 @@ function conclude(choiceId) {
 }
 
 function serializableSave() {
+  const { log: chronicle, ...snapshot } = state;
   return {
-    version: 1,
-    stage: state.stage,
-    stance: state.stance,
-    chapterChoice: state.chapterChoice,
-    echoUnderstood: state.echoUnderstood,
-    clue: state.clue,
-    evac: state.evac,
-    stats: state.stats,
-    trust: state.trust,
-    battle: state.battle,
-    ending: state.ending,
-    nextGoal: state.nextGoal,
-    chapterTwoPhase: state.chapterTwoPhase,
-    chapterTwoRoute: state.chapterTwoRoute,
-    chapterTwoChoice: state.chapterTwoChoice,
-    chapterTwoEntryChoice: state.chapterTwoEntryChoice,
-    chapterTwoInvestigation: state.chapterTwoInvestigation,
-    chapterTwoOutcome: state.chapterTwoOutcome,
-    chapterTwoResolution: state.chapterTwoResolution,
-    chapterThreeChoice: state.chapterThreeChoice,
-    chronicle: state.log
+    ...snapshot,
+    version: 2,
+    savedAt: new Date().toISOString(),
+    chronicle
   };
 }
 
@@ -504,6 +519,7 @@ function persistSave() {
   memorySave = serializableSave();
   try { localStorage.setItem(CONTENT.storageKey, JSON.stringify(memorySave)); }
   catch { /* Local storage may be unavailable in a restricted browser context. */ }
+  renderSaveSlots();
 }
 
 function readSave() {
@@ -514,10 +530,140 @@ function readSave() {
 function renderContinueButton() {
   const save = readSave();
   const area = $("#continueArea");
-  if (!save?.chapterChoice) { area.innerHTML = ""; return; }
-  const entry = ["chapter3-entry", "chapter3-ready"].includes(save.chapterTwoPhase) ? "第三章入口已開啟" : save.chapterTwoPhase === "aftermath" ? "第二章危機餘波" : save.chapterTwoPhase === "crisis" ? "第二章危機進行中" : save.chapterTwoPhase === "investigation" ? "第二章調查進行中" : save.chapterTwoChoice ? "第二章已完成" : `第一章結局：${save.ending?.title ?? "已完成"}`;
-  area.innerHTML = `<button class="continue-button" type="button"><strong>承接上次進度</strong><span>${entry}｜繼續冒險</span></button>`;
-  area.querySelector("button").addEventListener("click", () => openChapterTwo(save));
+  if (!hasStoryProgress(save)) { area.innerHTML = ""; return; }
+  area.innerHTML = `<button class="continue-button" type="button"><strong>承接自動存檔</strong><span>${escapeHTML(progressCode(save))}｜${escapeHTML(saveLocation(save))}｜${escapeHTML(formatSaveTime(save.savedAt))}</span></button>`;
+  area.querySelector("button").addEventListener("click", () => resumeSnapshot(save));
+}
+
+function hasStoryProgress(save) {
+  return Boolean(save && save.stage && save.stage !== "opening");
+}
+
+function saveLocation(save = state) {
+  if (save.chapterTwoPhase?.startsWith("chapter3-") || save.chapterTwoPhase === "chapter3-entry") {
+    const stage = save.chapterThreePhase ? CONTENT.chapterTwo.chapterThreeStages[save.chapterThreePhase] : null;
+    return `第三章・${stage?.clock || "入口"}`;
+  }
+  if (["chapter2", "chapter2-ended"].includes(save.stage)) {
+    const names = { entry: "章節入口", investigation: "觀星台調查", crisis: "星盤危機", aftermath: "危機餘波" };
+    return `第二章・${names[save.chapterTwoPhase] || "星盤逆轉"}`;
+  }
+  if (save.stage === "actions") return `第一章・行動時段 ${Math.max(1, 4 - (save.slots ?? 3))} / 3`;
+  if (save.stage === "battle") return `第一章・戰鬥第 ${save.battleRound || 1} 回合`;
+  if (save.stage === "decision") return "第一章・結局抉擇";
+  if (save.stage === "ended") return `第一章・${save.ending?.title || "尾聲"}`;
+  return "第一章・潰堤前夜";
+}
+
+function choiceNumber(choices = [], id) {
+  const index = choices.findIndex((choice) => choice.id === id);
+  return index < 0 ? 0 : index + 1;
+}
+
+function progressCode(save = state) {
+  if (save.chapterThreePhase || save.chapterTwoPhase === "chapter3-entry" || save.chapterTwoPhase?.startsWith("chapter3-")) {
+    if (save.chapterTwoPhase === "chapter3-entry" && !save.chapterThreePhase) return "3-0-0";
+    const phaseNumber = { trail: 1, door: 2, names: 3, finale: 4 }[save.chapterThreePhase] || 0;
+    let branchNumber = 0;
+    if (save.chapterThreePhase === "trail") {
+      branchNumber = choiceNumber(CONTENT.chapterTwo.chapterThree[save.chapterTwoOutcome]?.choices, save.chapterThreeChoice);
+    } else if (save.chapterThreePhase === "door") {
+      branchNumber = choiceNumber(CONTENT.chapterTwo.chapterThreeStages.trail.choices, save.chapterThreeRidgeChoice);
+    } else if (save.chapterThreePhase === "names") {
+      branchNumber = choiceNumber(CONTENT.chapterTwo.chapterThreeStages.door.choices, save.chapterThreeDoorChoice);
+    } else if (save.chapterThreePhase === "finale") {
+      branchNumber = choiceNumber(CONTENT.chapterTwo.chapterThreeStages.names.choices, save.chapterThreeFinaleChoice);
+    }
+    return `3-${phaseNumber}-${branchNumber}`;
+  }
+  if (["chapter2", "chapter2-ended"].includes(save.stage)) {
+    const phaseNumber = { entry: 1, investigation: 2, crisis: 3, aftermath: 4 }[save.chapterTwoPhase] || 0;
+    const route = CONTENT.chapterTwo[save.chapterTwoRoute];
+    let branchNumber = 0;
+    if (save.chapterTwoPhase === "investigation") branchNumber = choiceNumber(route?.choices, save.chapterTwoEntryChoice);
+    else if (save.chapterTwoPhase === "crisis") branchNumber = choiceNumber(CONTENT.chapterTwo.investigation[save.chapterTwoRoute]?.choices, save.chapterTwoInvestigation);
+    else if (save.chapterTwoPhase === "aftermath") branchNumber = choiceNumber(CONTENT.chapterTwo.crisis.choices, save.chapterTwoChoice);
+    return `2-${phaseNumber}-${branchNumber}`;
+  }
+  const phaseNumber = { opening: 0, actions: 1, battle: 2, decision: 3, ended: 4 }[save.stage] || 0;
+  const battleActions = Object.entries(CONTENT.battle.actions).map(([id, choice]) => ({ id, ...choice }));
+  const lastBattleAction = save.stage === "battle"
+    ? [...(save.chronicle || save.log || [])].reverse().find((entry) => entry.type === "action" && battleActions.some((choice) => choice.title === entry.title))
+    : null;
+  const battleActionIndex = battleActions.findIndex((choice) => choice.title === lastBattleAction?.title);
+  const branchNumber = save.stage === "actions"
+    ? choiceNumber(CONTENT.opening.choices, save.stance)
+    : save.stage === "battle" ? (battleActionIndex < 0 ? 0 : battleActionIndex + 1)
+      : save.stage === "ended" ? choiceNumber(CONTENT.battle.choices, save.chapterChoice) : 0;
+  return `1-${phaseNumber}-${branchNumber}`;
+}
+
+function formatSaveTime(value) {
+  const date = value ? new Date(value) : null;
+  return date && Number.isFinite(date.getTime())
+    ? new Intl.DateTimeFormat("zh-TW", { dateStyle: "short", timeStyle: "short" }).format(date)
+    : "時間未記錄";
+}
+
+function readManualSlots() {
+  try {
+    const slots = JSON.parse(localStorage.getItem(manualSlotsKey) || "[]");
+    return Array.isArray(slots) ? slots.slice(0, 3) : [];
+  } catch { return []; }
+}
+
+function renderSaveSlots() {
+  const container = $("#saveSlots");
+  if (!container) return;
+  const autoSave = memorySave || readSave();
+  const autoStatus = $("#autoSaveStatus");
+  if (autoStatus) autoStatus.textContent = hasStoryProgress(autoSave)
+    ? `自動存檔 ${progressCode(autoSave)}｜${saveLocation(autoSave)}｜${formatSaveTime(autoSave.savedAt)}`
+    : "自動存檔會在故事開始後建立。";
+  const slots = readManualSlots();
+  const canSave = state.stage !== "opening";
+  container.innerHTML = [0, 1, 2].map((index) => {
+    const slot = slots[index];
+    const occupied = Boolean(slot?.snapshot);
+    const label = `存檔位 ${index + 1}`;
+    const details = occupied
+      ? `<p class="save-slot-meta">進度 ${escapeHTML(slot.progress || progressCode(slot.snapshot))}<br>${escapeHTML(slot.location || saveLocation(slot.snapshot))}<br>${escapeHTML(formatSaveTime(slot.savedAt))}</p>`
+      : '<p class="save-slot-meta save-slot-empty">空白存檔位</p>';
+    return `<div class="save-slot"><div class="save-slot-top"><strong>${label}</strong><span>${occupied ? "已保存" : "空白"}</span></div>${details}<div class="save-slot-actions"><button class="save-slot-button" data-save-slot="${index}" ${canSave ? "" : "disabled"}>${occupied ? "覆蓋" : "存入"}</button><button class="save-slot-button" data-load-slot="${index}" ${occupied ? "" : "disabled"}>讀取</button><button class="save-slot-button delete" data-delete-slot="${index}" ${occupied ? "" : "disabled"}>刪除</button></div></div>`;
+  }).join("");
+  container.querySelectorAll("[data-save-slot]").forEach((button) => button.addEventListener("click", () => saveManualSlot(Number(button.dataset.saveSlot))));
+  container.querySelectorAll("[data-load-slot]").forEach((button) => button.addEventListener("click", () => loadManualSlot(Number(button.dataset.loadSlot))));
+  container.querySelectorAll("[data-delete-slot]").forEach((button) => button.addEventListener("click", () => deleteManualSlot(Number(button.dataset.deleteSlot))));
+}
+
+function saveManualSlot(index) {
+  if (state.stage === "opening") return;
+  const slots = readManualSlots();
+  if (slots[index]?.snapshot && !window.confirm(`要覆蓋存檔位 ${index + 1} 嗎？`)) return;
+  slots[index] = { savedAt: new Date().toISOString(), location: saveLocation(), progress: progressCode(), snapshot: serializableSave() };
+  try {
+    localStorage.setItem(manualSlotsKey, JSON.stringify(slots));
+    renderSaveSlots();
+  } catch {
+    window.alert("無法保存存檔。請確認瀏覽器儲存空間未滿，或改用同一瀏覽器開啟遊戲。");
+  }
+}
+
+function loadManualSlot(index) {
+  const slot = readManualSlots()[index];
+  if (!slot?.snapshot) return;
+  if (hasStoryProgress(readSave()) && !window.confirm("讀取後會取代目前的自動續玩進度；三個手動存檔不受影響。仍要讀取嗎？")) return;
+  resumeSnapshot(slot.snapshot);
+}
+
+function deleteManualSlot(index) {
+  const slots = readManualSlots();
+  if (!slots[index]?.snapshot || !window.confirm(`要刪除存檔位 ${index + 1} 嗎？`)) return;
+  slots[index] = null;
+  try {
+    localStorage.setItem(manualSlotsKey, JSON.stringify(slots));
+    renderSaveSlots();
+  } catch { /* The existing slot remains available if storage is restricted. */ }
 }
 
 function chapterTwoRouteKey(save) {
@@ -525,13 +671,48 @@ function chapterTwoRouteKey(save) {
   return save.chapterChoice;
 }
 
+function resumeSnapshot(save) {
+  if (!save) return;
+  const defaults = initialState();
+  state = {
+    ...defaults,
+    ...save,
+    stats: { ...defaults.stats, ...save.stats },
+    trust: { ...defaults.trust, ...save.trust },
+    battle: { ...defaults.battle, ...save.battle },
+    log: Array.isArray(save.chronicle) ? save.chronicle : Array.isArray(save.log) ? save.log : []
+  };
+  persistSave();
+  if (["chapter2", "chapter2-ended", "chapter3-entry", "chapter3-ready"].includes(state.stage)
+      || state.chapterTwoPhase?.startsWith("chapter3-") || state.chapterTwoPhase === "chapter3-entry") {
+    openChapterTwo(state);
+    return;
+  }
+  if (state.stage === "actions") renderActions();
+  else if (state.stage === "battle") renderBattle();
+  else if (state.stage === "decision") renderDecision();
+  else if (state.stage === "ended") renderEnding();
+  else renderOpening();
+  persistSave();
+  renderStats();
+  renderLog();
+}
+
 function openChapterTwo(save) {
   if (!save?.chapterChoice) return;
   state = { ...initialState(), ...save, stage: "chapter2", chapterTwoRoute: chapterTwoRouteKey(save), slots: 0 };
   if (Array.isArray(save.chronicle)) state.log = save.chronicle;
   else if (Array.isArray(save.log)) state.log = save.log;
-  if (["chapter3-entry", "chapter3-ready"].includes(state.chapterTwoPhase)) {
+  if (state.chapterTwoPhase === "chapter3-entry" || (state.chapterTwoPhase === "chapter3-ready" && !state.chapterThreePhase)) {
     openChapterThreeEntrance();
+    return;
+  }
+  if (state.chapterTwoPhase?.startsWith("chapter3-") && state.chapterThreePhase) {
+    state.chapterThreeAstridJoined = true;
+    state.chapterThreeGrimmJoined = true;
+    state.trust.astrid = Math.max(state.trust.astrid ?? 0, 1);
+    state.trust.grimm = Math.max(state.trust.grimm ?? 0, 1);
+    renderChapterThreePhase(state.chapterThreePhase);
     return;
   }
   if (state.chapterTwoPhase === "aftermath") {
@@ -606,6 +787,8 @@ function openChapterThreeEntrance() {
   const chapter = CONTENT.chapterTwo.chapterThree[state.chapterTwoOutcome];
   state.stage = "chapter3-entry";
   state.chapterTwoPhase = "chapter3-entry";
+  state.chapterThreeAstridJoined = true;
+  state.trust.astrid = Math.max(state.trust.astrid ?? 0, 1);
   setStageLabel("第三章・序幕", "霜環峽／盲星谷");
   setStory(chapter.title, chapter.paragraphs);
   renderChoices(chapter.choices.map((choice) => ({
@@ -622,15 +805,76 @@ function openChapterThreeEntrance() {
 
 function beginChapterThree(choice) {
   state.chapterThreeChoice = choice.id;
+  state.chapterThreeEntryOutcome = choice.outcome;
+  state.chapterThreePreviousOutcome = choice.outcome;
   state.nextGoal = choice.nextGoal;
-  state.chapterTwoPhase = "chapter3-ready";
+  renderChapterThreePhase("trail", choice.outcome);
+  persistSave();
+  renderStats();
+}
+
+function renderChapterThreePhase(phase = state.chapterThreePhase, previousOutcome = state.chapterThreePreviousOutcome) {
   state.stage = "chapter3-ready";
-  const chapter = CONTENT.chapterTwo.chapterThree[state.chapterTwoOutcome];
-  setStageLabel("第三章・啟程", "第一個行動");
-  setStory(chapter.title, [choice.outcome, { speaker: state.chapterTwoOutcome === "rescue" ? "弗蕾亞" : state.chapterTwoOutcome === "answer" ? "法芙娜" : "英格瓦", text: `那就先去${state.nextGoal}。` }, "這裡是第三章的入口。接下來的事件將從你選定的方向展開。"]);
+  state.chapterThreePhase = phase;
+  state.chapterTwoPhase = `chapter3-${phase}`;
+  if (phase === "trail") {
+    state.chapterThreeGrimmJoined = true;
+    state.trust.grimm = Math.max(state.trust.grimm ?? 0, 1);
+  }
+  if (phase === "finale") {
+    renderChapterThreeFinale(previousOutcome);
+    return;
+  }
+  const chapter = CONTENT.chapterTwo.chapterThreeStages[phase];
+  if (!chapter) return;
+  const phaseLabel = phase === "trail" ? "霜環峽" : phase === "door" ? "古關石門" : "盲星谷";
+  setStageLabel(`第三章・${phaseLabel}`, chapter.clock);
+  setStory(chapter.title, [previousOutcome, ...chapter.paragraphs].filter(Boolean));
+  renderChoices(chapter.choices.map((choice) => ({ ...choice, choose: () => resolveChapterThree(choice) })));
+  $("#continueArea").innerHTML = "";
+  $("#actionArea").innerHTML = "";
+  $("#battleArea").innerHTML = "";
+  $("#endingArea").innerHTML = "";
+  renderStats();
+}
+
+function resolveChapterThree(choice) {
+  applyEffects(choice.effects);
+  state.chapterThreePreviousOutcome = choice.outcome;
+  if (state.chapterThreePhase === "trail") {
+    state.chapterThreeRidgeChoice = choice.id;
+    const ally = choice.id === "follow_ruts" ? "grimm" : "astrid";
+    state.trust[ally] = Math.min(3, (state.trust[ally] ?? 0) + 1);
+    state.nextGoal = "確認石門後的敲擊來源";
+    renderChapterThreePhase("door", choice.outcome);
+  } else if (state.chapterThreePhase === "door") {
+    state.chapterThreeDoorChoice = choice.id;
+    const ally = choice.id === "break_seal" ? "grimm" : "astrid";
+    state.trust[ally] = Math.min(3, (state.trust[ally] ?? 0) + 1);
+    state.nextGoal = "辨認盲星谷界碑上的名字";
+    renderChapterThreePhase("names", choice.outcome);
+  } else if (state.chapterThreePhase === "names") {
+    state.chapterThreeFinaleChoice = choice.id;
+    state.nextGoal = "循著新星圖追查下一座界碑";
+    renderChapterThreePhase("finale", choice.outcome);
+  }
+  persistSave();
+  renderStats();
+}
+
+function renderChapterThreeFinale(previousOutcome = state.chapterThreePreviousOutcome) {
+  const finale = CONTENT.chapterTwo.chapterThreeStages.finales[state.chapterThreeFinaleChoice];
+  if (!finale) return;
+  state.chapterThreeJoined = true;
+  state.trust.sern = Math.max(state.trust.sern ?? 0, state.chapterThreeFinaleChoice === "offer_name" ? 2 : 1);
+  setStageLabel("第三章・尾聲", "盲星谷・回聲");
+  setStory(`第三章｜${finale.title}`, [previousOutcome, ...finale.paragraphs].filter(Boolean));
   $("#choices").innerHTML = "";
-  $("#endingArea").innerHTML = `<div class="ending-card"><h2>第三章即將開始</h2><p>${choice.outcome}</p><p class="next-hook">目前目標：${state.nextGoal}</p><div class="ending-actions"><button class="ending-button" id="reopenChapterThree">重新查看第三章入口</button><button class="quiet-button" id="newRun">開始新週目</button></div></div>`;
-  $("#reopenChapterThree").addEventListener("click", openChapterThreeEntrance);
+  $("#continueArea").innerHTML = "";
+  $("#actionArea").innerHTML = "";
+  $("#battleArea").innerHTML = "";
+  $("#endingArea").innerHTML = `<div class="ending-card"><h2>${escapeHTML(finale.title)}</h2><p>${escapeHTML(finale.summary)}</p><p class="next-hook">${escapeHTML(finale.hook)}</p><div class="ending-actions"><button class="ending-button" id="reopenChapterThreeFinale">重新查看尾聲</button><button class="quiet-button" id="newRun">開始新週目</button></div></div>`;
+  $("#reopenChapterThreeFinale").addEventListener("click", () => renderChapterThreePhase("finale"));
   $("#newRun").addEventListener("click", reset);
   persistSave();
   renderStats();
@@ -675,6 +919,7 @@ function resolveChapterTwo(choice) {
 }
 
 function reset() {
+  if (hasStoryProgress(readSave()) && !window.confirm("重新開始會重設自動續玩進度；三個手動存檔會保留。要重新開始嗎？")) return;
   try { localStorage.removeItem(CONTENT.storageKey); } catch { /* Ignore restricted storage. */ }
   memorySave = null;
   state = initialState();
@@ -682,6 +927,7 @@ function reset() {
   renderOpening();
   renderStats();
   renderLog();
+  renderSaveSlots();
 }
 
 function downloadStoryLog() {
@@ -751,3 +997,4 @@ initTextSizeControls();
 renderOpening();
 renderStats();
 renderLog();
+renderSaveSlots();
