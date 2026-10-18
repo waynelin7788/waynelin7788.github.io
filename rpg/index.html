@@ -1,1 +1,46 @@
-
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#111d29">
+    <title>星幽啟示錄 RPG｜潰堤前夜</title>
+    <link rel="stylesheet" href="src/style.css?v=11">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div class="brand"><span class="brand-mark">✦</span><div><p class="eyebrow">星幽啟示錄・互動故事 RPG</p><h1>潰堤前夜</h1></div></div>
+        <div class="header-tools">
+          <div class="text-size-controls" role="group" aria-label="文字大小調整">
+            <span id="textScaleValue" aria-live="polite">文字 110%</span>
+            <button class="quiet-button text-size-button" id="fontSmaller" type="button" aria-label="縮小文字" title="縮小文字">A−</button>
+            <button class="quiet-button text-size-button" id="fontLarger" type="button" aria-label="放大文字" title="放大文字">A＋</button>
+          </div>
+          <button class="quiet-button" id="restart" type="button">重新開始</button>
+        </div>
+      </header>
+      <div class="layout">
+        <section class="story-column" aria-live="polite">
+          <div class="chapter-line"><span class="chapter-emblem">✦</span><span id="phaseLabel">序章</span><span class="line"></span><span id="chapterClock">危機逼近</span></div>
+          <article id="story" class="story-card"></article>
+          <div id="choices" class="choices"></div>
+          <div id="continueArea" class="continue-area"></div>
+          <div id="actionArea" class="action-area"></div>
+          <div id="battleArea" class="battle-area"></div>
+          <div id="endingArea" class="ending-area"></div>
+        </section>
+        <aside class="sidebar">
+          <section class="panel pressure-panel"><div class="panel-heading"><h2>界碑穩定</h2><span id="stabilityValue">狀態待確認</span></div><div class="meter"><span id="stabilityMeter"></span></div><p id="pressureText">抵達後才能判斷裂隙狀況。</p></section>
+          <section class="panel"><div class="panel-heading"><h2>調律者</h2><span class="tag">凡人</span></div><div id="stats" class="stat-list"></div></section>
+          <section class="panel"><div class="panel-heading"><h2>同行者</h2><span id="partyNote" class="muted">尚未會合</span></div><div id="companions" class="companion-list"></div></section>
+          <section class="panel journal"><div class="panel-heading"><h2>故事紀錄</h2><button class="export-log-button" id="exportLog" type="button">下載 .txt</button></div><ol id="log"></ol></section>
+          <p class="prototype-note">故事紀錄會保存場景、對話、選擇與行動；可下載文字檔留存</p>
+        </aside>
+      </div>
+      <footer>一段短章節原型｜選擇會改變支援、代價與結局</footer>
+    </main>
+    <script src="data/chapter-content.js"></script>
+    <script src="src/main.js?v=9"></script>
+  </body>
+</html>
