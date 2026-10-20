@@ -86,6 +86,7 @@ button { font-family: inherit; }
 .scene-cast { position: absolute; z-index: 3; inset: 0; pointer-events: none; }
 .scene-actor { display: block; position: absolute; bottom: -2%; width: auto; height: 91%; max-width: none; object-fit: contain; object-position: center bottom; filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .38)); }
 .cast-1 .actor-1 { right: 7%; height: 92%; }
+.scene-undercity-true-name .cast-1 .actor-1 { left: 3%; right: auto; height: 86%; }
 .cast-2 .actor-1 { left: 10%; height: 89%; }
 .cast-2 .actor-2 { right: 9%; height: 92%; }
 .cast-3 .actor-1 { left: -4%; height: 73%; }
