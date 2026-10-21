@@ -156,24 +156,35 @@ function storyVisual(paragraphs = []) {
       gate: "chapter-four-gate.webp",
       archive: "chapter-four-archive.webp",
       core: "chapter-four-core.webp",
-      finale: "chapter-four-core.webp"
+      finale: "chapter-four-core.webp",
+      failureEntry: "chapter-four-failure-entry.webp",
+      failureRings: "chapter-four-failure-rings.webp",
+      failureBridge: "chapter-four-failure-bridge.webp",
+      failureAnchor: "chapter-four-failure-vanish.webp",
+      failureFinale: "chapter-four-failure-ending.webp"
     };
     return { background: `assets/scenes/${backgrounds[state.chapterFourPhase] || backgrounds.approach}`, characters: cast, name: "倒懸之城・維洛斯", mood: `chapter-four-${cast.length}` };
   }
   if (state.stage === "chapter5-ready") {
+    const failurePhase = String(state.chapterFivePhase || "").startsWith("failure");
     const cast = [...new Map(paragraphs
       .filter((item) => typeof item === "object" && item.speaker)
       .map((item) => characterForSpeaker(item.speaker))
       .filter(Boolean)
       .map((person) => [person.id, person])).values()];
-    if (!cast.length) cast.push(companionData[5]);
+    if (!cast.length) cast.push(failurePhase ? starEaterCharacter : companionData[5]);
     const backgrounds = {
       harbor: "chapter-five-harbor.webp",
       undercity: "chapter-five-crossing.webp",
       crossing: "chapter-five-crossing.webp",
       lighthouse: "chapter-five-lighthouse.webp",
       lens: "chapter-five-lens.webp",
-      finale: "chapter-five-lens.webp"
+      finale: "chapter-five-lens.webp",
+      failureEntry: "chapter-five-failure-entry.webp",
+      failureCrossing: "chapter-five-failure-crossing.webp",
+      failureEcho: "chapter-five-failure-echo.webp",
+      failureHarbor: "chapter-five-failure-harbor.webp",
+      failureFinale: "chapter-five-failure-ending.webp"
     };
     return { background: `assets/scenes/${backgrounds[state.chapterFivePhase] || backgrounds.harbor}`, characters: cast, name: "無星渡口・沉星潮", mood: `chapter-five-${cast.length}` };
   }
@@ -238,18 +249,24 @@ function storyVisual(paragraphs = []) {
     return { background: `assets/scenes/${backgrounds[state.chapterSevenPhase] || backgrounds.arrival}`, characters: cast, name: "沉眠星群", mood: `chapter-seven-${cast.length}` };
   }
   if (state.stage === "chapter8-ready") {
+    const failurePhase = String(state.chapterEightPhase || "").startsWith("failure");
     const cast = [...new Map(paragraphs
       .filter((item) => typeof item === "object" && item.speaker)
       .map((item) => characterForSpeaker(item.speaker))
       .filter(Boolean)
       .map((person) => [person.id, person])).values()];
-    if (!cast.length) cast.push(companionData[5]);
+    if (!cast.length) cast.push(failurePhase ? starEaterCharacter : companionData[5]);
     const backgrounds = {
       return: "chapter-eight-return.webp",
       refuge: "chapter-eight-refuge.webp",
       covenant: "chapter-eight-covenant.webp",
       rift: "chapter-eight-rift.webp",
-      finale: "chapter-eight-rift.webp"
+      finale: "chapter-eight-rift.webp",
+      failureEntry: "chapter-eight-failure-entry.webp",
+      failureDescent: "chapter-eight-failure-descent.webp",
+      failureAnchor: "chapter-eight-failure-anchor.webp",
+      failureName: "chapter-eight-failure-name.webp",
+      failureFinale: "chapter-eight-failure-ending.webp"
     };
     return { background: `assets/scenes/${backgrounds[state.chapterEightPhase] || backgrounds.return}`, characters: cast, name: "裂星前夜", mood: `chapter-eight-${cast.length}` };
   }
@@ -537,12 +554,16 @@ function chronicleSectionTitle(entry, chapter, firstScene) {
   if (chapter === "第四章") {
     if (firstScene) return title;
     if (Object.values(CONTENT.chapterFour.stages).some((item) => item.title === entry.title)) return title;
+    if (Object.values(CONTENT.chapterFour.failureStages).some((item) => item.title === entry.title)) return title;
     if (Object.values(CONTENT.chapterFour.finales).some((item) => entry.title === `第四章｜${item.title}`)) return title;
+    if (Object.values(CONTENT.chapterFour.failureFinales).some((item) => entry.title === `第四章｜${item.title}`)) return title;
   }
   if (chapter === "第五章") {
     if (firstScene) return title;
     if (Object.values(CONTENT.chapterFive.stages).some((item) => item.title === entry.title)) return title;
+    if (Object.values(CONTENT.chapterFive.failureStages).some((item) => item.title === entry.title)) return title;
     if (Object.values(CONTENT.chapterFive.finales).some((item) => entry.title === `第五章｜${item.title}`)) return title;
+    if (Object.values(CONTENT.chapterFive.failureFinales).some((item) => entry.title === `第五章｜${item.title}`)) return title;
   }
   if (chapter === "第六章") {
     if (firstScene) return title;
@@ -557,7 +578,9 @@ function chronicleSectionTitle(entry, chapter, firstScene) {
   if (chapter === "第八章") {
     if (firstScene) return title;
     if (Object.values(CONTENT.chapterEight.stages).some((item) => item.title === entry.title)) return title;
+    if (Object.values(CONTENT.chapterEight.failureStages).some((item) => item.title === entry.title)) return title;
     if (Object.values(CONTENT.chapterEight.finales).some((item) => entry.title === `第八章｜${item.title}`)) return title;
+    if (Object.values(CONTENT.chapterEight.failureFinales).some((item) => entry.title === `第八章｜${item.title}`)) return title;
   }
   if (chapter === "第九章") {
     if (firstScene) return title;
@@ -878,7 +901,8 @@ function saveLocation(save = state) {
   }
   if (save.chapterTwoPhase?.startsWith("chapter8-") || save.stage === "chapter8-ready") {
     const phase = save.chapterEightPhase;
-    return `第八章・${phase === "finale" ? "尾聲" : CONTENT.chapterEight.stages[phase]?.clock || "裂星前夜"}`;
+    if (phase === "failureFinale") return `第八章・${CONTENT.chapterEight.failureFinales[save.chapterEightRiftChoice]?.title || "失敗結局"}`;
+    return `第八章・${phase === "finale" ? "尾聲" : CONTENT.chapterEight.stages[phase]?.clock || CONTENT.chapterEight.failureStages[phase]?.clock || "裂星前夜"}`;
   }
   if (save.chapterTwoPhase?.startsWith("chapter7-") || save.stage === "chapter7-ready") {
     const phase = save.chapterSevenPhase;
@@ -890,12 +914,14 @@ function saveLocation(save = state) {
   }
   if (save.chapterTwoPhase?.startsWith("chapter5-") || save.stage === "chapter5-ready") {
     const phase = save.chapterFivePhase;
-    return `第五章・${phase === "finale" ? "尾聲" : CONTENT.chapterFive.stages[phase]?.clock || "無星渡口"}`;
+    if (phase === "failureFinale") return `第五章・${CONTENT.chapterFive.failureFinales[save.chapterFiveLensChoice]?.title || "失敗結局"}`;
+    return `第五章・${phase === "finale" ? "尾聲" : CONTENT.chapterFive.stages[phase]?.clock || CONTENT.chapterFive.failureStages[phase]?.clock || "無星渡口"}`;
   }
   if (save.chapterTwoPhase?.startsWith("chapter4-") || save.stage === "chapter4-ready") {
     const stages = CONTENT.chapterFour.stages;
     const phase = save.chapterFourPhase;
-    return `第四章・${phase === "finale" ? "尾聲" : stages[phase]?.clock || "倒懸之城"}`;
+    if (phase === "failureFinale") return `第四章・${CONTENT.chapterFour.failureFinales[save.chapterFourCoreChoice]?.title || "失敗結局"}`;
+    return `第四章・${phase === "finale" ? "尾聲" : stages[phase]?.clock || CONTENT.chapterFour.failureStages[phase]?.clock || "倒懸之城"}`;
   }
   if (save.chapterTwoPhase?.startsWith("chapter3-") || save.chapterTwoPhase === "chapter3-entry") {
     const stage = save.chapterThreePhase ? CONTENT.chapterTwo.chapterThreeStages[save.chapterThreePhase] : null;
@@ -954,13 +980,18 @@ function progressCode(save = state) {
     return `9-${phaseNumber}-${branchNumber}`;
   }
   if (save.chapterEightPhase || save.chapterTwoPhase?.startsWith("chapter8-")) {
-    const phaseNumber = { return: 1, refuge: 2, covenant: 3, rift: 4, finale: 5 }[save.chapterEightPhase] || 0;
+    const phaseNumber = { return: 1, refuge: 2, covenant: 3, rift: 4, finale: 5, failureEntry: 6, failureDescent: 7, failureAnchor: 8, failureName: 9, failureFinale: 10 }[save.chapterEightPhase] || 0;
     const branchNumber = {
       return: 0,
       refuge: choiceNumber(CONTENT.chapterEight.stages.return.choices, save.chapterEightReturnChoice),
       covenant: choiceNumber(CONTENT.chapterEight.stages.refuge.choices, save.chapterEightRefugeChoice),
       rift: choiceNumber(CONTENT.chapterEight.stages.covenant.choices, save.chapterEightCovenantChoice),
-      finale: choiceNumber(CONTENT.chapterEight.stages.rift.choices, save.chapterEightRiftChoice)
+      finale: choiceNumber(CONTENT.chapterEight.stages.rift.choices, save.chapterEightRiftChoice),
+      failureEntry: choiceNumber(CONTENT.chapterEight.stages.rift.choices, save.chapterEightRiftChoice),
+      failureDescent: save.chapterEightFailureEntryChoice ? 1 : 0,
+      failureAnchor: save.chapterEightFailureDescentChoice ? 1 : 0,
+      failureName: save.chapterEightFailureAnchorChoice ? 1 : 0,
+      failureFinale: save.chapterEightFailureNameChoice ? 1 : 0
     }[save.chapterEightPhase] || 0;
     return `8-${phaseNumber}-${branchNumber}`;
   }
@@ -987,25 +1018,35 @@ function progressCode(save = state) {
     return `6-${phaseNumber}-${branchNumber}`;
   }
   if (save.chapterFivePhase || save.chapterTwoPhase?.startsWith("chapter5-")) {
-    const phaseNumber = { harbor: 1, undercity: 2, crossing: 3, lighthouse: 4, lens: 5, finale: 6 }[save.chapterFivePhase] || 0;
+    const phaseNumber = { harbor: 1, undercity: 2, crossing: 3, lighthouse: 4, lens: 5, finale: 6, failureEntry: 7, failureCrossing: 8, failureEcho: 9, failureHarbor: 10, failureFinale: 11 }[save.chapterFivePhase] || 0;
     const branchNumber = {
       harbor: 0,
       undercity: choiceNumber(CONTENT.chapterFive.stages.undercity.choices, save.chapterFiveUndercityChoice),
       crossing: choiceNumber(CONTENT.chapterFive.stages.harbor.choices, save.chapterFiveHarborChoice),
       lighthouse: choiceNumber(CONTENT.chapterFive.stages.crossing.choices, save.chapterFiveCrossingChoice),
       lens: choiceNumber(CONTENT.chapterFive.stages.lighthouse.choices, save.chapterFiveLighthouseChoice),
-      finale: choiceNumber(CONTENT.chapterFive.stages.lens.choices, save.chapterFiveLensChoice)
+      finale: choiceNumber(CONTENT.chapterFive.stages.lens.choices, save.chapterFiveLensChoice),
+      failureEntry: choiceNumber(CONTENT.chapterFive.stages.lens.choices, save.chapterFiveLensChoice),
+      failureCrossing: save.chapterFiveFailureEntryChoice ? 1 : 0,
+      failureEcho: save.chapterFiveFailureCrossingChoice ? 1 : 0,
+      failureHarbor: save.chapterFiveFailureEchoChoice ? 1 : 0,
+      failureFinale: save.chapterFiveFailureHarborChoice ? 1 : 0
     }[save.chapterFivePhase] || 0;
     return `5-${phaseNumber}-${branchNumber}`;
   }
   if (save.chapterFourPhase || save.chapterTwoPhase?.startsWith("chapter4-")) {
-    const phaseNumber = { approach: 1, gate: 2, archive: 3, core: 4, finale: 5 }[save.chapterFourPhase] || 0;
+    const phaseNumber = { approach: 1, gate: 2, archive: 3, core: 4, finale: 5, failureEntry: 6, failureRings: 7, failureBridge: 8, failureAnchor: 9, failureFinale: 10 }[save.chapterFourPhase] || 0;
     const branchNumber = {
       approach: 0,
       gate: choiceNumber(CONTENT.chapterFour.stages.approach.choices, save.chapterFourApproachChoice),
       archive: choiceNumber(CONTENT.chapterFour.stages.gate.choices, save.chapterFourGateChoice),
       core: choiceNumber(CONTENT.chapterFour.stages.archive.choices, save.chapterFourArchiveChoice),
-      finale: choiceNumber(CONTENT.chapterFour.stages.core.choices, save.chapterFourCoreChoice)
+      finale: choiceNumber(CONTENT.chapterFour.stages.core.choices, save.chapterFourCoreChoice),
+      failureEntry: choiceNumber(CONTENT.chapterFour.stages.core.choices, save.chapterFourCoreChoice),
+      failureRings: save.chapterFourFailureEntryChoice ? 1 : 0,
+      failureBridge: save.chapterFourFailureRingsChoice ? 1 : 0,
+      failureAnchor: save.chapterFourFailureBridgeChoice ? 1 : 0,
+      failureFinale: save.chapterFourFailureAnchorChoice ? 1 : 0
     }[save.chapterFourPhase] || 0;
     return `4-${phaseNumber}-${branchNumber}`;
   }
@@ -1393,9 +1434,13 @@ function renderChapterFourPhase(phase = state.chapterFourPhase, previousOutcome 
     renderChapterFourFinale(previousOutcome);
     return;
   }
-  const chapter = CONTENT.chapterFour.stages[phase];
+  if (phase === "failureFinale") {
+    renderChapterFourFailureFinale(previousOutcome);
+    return;
+  }
+  const chapter = CONTENT.chapterFour.stages[phase] || CONTENT.chapterFour.failureStages[phase];
   if (!chapter) return;
-  const label = { approach: "雲海之路", gate: "三環城門", archive: "檔案廳", core: "城市核心" }[phase];
+  const label = { approach: "雲海之路", gate: "三環城門", archive: "檔案廳", core: "城市核心", failureEntry: "核心失序", failureRings: "撤離城門", failureBridge: "最後座標", failureAnchor: "星圖之外" }[phase];
   setStageLabel(`第四章・${label}`, chapter.clock);
   setStory(chapter.title, [previousOutcome, ...chapter.paragraphs].filter(Boolean));
   renderChoices(chapter.choices.map((choice) => ({ ...choice, choose: () => resolveChapterFour(choice) })));
@@ -1409,7 +1454,23 @@ function renderChapterFourPhase(phase = state.chapterFourPhase, previousOutcome 
 
 function resolveChapterFour(choice) {
   state.chapterFourPreviousOutcome = choice.outcome;
-  if (state.chapterFourPhase === "approach") {
+  if (state.chapterFourPhase === "failureEntry") {
+    state.chapterFourFailureEntryChoice = choice.id;
+    state.nextGoal = choice.nextGoal;
+    renderChapterFourPhase("failureRings", choice.outcome);
+  } else if (state.chapterFourPhase === "failureRings") {
+    state.chapterFourFailureRingsChoice = choice.id;
+    state.nextGoal = choice.nextGoal;
+    renderChapterFourPhase("failureBridge", choice.outcome);
+  } else if (state.chapterFourPhase === "failureBridge") {
+    state.chapterFourFailureBridgeChoice = choice.id;
+    state.nextGoal = choice.nextGoal;
+    renderChapterFourPhase("failureAnchor", choice.outcome);
+  } else if (state.chapterFourPhase === "failureAnchor") {
+    state.chapterFourFailureAnchorChoice = choice.id;
+    state.nextGoal = choice.nextGoal;
+    renderChapterFourPhase("failureFinale", choice.outcome);
+  } else if (state.chapterFourPhase === "approach") {
     state.chapterFourApproachChoice = choice.id;
     state.nextGoal = choice.nextGoal;
     renderChapterFourPhase("gate", choice.outcome);
@@ -1424,9 +1485,26 @@ function resolveChapterFour(choice) {
   } else if (state.chapterFourPhase === "core") {
     state.chapterFourCoreChoice = choice.id;
     state.nextGoal = choice.nextGoal;
-    renderChapterFourPhase("finale", choice.outcome);
+    renderChapterFourPhase(choice.id === "split_core" ? "failureEntry" : "finale", choice.outcome);
   }
   applyEffects(choice.effects);
+  persistSave();
+  renderStats();
+}
+
+function renderChapterFourFailureFinale(previousOutcome = state.chapterFourPreviousOutcome) {
+  const finale = CONTENT.chapterFour.failureFinales[state.chapterFourCoreChoice];
+  if (!finale) return;
+  state.chapterFourComplete = true;
+  setStageLabel("第四章・失敗結局", "倒懸之城・星圖之外");
+  setStory(`第四章｜${finale.title}`, [previousOutcome, ...finale.paragraphs].filter(Boolean));
+  $("#choices").innerHTML = "";
+  $("#continueArea").innerHTML = "";
+  $("#actionArea").innerHTML = "";
+  $("#battleArea").innerHTML = "";
+  $("#endingArea").innerHTML = `<div class="ending-card"><h2>${escapeHTML(finale.title)}</h2><p>${escapeHTML(finale.summary)}</p><p class="next-hook">${escapeHTML(finale.hook)}</p><div class="ending-actions"><button class="quiet-button" id="reopenChapterFourFailureFinale">重新查看結局</button><button class="quiet-button" id="newRun">開始新週目</button></div></div>`;
+  $("#reopenChapterFourFailureFinale").addEventListener("click", () => renderChapterFourPhase("failureFinale"));
+  $("#newRun").addEventListener("click", reset);
   persistSave();
   renderStats();
 }
@@ -1479,10 +1557,14 @@ function renderChapterFivePhase(phase = state.chapterFivePhase, previousOutcome 
     renderChapterFiveFinale(previousOutcome);
     return;
   }
-  const chapter = CONTENT.chapterFive.stages[phase];
+  if (phase === "failureFinale") {
+    renderChapterFiveFailureFinale(previousOutcome);
+    return;
+  }
+  const chapter = CONTENT.chapterFive.stages[phase] || CONTENT.chapterFive.failureStages[phase];
   if (!chapter) return;
-  const label = { harbor: "沉星潮", undercity: "城底撤離道", crossing: "沉沒航道", lighthouse: "守燈室", lens: "古鏡" }[phase];
-  setStageLabel(`第五章・${label}`, chapter.clock);
+  const label = { harbor: "沉星潮", undercity: "城底撤離道", crossing: "沉沒航道", lighthouse: "守燈室", lens: "古鏡", failureEntry: "鏡心過載", failureCrossing: "外海航路", failureEcho: "回聲交會處", failureHarbor: "沉星後的岸邊" }[phase];
+  setStageLabel(`第五章・${label || chapter.title}`, chapter.clock);
   const storyTitle = phase === "harbor" ? `第五章｜${chapter.title}` : chapter.title;
   setStory(storyTitle, [...(phase === "harbor" ? [] : [previousOutcome]), ...chapter.paragraphs].filter(Boolean));
   renderChoices(chapter.choices.map((choice) => ({ ...choice, choose: () => resolveChapterFive(choice) })));
@@ -1496,7 +1578,23 @@ function renderChapterFivePhase(phase = state.chapterFivePhase, previousOutcome 
 
 function resolveChapterFive(choice) {
   state.chapterFivePreviousOutcome = choice.outcome;
-  if (state.chapterFivePhase === "harbor") {
+  if (state.chapterFivePhase === "failureEntry") {
+    state.chapterFiveFailureEntryChoice = choice.id;
+    state.nextGoal = choice.nextGoal;
+    renderChapterFivePhase("failureCrossing", choice.outcome);
+  } else if (state.chapterFivePhase === "failureCrossing") {
+    state.chapterFiveFailureCrossingChoice = choice.id;
+    state.nextGoal = choice.nextGoal;
+    renderChapterFivePhase("failureEcho", choice.outcome);
+  } else if (state.chapterFivePhase === "failureEcho") {
+    state.chapterFiveFailureEchoChoice = choice.id;
+    state.nextGoal = choice.nextGoal;
+    renderChapterFivePhase("failureHarbor", choice.outcome);
+  } else if (state.chapterFivePhase === "failureHarbor") {
+    state.chapterFiveFailureHarborChoice = choice.id;
+    state.nextGoal = choice.nextGoal;
+    renderChapterFivePhase("failureFinale", choice.outcome);
+  } else if (state.chapterFivePhase === "harbor") {
     state.chapterFiveHarborChoice = choice.id;
     state.nextGoal = choice.nextGoal;
     const phase = state.chapterFourCoreChoice === "sever_path" ? "undercity" : "crossing";
@@ -1516,7 +1614,7 @@ function resolveChapterFive(choice) {
   } else if (state.chapterFivePhase === "lens") {
     state.chapterFiveLensChoice = choice.id;
     state.nextGoal = choice.nextGoal;
-    renderChapterFivePhase("finale", choice.outcome);
+    renderChapterFivePhase(choice.id === "mirror_overload" ? "failureEntry" : "finale", choice.outcome);
   }
   applyEffects(choice.effects);
   persistSave();
@@ -1538,6 +1636,24 @@ function renderChapterFiveFinale(previousOutcome = state.chapterFivePreviousOutc
   $("#endingArea").innerHTML = `<div class="ending-card"><h2>${escapeHTML(finale.title)}</h2><p>${escapeHTML(finale.summary)}</p><p class="next-hook">${escapeHTML(finale.hook)}</p><div class="ending-actions"><button class="ending-button" id="goChapterSix">${startsUndercityRoute ? "進入第六章・失星航路篇" : "前往第六章・七約殘響"}</button><button class="quiet-button" id="reopenChapterFiveFinale">重新查看尾聲</button><button class="quiet-button" id="newRun">開始新週目</button></div></div>`;
   $("#goChapterSix").addEventListener("click", startsUndercityRoute ? beginUndercityRoute : beginChapterSix);
   $("#reopenChapterFiveFinale").addEventListener("click", () => renderChapterFivePhase("finale"));
+  $("#newRun").addEventListener("click", reset);
+  persistSave();
+  renderStats();
+}
+
+function renderChapterFiveFailureFinale(previousOutcome = state.chapterFivePreviousOutcome) {
+  const finale = CONTENT.chapterFive.failureFinales[state.chapterFiveLensChoice];
+  if (!finale) return;
+  state.chapterFiveComplete = true;
+  state.chapterFiveEilanJoined = true;
+  setStageLabel("第五章・失敗結局", "無星渡口・沉星後的岸邊");
+  setStory(`第五章｜${finale.title}`, [previousOutcome, ...finale.paragraphs].filter(Boolean));
+  $("#choices").innerHTML = "";
+  $("#continueArea").innerHTML = "";
+  $("#actionArea").innerHTML = "";
+  $("#battleArea").innerHTML = "";
+  $("#endingArea").innerHTML = `<div class="ending-card"><h2>${escapeHTML(finale.title)}</h2><p>${escapeHTML(finale.summary)}</p><p class="next-hook">${escapeHTML(finale.hook)}</p><div class="ending-actions"><button class="ending-button" id="reopenChapterFiveFailureFinale">重新查看失敗結局</button><button class="quiet-button" id="newRun">開始新週目</button></div></div>`;
+  $("#reopenChapterFiveFailureFinale").addEventListener("click", () => renderChapterFivePhase("failureFinale"));
   $("#newRun").addEventListener("click", reset);
   persistSave();
   renderStats();
@@ -1892,10 +2008,14 @@ function renderChapterEightPhase(phase = state.chapterEightPhase, previousOutcom
     renderChapterEightFinale(previousOutcome);
     return;
   }
-  const chapter = CONTENT.chapterEight.stages[phase];
+  if (phase === "failureFinale") {
+    renderChapterEightFailureFinale(previousOutcome);
+    return;
+  }
+  const chapter = CONTENT.chapterEight.stages[phase] || CONTENT.chapterEight.failureStages[phase];
   if (!chapter) return;
-  const labels = { return: "歸航港", refuge: "共夢廊道", covenant: "盟約原址", rift: "星海裂口" };
-  setStageLabel(`第八章・${labels[phase]}`, chapter.clock);
+  const labels = { return: "歸航港", refuge: "共夢廊道", covenant: "盟約原址", rift: "星海裂口", failureEntry: "裂口門前", failureDescent: "裂口內側", failureAnchor: "主鏈核心", failureName: "無名星門" };
+  setStageLabel(`第八章・${labels[phase] || chapter.title}`, chapter.clock);
   const storyTitle = phase === "return" ? `第八章｜${chapter.title}` : chapter.title;
   setStory(storyTitle, [...(phase === "return" ? [] : [previousOutcome]), ...chapter.paragraphs].filter(Boolean));
   renderChoices(chapter.choices.map((choice) => ({ ...choice, choose: () => resolveChapterEight(choice) })));
@@ -1909,7 +2029,23 @@ function renderChapterEightPhase(phase = state.chapterEightPhase, previousOutcom
 
 function resolveChapterEight(choice) {
   state.chapterEightPreviousOutcome = choice.outcome;
-  if (state.chapterEightPhase === "return") {
+  if (state.chapterEightPhase === "failureEntry") {
+    state.chapterEightFailureEntryChoice = choice.id;
+    state.nextGoal = choice.nextGoal;
+    renderChapterEightPhase("failureDescent", choice.outcome);
+  } else if (state.chapterEightPhase === "failureDescent") {
+    state.chapterEightFailureDescentChoice = choice.id;
+    state.nextGoal = choice.nextGoal;
+    renderChapterEightPhase("failureAnchor", choice.outcome);
+  } else if (state.chapterEightPhase === "failureAnchor") {
+    state.chapterEightFailureAnchorChoice = choice.id;
+    state.nextGoal = choice.nextGoal;
+    renderChapterEightPhase("failureName", choice.outcome);
+  } else if (state.chapterEightPhase === "failureName") {
+    state.chapterEightFailureNameChoice = choice.id;
+    state.nextGoal = choice.nextGoal;
+    renderChapterEightPhase("failureFinale", choice.outcome);
+  } else if (state.chapterEightPhase === "return") {
     state.chapterEightReturnChoice = choice.id;
     state.nextGoal = choice.nextGoal;
     renderChapterEightPhase("refuge", choice.outcome);
@@ -1924,7 +2060,7 @@ function resolveChapterEight(choice) {
   } else if (state.chapterEightPhase === "rift") {
     state.chapterEightRiftChoice = choice.id;
     state.nextGoal = choice.nextGoal;
-    renderChapterEightPhase("finale", choice.outcome);
+    renderChapterEightPhase(choice.id === "solo_anchor" ? "failureEntry" : "finale", choice.outcome);
   }
   applyEffects(choice.effects);
   persistSave();
@@ -1944,6 +2080,23 @@ function renderChapterEightFinale(previousOutcome = state.chapterEightPreviousOu
   $("#endingArea").innerHTML = `<div class="ending-card"><h2>${escapeHTML(finale.title)}</h2><p>${escapeHTML(finale.summary)}</p><p class="next-hook">${escapeHTML(finale.hook)}</p><div class="ending-actions"><button class="ending-button" id="goChapterNine">前往第九章</button><button class="quiet-button" id="reopenChapterEightFinale">重新查看尾聲</button><button class="quiet-button" id="newRun">開始新週目</button></div></div>`;
   $("#goChapterNine").addEventListener("click", beginChapterNine);
   $("#reopenChapterEightFinale").addEventListener("click", () => renderChapterEightPhase("finale"));
+  $("#newRun").addEventListener("click", reset);
+  persistSave();
+  renderStats();
+}
+
+function renderChapterEightFailureFinale(previousOutcome = state.chapterEightPreviousOutcome) {
+  const finale = CONTENT.chapterEight.failureFinales[state.chapterEightRiftChoice];
+  if (!finale) return;
+  state.chapterEightComplete = true;
+  setStageLabel("第八章・失敗結局", "無名星門・最後的黎明");
+  setStory(`第八章｜${finale.title}`, [previousOutcome, ...finale.paragraphs].filter(Boolean));
+  $("#choices").innerHTML = "";
+  $("#continueArea").innerHTML = "";
+  $("#actionArea").innerHTML = "";
+  $("#battleArea").innerHTML = "";
+  $("#endingArea").innerHTML = `<div class="ending-card"><h2>${escapeHTML(finale.title)}</h2><p>${escapeHTML(finale.summary)}</p><p class="next-hook">${escapeHTML(finale.hook)}</p><div class="ending-actions"><button class="ending-button" id="reopenChapterEightFailureFinale">重新查看失敗結局</button><button class="quiet-button" id="newRun">開始新週目</button></div></div>`;
+  $("#reopenChapterEightFailureFinale").addEventListener("click", () => renderChapterEightPhase("failureFinale"));
   $("#newRun").addEventListener("click", reset);
   persistSave();
   renderStats();
