@@ -21,6 +21,9 @@
 - [第一章事件流程與核心同伴](docs/chapter-one-flow.md)：原型事件節點、同伴動機提案、狀態欄位與平衡原則。
 - [第一章製作規格](docs/chapter-one-spec.md)：同伴人物卡、旗標回收、章末方案、戰鬥與技術方向，以及下一個製作里程碑。
 - [第二章製作規格](docs/chapter-two-spec.md)：四種第一章承接入口、觀星台主線危機、後果取捨，以及通往第三章的三種序幕入口。
+- [第四章失敗結局支線](docs/chapter-four-failure-ending.md)：核心路線分裂後的四個單選節點、失城結局與專屬場景圖。
+- [第五章失敗結局支線](docs/chapter-five-failure-ending.md)：過載古鏡同時送出假星與名字回聲的單選流程及專屬場景圖。
+- [第八章失敗結局支線](docs/chapter-eight-failure-ending.md)：裂口門前的單選節點、調律者的自我犧牲，以及專屬場景素材。
 - [隱藏結局解鎖紀錄（劇透）](docs/hidden-ending-unlock.md)：記錄真名結局的條件與機率，並作為後續特殊結局的條件紀錄準則。
 - `data/chapter-content.js`：第一章完整流程，以及第二至第十章的分歧劇情、後果選擇與章末結局。
 - [開啟網頁原型](index.html)：可直接在瀏覽器中遊玩第一章流程。
